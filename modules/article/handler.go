@@ -1,17 +1,16 @@
-package http
+package article
 
 import (
-	"base-site-api/modules/article/service"
 	"base-site-api/responses"
 
 	"github.com/gofiber/fiber"
 )
 
 type ArticleHandler struct {
-	service service.Service
+	service Service
 }
 
-func New(s service.Service) *ArticleHandler {
+func NewHandler(s Service) *ArticleHandler {
 	return &ArticleHandler{
 		service: s,
 	}

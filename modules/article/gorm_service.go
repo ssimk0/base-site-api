@@ -1,18 +1,17 @@
-package service
+package article
 
 import (
 	"base-site-api/models"
-	"base-site-api/modules/article/repository"
 
-	"github.com/prometheus/common/log"
+	log "github.com/sirupsen/logrus"
 )
 
 // GormService implementation of article Service interface
 type GormService struct {
-	repository repository.Repository
+	repository Repository
 }
 
-func New(r repository.Repository) *GormService {
+func NewService(r Repository) *GormService {
 	return &GormService{
 		repository: r,
 	}

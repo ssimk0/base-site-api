@@ -1,4 +1,4 @@
-package repository
+package article
 
 import (
 	"base-site-api/models"
@@ -12,7 +12,7 @@ type GormRepository struct {
 	db *gorm.DB
 }
 
-func New(db *gorm.DB) *GormRepository {
+func NewRepository(db *gorm.DB) *GormRepository {
 	return &GormRepository{
 		db,
 	}

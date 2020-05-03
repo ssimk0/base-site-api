@@ -12,10 +12,9 @@ import (
 
 // ENDPOINTS
 func setupV1ApiEndpoints(api *fiber.Group, config *config.Config) {
-	v1 := api.Group("/v1")
 	db := config.Database
 
-	article.New(db, v1)
+	article.New(db, api)
 }
 
 // SETTINGS FOR GROUPS

@@ -1,4 +1,4 @@
-package service
+package article
 
 import (
 	"base-site-api/models"

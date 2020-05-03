@@ -1,20 +1,16 @@
 package article
 
 import (
-	"base-site-api/modules/article/delivery/http"
-	"base-site-api/modules/article/repository"
-	"base-site-api/modules/article/service"
-
 	"github.com/gofiber/fiber"
 	"github.com/jinzhu/gorm"
 )
 
 func New(db *gorm.DB, api *fiber.Group) {
-	handler := http.New(service.New(repository.New(db)))
+	handler := NewHandler(NewService(NewRepository(db)))
 
-	api.Get("/articles", handler.List)
-	// api.Post("/articles", handler.Create)
-	// api.Put("/articles", handler.Update)
-	// api.Delete("/articles/{id}", handler.Remove)
-	// api.Get("/articles/{id}", handler.GetDetail)
+	api.Get("/v1/articles", handler.List)
+	// api.Post("/v1/articles", handler.Create)
+	// api.Put("/v1/articles", handler.Update)
+	// api.Delete("/v1/articles/{id}", handler.Remove)
+	// api.Get("/v1/articles/{id}", handler.GetDetail)
 }
