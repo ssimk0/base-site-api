@@ -6,8 +6,9 @@ import (
 
 // Service interface for Auth
 type Service interface {
-	Login(username string, password string) (*models.User, error)
-	UserInfo(userId uint) (*models.User, error)
+	Login(username string, password string) (string, error)
+	UserInfo(userID uint) (*models.User, error)
+	RegisterUser(u *models.User) error
 	ForgotPassword(email string) error
 	ResetPassword(token string, newPassword string) error
 }

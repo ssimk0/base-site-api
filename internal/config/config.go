@@ -9,11 +9,13 @@ import (
 	"github.com/joho/godotenv"
 )
 
+// Constants for whole application setup
 type Constants struct {
 	ADDRESS string
 	ENV     string
 }
 
+// Config application with all constants and database
 type Config struct {
 	Constants
 	Database *gorm.DB
@@ -26,11 +28,16 @@ func initDB(env string) (*gorm.DB, error) {
 	}
 
 	conn.LogMode(env == "development")
-	conn.Debug().AutoMigrate(&models.Article{}) // models here
+	conn.Debug().AutoMigrate(
+		&models.Article{},
+		&models.User{},
+		&models.ForgotPasswordToken{},
+	)
 
 	return conn, nil
 }
 
+// New return application Config
 func New() (*Config, error) {
 	err := godotenv.Load()
 

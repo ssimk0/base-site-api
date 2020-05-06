@@ -1,6 +1,8 @@
 package main
 
 import (
+	//"base-site-api/middleware"
+
 	"github.com/gofiber/fiber"
 	"github.com/gofiber/helmet"
 	"github.com/gofiber/logger"
@@ -18,4 +20,5 @@ func configureGlobalMiddleware(app *fiber.Fiber) {
 	}))
 	app.Use(logger.New())
 	app.Use(helmet.New())
+	//app.Use(middleware.New())
 }

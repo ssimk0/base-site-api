@@ -27,5 +27,5 @@ func (h *ArticleHandler) List(c *fiber.Ctx) {
 		return
 	}
 
-	c.Send(&articles)
+	c.JSON(&articles)
 }

@@ -61,8 +61,8 @@ func (s *GormService) Store(article *models.Article) (*models.Article, error) {
 }
 
 // Delete article set the deleted_at and make it unavailable to retrieve
-func (s *GormService) Delete(id uint, userId uint) error {
-	log.Infof("Article with id %d deleted by user with id %d", id, userId)
+func (s *GormService) Delete(id uint, userID uint) error {
+	log.Infof("Article with id %d deleted by user with id %d", id, userID)
 
 	return s.repository.Delete(id)
 }

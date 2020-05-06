@@ -5,6 +5,7 @@ import (
 
 	"base-site-api/internal/config"
 	"base-site-api/modules/article"
+	"base-site-api/modules/auth"
 
 	"github.com/gofiber/cors"
 	"github.com/gofiber/fiber"
@@ -15,6 +16,7 @@ func setupV1ApiEndpoints(api *fiber.Group, config *config.Config) {
 	db := config.Database
 
 	article.New(db, api)
+	auth.New(db, api)
 }
 
 // SETTINGS FOR GROUPS

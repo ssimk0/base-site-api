@@ -10,5 +10,5 @@ type Service interface {
 	FindAll(sort string) ([]*models.Article, error)
 	Update(article *models.Article, id uint) error
 	Store(article *models.Article) (*models.Article, error)
-	Delete(id uint, userId uint) error
+	Delete(id uint, userID uint) error
 }
