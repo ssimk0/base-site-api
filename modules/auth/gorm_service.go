@@ -126,13 +126,13 @@ func (s *GormService) ResetPassword(token string, newPassword string) error {
 	if token == t.Token {
 
 		u := &t.User
-		pass, err := hashPassword((newPassword)
+		pass, err := hashPassword(newPassword)
 		if err != nil {
 			return err
 		}
-	
+
 		u.PasswordHash = pass
-		s.repository.Update(user, user.ID)
+		s.repository.Update(u, u.ID)
 	}
 
 	return nil
@@ -144,7 +144,7 @@ func (s *GormService) RegisterUser(u *models.User) error {
 		return fmt.Errorf("Passwords are not same")
 	}
 
-	pass, err := hashPassword((u.Password)
+	pass, err := hashPassword(u.Password)
 	if err != nil {
 		return err
 	}
