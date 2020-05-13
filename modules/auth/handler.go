@@ -1,10 +1,11 @@
 package auth
 
 import (
-	"base-site-api/responses"
 	"base-site-api/models"
-	"github.com/sirupsen/logrus"
+	"base-site-api/responses"
+
 	"github.com/gofiber/fiber"
+	"github.com/sirupsen/logrus"
 )
 
 type AuthHandler struct {
@@ -60,19 +61,49 @@ func (h *AuthHandler) RegisterUser(c *fiber.Ctx) {
 			Error:   "BAD_REQUEST",
 		})
 	}
-	logrus.Debugf("%v", u)
+
 	err := h.service.RegisterUser(&u)
 
 	if err != nil {
-		logrus.Error(err)
+		logrus.Errorf("Error while registering user: %s", err)
+
 		c.Status(403).JSON(&responses.ErrorResponse{
 			Message: "Wrong password or username",
 			Error:   "BAD_REQUEST",
 		})
+	} else {
+		c.Status(201).JSON(responses.SuccessResponse{
+			Success: true,
+			Id:      0,
+		})
+	}
+}
+
+func (h *AuthHandler) ForgotPassword(c *fiber.Ctx) {
+	u := models.User{}
+
+	if err := c.BodyParser(u); err != nil {
+		logrus.Error(err)
+		c.Status(400).JSON(&responses.ErrorResponse{
+			Message: "Bad parameters",
+			Error:   "BAD_REQUEST",
+		})
 	}
 
-	c.Status(201).JSON(responses.SuccessResponse{
-		Success: true,
-		Id: 0,
-	})
+	err := h.service.ForgotPassword(u.Email)
+
+	if err != nil {
+		logrus.Errorf("Error while processing forgot password: %s", err)
+
+		c.Status(400).JSON(&responses.ErrorResponse{
+			Message: "Error while processing forgot password",
+			Error:   "BAD_REQUEST",
+		})
+
+	} else {
+		c.JSON(responses.SuccessResponse{
+			Success: true,
+			Id:      0,
+		})
+	}
 }

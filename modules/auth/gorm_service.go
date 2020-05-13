@@ -2,7 +2,10 @@ package auth
 
 import (
 	"base-site-api/models"
+	"base-site-api/utils"
+	"bytes"
 	"fmt"
+	"html/template"
 	"io/ioutil"
 	"strings"
 	"time"
@@ -18,6 +21,7 @@ import (
 type GormService struct {
 	repository Repository
 	signingKey []byte
+	templates  *template.Template
 }
 
 // NewService return instance of GormService
@@ -27,9 +31,12 @@ func NewService(repository Repository) *GormService {
 		log.Fatal(err)
 	}
 
+	tpl := template.Must(template.ParseGlob("templates/emails/*.html"))
+
 	return &GormService{
 		repository,
 		signingKey,
+		tpl,
 	}
 }
 
@@ -70,13 +77,64 @@ func (s *GormService) UserInfo(userID uint) (*models.User, error) {
 	return s.repository.Find(userID)
 }
 
+type ForgotPasswordMailData struct {
+	FirstName string
+	Link      string
+}
+
 // ForgotPassword send email with ForgotPasswordToken
 func (s *GormService) ForgotPassword(email string) error {
-	return nil
+	user, err := s.repository.FindUserByEmail(email)
+
+	if err != nil {
+		return err
+	}
+
+	token := &models.ForgotPasswordToken{
+		Token:    utils.GenerateRandomString(10),
+		User:     *user,
+		ExpireAt: time.Now().Add(time.Minute * 15),
+	}
+
+	_, err = s.repository.StoreForgotPasswordToken(token)
+
+	if err != nil {
+		return err
+	}
+
+	w := &bytes.Buffer{}
+	err = s.templates.ExecuteTemplate(w, "forgot-password.html", ForgotPasswordMailData{
+		FirstName: user.FirstName,
+		Link:      fmt.Sprintf("%s/reset-password?token=%s", envy.Get("APP_URI", ""), token.Token),
+	})
+
+	if err != nil {
+		return err
+	}
+
+	err = utils.SendMail(email, w.Bytes())
+	return err
 }
 
 // ResetPassword set new password for use if have valid token
 func (s *GormService) ResetPassword(token string, newPassword string) error {
+	t, err := s.repository.GetForgotPasswordToken(token)
+	if err != nil {
+		return err
+	}
+
+	if token == t.Token {
+
+		u := &t.User
+		pass, err := hashPassword((newPassword)
+		if err != nil {
+			return err
+		}
+	
+		u.PasswordHash = pass
+		s.repository.Update(user, user.ID)
+	}
+
 	return nil
 }
 
@@ -86,12 +144,12 @@ func (s *GormService) RegisterUser(u *models.User) error {
 		return fmt.Errorf("Passwords are not same")
 	}
 
-	ph, err := bcrypt.GenerateFromPassword([]byte(u.Password), bcrypt.DefaultCost)
+	pass, err := hashPassword((u.Password)
 	if err != nil {
-		return fmt.Errorf("Error while hasing Passwords with error: %s", err)
+		return err
 	}
 
-	u.PasswordHash = string(ph)
+	u.PasswordHash = pass
 	u.Email = strings.ToLower(strings.TrimSpace(u.Email))
 
 	return s.repository.CreateUser(u)
@@ -99,4 +157,13 @@ func (s *GormService) RegisterUser(u *models.User) error {
 
 func oneWeek() time.Duration {
 	return 7 * 24 * time.Hour
+}
+
+func hashPassword(password string) (string, error) {
+	ph, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return "", fmt.Errorf("Error while hasing Passwords with error: %s", err)
+	}
+
+	return string(ph), nil
 }

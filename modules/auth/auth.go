@@ -12,6 +12,6 @@ func New(db *gorm.DB, api *fiber.Group) {
 	api.Post("/v1/auth/login", handler.Login)
 	api.Post("/v1/auth/register-user", handler.RegisterUser)
 	// api.Get("/v1/auth/user", handler.GetUserInfo)
-	// api.Post("/v1/auth/forgot-password", handler.ForgotPassword)
+	api.Post("/v1/auth/forgot-password", handler.ForgotPassword)
 	// api.Post("/v1/auth/reset-password", handler.ResetPassword)
 }

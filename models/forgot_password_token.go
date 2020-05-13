@@ -10,5 +10,6 @@ import (
 type ForgotPasswordToken struct {
 	gorm.Model
 	Token    string    `json:"token"`
+	User     User      `json:"-"`
 	ExpireAt time.Time `json:"expire_at"`
 }
