@@ -7,13 +7,13 @@ import (
 	"fmt"
 	"html/template"
 	"io/ioutil"
+	"os"
 	"strings"
 	"time"
 
 	log "github.com/sirupsen/logrus"
 
 	"github.com/dgrijalva/jwt-go"
-	"github.com/gobuffalo/envy"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -26,7 +26,7 @@ type GormService struct {
 
 // NewService return instance of GormService
 func NewService(repository Repository) *GormService {
-	signingKey, err := ioutil.ReadFile(envy.Get("JWT_KEY_PATH", ""))
+	signingKey, err := ioutil.ReadFile(os.Getenv("JWT_KEY_PATH"))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -57,7 +57,7 @@ func (s *GormService) Login(username string, password string) (string, error) {
 
 	claims := jwt.StandardClaims{
 		ExpiresAt: time.Now().Add(oneWeek()).Unix(),
-		Issuer:    fmt.Sprintf("%s.api.go-with-jwt.it", envy.Get("GO_ENV", "development")),
+		Issuer:    fmt.Sprintf("%s.api.go-with-jwt.it", os.Getenv("GO_ENV")),
 		Id:        string(u.ID),
 	}
 
@@ -77,7 +77,7 @@ func (s *GormService) UserInfo(userID uint) (*models.User, error) {
 	return s.repository.Find(userID)
 }
 
-type ForgotPasswordMailData struct {
+type forgotPasswordMailData struct {
 	FirstName string
 	Link      string
 }
@@ -103,9 +103,9 @@ func (s *GormService) ForgotPassword(email string) error {
 	}
 
 	w := &bytes.Buffer{}
-	err = s.templates.ExecuteTemplate(w, "forgot-password.html", ForgotPasswordMailData{
+	err = s.templates.ExecuteTemplate(w, "forgot-password.html", forgotPasswordMailData{
 		FirstName: user.FirstName,
-		Link:      fmt.Sprintf("%s/reset-password?token=%s", envy.Get("APP_URI", ""), token.Token),
+		Link:      fmt.Sprintf("%s/reset-password?token=%s", os.Getenv("APP_URI"), token.Token),
 	})
 
 	if err != nil {

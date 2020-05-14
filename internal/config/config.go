@@ -39,7 +39,12 @@ func initDB(env string) (*gorm.DB, error) {
 
 // New return application Config
 func New() (*Config, error) {
-	err := godotenv.Load()
+	var err error
+	if os.Getenv("GO_ENV") == "testing" {
+		err = godotenv.Load(".test.env")
+	} else {
+		err = godotenv.Load()
+	}
 
 	if err != nil {
 		return nil, err

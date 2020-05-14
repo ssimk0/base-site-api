@@ -16,9 +16,9 @@ func init() {
 	log.SetOutput(os.Stdout)
 
 	if os.Getenv("GO_ENV") == "development" {
-		logLevel = log.InfoLevel
+		logLevel = log.DebugLevel
 	} else {
-		logLevel = log.WarnLevel
+		logLevel = log.InfoLevel
 	}
 
 	log.SetLevel(logLevel)
@@ -32,7 +32,11 @@ func main() {
 	}
 
 	// SETUP APP
-	app := fiber.New()
+	app := fiber.New(&fiber.Settings{
+		Prefork:       true,
+		CaseSensitive: true,
+		StrictRouting: true,
+	})
 
 	configureGlobalMiddleware(app)
 
