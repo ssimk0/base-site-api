@@ -2,6 +2,7 @@ package article
 
 import (
 	"base-site-api/models"
+	"github.com/gosimple/slug"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -50,8 +51,9 @@ func (s *GormService) Update(article *models.Article, id uint) error {
 }
 
 // Storre create a new article and return instance of it
-func (s *GormService) Store(article *models.Article) (*models.Article, error) {
-	id, err := s.repository.Store(article)
+func (s *GormService) Store(article *models.Article, userID uint) (*models.Article, error) {
+	article.Slug = slug.Make(article.Title)
+	id, err := s.repository.Store(article, userID)
 
 	if err != nil {
 		return nil, err

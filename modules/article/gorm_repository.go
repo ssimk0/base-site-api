@@ -36,7 +36,7 @@ func (r *GormRepository) Find(id uint) (*models.Article, error) {
 func (r *GormRepository) FindAll(order string) ([]*models.Article, error) {
 	var articles []*models.Article
 
-	if err := r.db.Model(&models.Article{}).Order(order).Where("published = 1").Find(&articles).Error; err != nil {
+	if err := r.db.Set("gorm:auto_preload", true).Model(&models.Article{}).Find(&articles).Error; err != nil {
 		return nil, err
 	}
 
@@ -58,7 +58,8 @@ func (r *GormRepository) Update(article *models.Article, id uint) error {
 
 
 // Store new article in db and return ID 
-func (r *GormRepository) Store(article *models.Article) (uint, error) {
+func (r *GormRepository) Store(article *models.Article, userID uint) (uint, error) {
+	article.UserID = userID
 	if err := r.db.Create(article).Error; err != nil {
 		return 0, err
 	}

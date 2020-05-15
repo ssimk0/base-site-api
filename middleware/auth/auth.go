@@ -16,7 +16,6 @@ type Config struct {
 }
 
 func FilterOutGet(c *fiber.Ctx) bool {
-	log.Debug("debug %s", c.Method())
 	return c.Method() == "GET"
 }
 
@@ -57,8 +56,8 @@ func New(cfg *Config) func(*fiber.Ctx) {
 
 		// getting claims
 		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-
-			c.Set("userId", claims["jti"].(string))
+			log.Debug(claims["jti"])
+			c.Locals("userID", claims["jti"].(string))
 		} else {
 			c.Status(http.StatusUnauthorized).Send(fmt.Errorf("Failed to validate token: %v", claims))
 			return

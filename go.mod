@@ -10,6 +10,7 @@ require (
 	github.com/gofiber/helmet v0.0.1
 	github.com/gofiber/logger v0.0.1
 	github.com/gofiber/recover v0.0.1
+	github.com/gosimple/slug v1.9.0
 	github.com/jinzhu/gorm v1.9.12
 	github.com/joho/godotenv v1.3.0
 	github.com/sirupsen/logrus v1.5.0

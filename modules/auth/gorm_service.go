@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"html/template"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -50,7 +51,8 @@ func (s *GormService) Login(username string, password string) (string, error) {
 	claims := jwt.StandardClaims{
 		ExpiresAt: time.Now().Add(oneWeek()).Unix(),
 		Issuer:    fmt.Sprintf("%s.api.go-with-jwt.it", os.Getenv("GO_ENV")),
-		Id:        string(u.ID),
+		Id:        strconv.FormatUint(uint64(u.ID), 16),
+		Subject:   strconv.FormatUint(uint64(u.ID), 16),
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)

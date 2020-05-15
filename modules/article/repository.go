@@ -9,6 +9,6 @@ type Repository interface {
 	Find(id uint) (*models.Article, error)
 	FindAll(order string) ([]*models.Article, error)
 	Update(article *models.Article, id uint) error
-	Store(article *models.Article) (uint, error)
+	Store(article *models.Article, userID uint) (uint, error)
 	Delete(id uint) error
 }
