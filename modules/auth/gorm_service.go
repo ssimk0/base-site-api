@@ -6,12 +6,9 @@ import (
 	"bytes"
 	"fmt"
 	"html/template"
-	"io/ioutil"
 	"os"
 	"strings"
 	"time"
-
-	log "github.com/sirupsen/logrus"
 
 	"github.com/dgrijalva/jwt-go"
 	"golang.org/x/crypto/bcrypt"
@@ -25,12 +22,7 @@ type GormService struct {
 }
 
 // NewService return instance of GormService
-func NewService(repository Repository) *GormService {
-	signingKey, err := ioutil.ReadFile(os.Getenv("JWT_KEY_PATH"))
-	if err != nil {
-		log.Fatal(err)
-	}
-
+func NewService(repository Repository, signingKey []byte) *GormService {
 	tpl := template.Must(template.ParseGlob("templates/emails/*.html"))
 
 	return &GormService{

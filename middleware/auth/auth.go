@@ -1,31 +1,33 @@
-package middleware
+package auth
 
 import (
 	"fmt"
-	"io/ioutil"
-	"log"
+	log "github.com/sirupsen/logrus"
 	"net/http"
 	"strings"
 
 	"github.com/dgrijalva/jwt-go"
-	"github.com/gobuffalo/envy"
 	"github.com/gofiber/fiber"
 )
 
-var signingKey []byte
-
-func init() {
-	var err error
-	signingKey, err = ioutil.ReadFile(envy.Get("JWT_KEY_PATH", ""))
-	if err != nil {
-		log.Fatal(err)
-	}
+type Config struct {
+	SigningKey []byte
+	Filter func(c *fiber.Ctx) bool
 }
 
-func New() func(*fiber.Ctx) {
+func FilterOutGet(c *fiber.Ctx) bool {
+	log.Debug("debug %s", c.Method())
+	return c.Method() == "GET"
+}
 
+func New(cfg *Config) func(*fiber.Ctx) {
 	// Return middleware handler
 	return func(c *fiber.Ctx) {
+
+		if cfg.Filter != nil && cfg.Filter(c) {
+			c.Next()
+			return
+		}
 	
 		// Get authorization header
 		tokenString := c.Get(fiber.HeaderAuthorization)
@@ -45,7 +47,7 @@ func New() func(*fiber.Ctx) {
 				return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 			}
 
-			return signingKey, nil
+			return cfg.SigningKey, nil
 		})
 
 		if err != nil {

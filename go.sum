@@ -13,8 +13,6 @@ github.com/fasthttp/websocket v1.4.2/go.mod h1:smsv/h4PBEBaU0XDTY5UwJTpZv69fQ0Ff
 github.com/go-sql-driver/mysql v1.4.1/go.mod h1:zAC/RDZ24gD3HViQzih4MyKcchzm+sOG5ZlKdlhCg5w=
 github.com/go-sql-driver/mysql v1.5.0 h1:ozyZYNQW3x3HtqT1jira07DN2PArx2v7/mN66gGcHOs=
 github.com/go-sql-driver/mysql v1.5.0/go.mod h1:DCzpHaOWr8IXmIStZouvnhqoel9Qv2LBy8hT2VhHyBg=
-github.com/gobuffalo/envy v1.9.0 h1:eZR0DuEgVLfeIb1zIKt3bT4YovIMf9O9LXQeCZLXpqE=
-github.com/gobuffalo/envy v1.9.0/go.mod h1:FurDp9+EDPE4aIUS3ZLyD+7/9fpx7YRt/ukY6jIHf0w=
 github.com/gofiber/cors v0.0.1 h1://BnEJ01S8uQOzeFB9N4UNo3YMSKcuZ9p1mog6tLuvo=
 github.com/gofiber/cors v0.0.1/go.mod h1:qQ5SEyyeO2K9e4c0eZf5GOYzKruIjVb0SSYMuNS4PRQ=
 github.com/gofiber/fiber v1.8.3/go.mod h1:5NagvZ+MZRT7nGdQTLPEJQWyaPfctF6S/eBapXM2EpM=

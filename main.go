@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/joho/godotenv"
 	"os"
 
 	"base-site-api/internal/config"
@@ -11,9 +12,20 @@ import (
 
 func init() {
 	var logLevel log.Level
+	var err error
 
 	log.SetFormatter(&log.TextFormatter{})
 	log.SetOutput(os.Stdout)
+
+	if os.Getenv("GO_ENV") == "testing" {
+		err = godotenv.Load(".test.env")
+	} else {
+		err = godotenv.Load()
+	}
+
+	if err != nil {
+		log.Fatalf("Fatal while loading env: %s", err)
+	}
 
 	if os.Getenv("GO_ENV") == "development" {
 		logLevel = log.DebugLevel
@@ -22,6 +34,7 @@ func init() {
 	}
 
 	log.SetLevel(logLevel)
+
 }
 
 func main() {

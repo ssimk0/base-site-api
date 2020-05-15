@@ -1,13 +1,13 @@
 package auth
 
 import (
+	"base-site-api/internal/config"
 	"github.com/gofiber/fiber"
-	"github.com/jinzhu/gorm"
 )
 
 // New setup whole module with all routes
-func New(db *gorm.DB, api *fiber.Group) {
-	handler := NewHandler(NewService(NewRepository(db)))
+func New(config *config.Config, api *fiber.Group) {
+	handler := NewHandler(NewService(NewRepository(config.Database), config.SigningKey))
 
 	api.Post("/v1/auth/login", handler.Login)
 	api.Post("/v1/auth/register-user", handler.RegisterUser)

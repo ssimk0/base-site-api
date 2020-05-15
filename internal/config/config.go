@@ -1,12 +1,13 @@
 package config
 
 import (
+	log "github.com/sirupsen/logrus"
+	"io/ioutil"
 	"os"
 
 	"base-site-api/models"
 
 	"github.com/jinzhu/gorm"
-	"github.com/joho/godotenv"
 )
 
 // Constants for whole application setup
@@ -19,6 +20,7 @@ type Constants struct {
 type Config struct {
 	Constants
 	Database *gorm.DB
+	SigningKey []byte
 }
 
 func initDB(env string) (*gorm.DB, error) {
@@ -40,19 +42,16 @@ func initDB(env string) (*gorm.DB, error) {
 // New return application Config
 func New() (*Config, error) {
 	var err error
-	if os.Getenv("GO_ENV") == "testing" {
-		err = godotenv.Load(".test.env")
-	} else {
-		err = godotenv.Load()
-	}
-
-	if err != nil {
-		return nil, err
-	}
 
 	constants := Constants{}
 	constants.ENV = os.Getenv("GO_ENV")
 	constants.ADDRESS = os.Getenv("ADDRESS")
+
+	signingKey, err := ioutil.ReadFile(os.Getenv("JWT_KEY_PATH"))
+
+	if err != nil {
+		log.Fatalf("Init jwt open err: %s",err)
+	}
 
 	db, err := initDB(constants.ENV)
 
@@ -63,5 +62,6 @@ func New() (*Config, error) {
 	return &Config{
 		Constants: constants,
 		Database:  db,
+		SigningKey: signingKey,
 	}, nil
 }
