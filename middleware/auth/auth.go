@@ -2,8 +2,8 @@ package auth
 
 import (
 	"fmt"
-	log "github.com/sirupsen/logrus"
 	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/dgrijalva/jwt-go"
@@ -12,7 +12,7 @@ import (
 
 type Config struct {
 	SigningKey []byte
-	Filter func(c *fiber.Ctx) bool
+	Filter     func(c *fiber.Ctx) bool
 }
 
 func FilterOutGet(c *fiber.Ctx) bool {
@@ -27,7 +27,7 @@ func New(cfg *Config) func(*fiber.Ctx) {
 			c.Next()
 			return
 		}
-	
+
 		// Get authorization header
 		tokenString := c.Get(fiber.HeaderAuthorization)
 
@@ -56,8 +56,13 @@ func New(cfg *Config) func(*fiber.Ctx) {
 
 		// getting claims
 		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-			log.Debug(claims["jti"])
-			c.Locals("userID", claims["jti"].(string))
+			userId, err := strconv.ParseUint(claims["jti"].(string), 10, 32)
+			if err != nil {
+				c.Status(http.StatusUnauthorized).Send(fmt.Errorf("Failed to validate token: %v", claims))
+				return
+			}
+
+			c.Locals("userID", uint(userId))
 		} else {
 			c.Status(http.StatusUnauthorized).Send(fmt.Errorf("Failed to validate token: %v", claims))
 			return
