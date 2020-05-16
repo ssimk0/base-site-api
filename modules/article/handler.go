@@ -7,7 +7,6 @@ import (
 	"strconv"
 )
 
-
 type ArticleHandler struct {
 	service Service
 }
@@ -19,7 +18,7 @@ func NewHandler(s Service) *ArticleHandler {
 }
 
 func (h *ArticleHandler) List(c *fiber.Ctx) {
-	articles, err := h.service.FindAll(c.Params("sort"))
+	articles, err := h.service.FindAll(c.Query("sort"))
 
 	if err != nil {
 		c.Status(500).Send(responses.ErrorResponse{
@@ -59,7 +58,7 @@ func (h *ArticleHandler) Create(c *fiber.Ctx) {
 
 	c.JSON(responses.SuccessResponse{
 		Success: true,
-		Id: a.ID,
+		Id:      a.ID,
 	})
 }
 
@@ -88,7 +87,7 @@ func (h *ArticleHandler) Update(c *fiber.Ctx) {
 
 	c.JSON(responses.SuccessResponse{
 		Success: true,
-		Id: article.ID,
+		Id:      article.ID,
 	})
 }
 
@@ -118,7 +117,7 @@ func (h *ArticleHandler) Remove(c *fiber.Ctx) {
 
 	c.JSON(responses.SuccessResponse{
 		Success: true,
-		Id: uint(uID),
+		Id:      uint(uID),
 	})
 }
 

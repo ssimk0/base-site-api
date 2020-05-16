@@ -2,6 +2,7 @@ package article
 
 import (
 	"base-site-api/models"
+	"fmt"
 	"github.com/gosimple/slug"
 
 	log "github.com/sirupsen/logrus"
@@ -38,8 +39,8 @@ func (s *GormService) Find(id uint) (*models.Article, error) {
 func (s *GormService) FindAll(sort string) ([]*models.Article, error) {
 	order := "created_at desc"
 
-	if sort == "top" {
-		order = "viewed desc"
+	if sort == "viewed" || sort == "created_at" {
+		order = fmt.Sprintf("%s desc", sort)
 	}
 
 	return s.repository.FindAll(order)

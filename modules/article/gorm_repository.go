@@ -20,7 +20,6 @@ func NewRepository(db *gorm.DB) *GormRepository {
 	}
 }
 
-
 // Find published article by slug
 func (r *GormRepository) Find(id uint) (*models.Article, error) {
 	article := models.Article{}
@@ -32,18 +31,16 @@ func (r *GormRepository) Find(id uint) (*models.Article, error) {
 	return &article, nil
 }
 
-
 // FindAll list all published articles also with order
 func (r *GormRepository) FindAll(order string) ([]*models.Article, error) {
 	var articles []*models.Article
 
-	if err := r.db.Set("gorm:auto_preload", true).Model(&models.Article{}).Find(&articles).Error; err != nil {
+	if err := r.db.Set("gorm:auto_preload", true).Model(&models.Article{}).Order(order).Where("published = 1").Find(&articles).Error; err != nil {
 		return nil, err
 	}
 
 	return articles, nil
 }
-
 
 // Update the article
 func (r *GormRepository) Update(article *models.Article, id uint) error {
@@ -57,8 +54,7 @@ func (r *GormRepository) Update(article *models.Article, id uint) error {
 	}).Error
 }
 
-
-// Store new article in db and return ID 
+// Store new article in db and return ID
 func (r *GormRepository) Store(article *models.Article, userID uint) (uint, error) {
 	article.UserID = userID
 	if err := r.db.Create(article).Error; err != nil {
@@ -68,8 +64,7 @@ func (r *GormRepository) Store(article *models.Article, userID uint) (uint, erro
 	return article.ID, nil
 }
 
-
-// Delete article by ID 
+// Delete article by ID
 func (r *GormRepository) Delete(id uint) error {
 	if err := r.db.Where("id = ?", id).Delete(&models.Article{}).Error; err != nil {
 		return err
