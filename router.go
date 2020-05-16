@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	"base-site-api/internal/config"
+	"base-site-api/config"
 	"base-site-api/modules/article"
 	"base-site-api/modules/auth"
 

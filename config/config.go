@@ -19,7 +19,7 @@ type Constants struct {
 // Config application with all constants and database
 type Config struct {
 	Constants
-	Database *gorm.DB
+	Database   *gorm.DB
 	SigningKey []byte
 }
 
@@ -50,7 +50,7 @@ func New() (*Config, error) {
 	signingKey, err := ioutil.ReadFile(os.Getenv("JWT_KEY_PATH"))
 
 	if err != nil {
-		log.Fatalf("Init jwt open err: %s",err)
+		log.Fatalf("Init jwt open err: %s", err)
 	}
 
 	db, err := initDB(constants.ENV)
@@ -60,8 +60,8 @@ func New() (*Config, error) {
 	}
 
 	return &Config{
-		Constants: constants,
-		Database:  db,
+		Constants:  constants,
+		Database:   db,
 		SigningKey: signingKey,
 	}, nil
 }

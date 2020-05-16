@@ -44,6 +44,7 @@ func (r *GormRepository) Find(id uint) (*models.User, error) {
 func (r *GormRepository) Update(user *models.User, id uint) error {
 
 	return r.db.Update(models.User{
+		ID:           id,
 		Email:        user.Email,
 		FirstName:    user.LastName,
 		PasswordHash: user.PasswordHash,
@@ -65,7 +66,7 @@ func (r *GormRepository) StoreForgotPasswordToken(token *models.ForgotPasswordTo
 func (r *GormRepository) GetForgotPasswordToken(token string) (*models.ForgotPasswordToken, error) {
 	t := models.ForgotPasswordToken{}
 
-	if err := r.db.Where("token = ?", token).First(&t).Error; err != nil {
+	if err := r.db.Set("gorm:auto_preload", true).Where("token = ?", token).First(&t).Error; err != nil {
 		return nil, err
 	}
 

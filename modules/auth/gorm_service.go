@@ -5,6 +5,7 @@ import (
 	"base-site-api/utils"
 	"bytes"
 	"fmt"
+	log "github.com/sirupsen/logrus"
 	"html/template"
 	"os"
 	"strconv"
@@ -86,7 +87,7 @@ func (s *GormService) ForgotPassword(email string) error {
 
 	token := &models.ForgotPasswordToken{
 		Token:    utils.GenerateRandomString(10),
-		User:     *user,
+		UserID:   user.ID,
 		ExpireAt: time.Now().Add(time.Minute * 15),
 	}
 
@@ -126,27 +127,34 @@ func (s *GormService) ResetPassword(token string, newPassword string) error {
 		}
 
 		u.PasswordHash = pass
-		s.repository.Update(u, u.ID)
+		err = s.repository.Update(u, u.ID)
+
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
 }
 
 // RegisterUser prepare, validate new user and save it to database
-func (s *GormService) RegisterUser(u *models.User) error {
+func (s *GormService) RegisterUser(u *UserRequest) error {
 	if u.Password != u.PasswordConfirm {
 		return fmt.Errorf("Passwords are not same")
 	}
-
+	log.Errorf("%s %s %s", u.Email, u.FirstName, u.LastName)
 	pass, err := hashPassword(u.Password)
 	if err != nil {
 		return err
 	}
-
-	u.PasswordHash = pass
-	u.Email = strings.ToLower(strings.TrimSpace(u.Email))
-
-	return s.repository.CreateUser(u)
+	user := models.User{
+		PasswordHash: pass,
+		Email:        strings.ToLower(strings.TrimSpace(u.Email)),
+		FirstName:    u.FirstName,
+		LastName:     u.LastName,
+	}
+	log.Errorf("%s %s %s", user.Email, user.FirstName, user.LastName)
+	return s.repository.CreateUser(&user)
 }
 
 func oneWeek() time.Duration {

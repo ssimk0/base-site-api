@@ -4,13 +4,13 @@ import (
 	"github.com/joho/godotenv"
 	"os"
 
-	"base-site-api/internal/config"
+	"base-site-api/config"
 
 	"github.com/gofiber/fiber"
 	log "github.com/sirupsen/logrus"
 )
 
-func init() {
+func setupEnv() {
 	var logLevel log.Level
 	var err error
 
@@ -32,13 +32,13 @@ func init() {
 	} else {
 		logLevel = log.InfoLevel
 	}
-
 	log.SetLevel(logLevel)
-
 }
 
 func main() {
-	config, err := config.New()
+	setupEnv()
+
+	c, err := config.New()
 
 	if err != nil {
 		log.Fatal(err)
@@ -53,13 +53,14 @@ func main() {
 
 	configureGlobalMiddleware(app)
 
-	configureAPIRoutes(app, config)
+	configureAPIRoutes(app, c)
 
-	startServer(app, config)
+	startServer(app, c)
 }
 
-func startServer(app *fiber.Fiber, config *config.Config) {
-	err := app.Listen(config.Constants.ADDRESS)
+func startServer(app *fiber.Fiber, c *config.Config) {
+
+	err := app.Listen(c.Constants.ADDRESS)
 
 	if err != nil {
 		log.Fatal(err.Error())

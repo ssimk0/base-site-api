@@ -7,6 +7,15 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
+// truncate all tables
+
+//SET FOREIGN_KEY_CHECKS=0;
+
+// SELECT Concat('TRUNCATE TABLE ',table_schema,'.',TABLE_NAME, ';')
+//FROM INFORMATION_SCHEMA.TABLES where  table_schema in (database_name)
+
+//SET FOREIGN_KEY_CHECKS=1;
+
 // DeleteCreatedEntities sets up GORM `onCreate` hook and return a function that can be deferred to
 // remove all the entities created after the hook was set up
 // You can use it as

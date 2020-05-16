@@ -1,7 +1,7 @@
 package article
 
 import (
-	"base-site-api/internal/config"
+	"base-site-api/config"
 	"base-site-api/middleware/auth"
 	"github.com/gofiber/fiber"
 )
@@ -12,7 +12,7 @@ func New(config *config.Config, api *fiber.Group) {
 	articles := api.Group("/v1/articles")
 	articles.Use(auth.New(&auth.Config{
 		SigningKey: config.SigningKey,
-		Filter: auth.FilterOutGet,
+		Filter:     auth.FilterGetOnly,
 	}))
 
 	articles.Get("/", handler.List)

@@ -15,7 +15,7 @@ type Config struct {
 	Filter     func(c *fiber.Ctx) bool
 }
 
-func FilterOutGet(c *fiber.Ctx) bool {
+func FilterGetOnly(c *fiber.Ctx) bool {
 	return c.Method() == "GET"
 }
 
@@ -32,7 +32,7 @@ func New(cfg *Config) func(*fiber.Ctx) {
 		tokenString := c.Get(fiber.HeaderAuthorization)
 
 		if len(tokenString) == 0 {
-			c.Status(http.StatusUnauthorized).Send(fmt.Errorf("No token set in headers"))
+			c.Status(http.StatusUnauthorized).Send(fmt.Errorf("no token set in headers"))
 			return
 		}
 
@@ -43,14 +43,14 @@ func New(cfg *Config) func(*fiber.Ctx) {
 		// parsing token
 		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-				return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
+				return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 			}
 
 			return cfg.SigningKey, nil
 		})
 
 		if err != nil {
-			c.Status(http.StatusUnauthorized).Send(fmt.Errorf("Could not parse the token, %v", err))
+			c.Status(http.StatusUnauthorized).Send(fmt.Errorf("could not parse the token, %v", err))
 			return
 		}
 
@@ -58,13 +58,13 @@ func New(cfg *Config) func(*fiber.Ctx) {
 		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 			userId, err := strconv.ParseUint(claims["jti"].(string), 10, 32)
 			if err != nil {
-				c.Status(http.StatusUnauthorized).Send(fmt.Errorf("Failed to validate token: %v", claims))
+				c.Status(http.StatusUnauthorized).Send(fmt.Errorf("failed to validate token: %v", claims))
 				return
 			}
 
 			c.Locals("userID", uint(userId))
 		} else {
-			c.Status(http.StatusUnauthorized).Send(fmt.Errorf("Failed to validate token: %v", claims))
+			c.Status(http.StatusUnauthorized).Send(fmt.Errorf("failed to validate token: %v", claims))
 			return
 		}
 		c.Next()

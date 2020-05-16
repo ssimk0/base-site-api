@@ -1,7 +1,7 @@
 package auth
 
 import (
-	"base-site-api/internal/config"
+	"base-site-api/config"
 	"github.com/gofiber/fiber"
 )
 
@@ -13,5 +13,5 @@ func New(config *config.Config, api *fiber.Group) {
 	api.Post("/v1/auth/register-user", handler.RegisterUser)
 	// api.Get("/v1/auth/user", handler.GetUserInfo)
 	api.Post("/v1/auth/forgot-password", handler.ForgotPassword)
-	// api.Post("/v1/auth/reset-password", handler.ResetPassword)
+	api.Post("/v1/auth/reset-password/:token", handler.ResetPassword)
 }
