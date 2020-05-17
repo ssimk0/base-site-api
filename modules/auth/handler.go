@@ -72,10 +72,10 @@ func (h *AuthHandler) RegisterUser(c *fiber.Ctx) {
 }
 
 func (h *AuthHandler) ForgotPassword(c *fiber.Ctx) {
-	u := models.User{}
+	u := &models.User{}
 
 	if err := c.BodyParser(u); err != nil {
-		logrus.Error(err)
+		logrus.Errorf("Error while parsing body: %s", err)
 		c.Status(400).JSON(&responses.ErrorResponse{
 			Message: "Bad parameters",
 			Error:   "BAD_REQUEST",

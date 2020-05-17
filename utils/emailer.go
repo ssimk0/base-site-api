@@ -7,17 +7,13 @@ import (
 	"os"
 )
 
+type ClientTLS struct {
+	smtpClient *smtp.Client
+	tlsConn    *tls.Conn
+}
+
 // SendMail trough TLS with setuped mail from ENV
 func SendMail(to string, body []byte) error {
-
-	// Set up authentication information.
-	auth := smtp.PlainAuth(
-		"",
-		os.Getenv("MAIL_USERNAME"),
-		os.Getenv("MAIL_PASSWORD"),
-		os.Getenv("MAIL_HOST"),
-	)
-
 	host := os.Getenv("MAIL_HOST")
 	addr := fmt.Sprintf("%s:%s", host, os.Getenv("MAIL_PORT"))
 	from := os.Getenv("MAIL_USERNAME")
@@ -30,47 +26,97 @@ func SendMail(to string, body []byte) error {
 	headers["Content-Type"] = "text/html; charset=\"UTF-8\";"
 	headers["MIME-version"] = "1.0"
 	message := ""
+
 	for k, v := range headers {
 		message += fmt.Sprintf("%s: %s\r\n", k, v)
 	}
 	message += "\r\n" + string(body)
 
-	tlsconfig := &tls.Config{ServerName: host}
+	client, err := setupClient(host, addr)
 
-	conn, err := tls.Dial("tcp", addr, tlsconfig)
 	if err != nil {
 		return err
 	}
-	defer conn.Close()
-	c, err := smtp.NewClient(conn, host)
-	if err != nil {
-		return err
-	}
+	c := client.smtpClient
+
+	defer client.tlsConn.Close()
 	defer c.Close()
-	if err = c.Hello("localhost"); err != nil {
-		return err
-	}
-	if err = c.Auth(auth); err != nil {
-		return err
-	}
-	if err = c.Mail(from); err != nil {
-		return err
-	}
-	if err = c.Rcpt(to); err != nil {
-		return err
-	}
-	w, err := c.Data()
+
+	err = setupFromTo(c, from, to)
+
 	if err != nil {
 		return err
 	}
-	_, err = w.Write([]byte(message))
-	if err != nil {
-		return err
-	}
-	err = w.Close()
+
+	err = writeData(c, message)
+
 	if err != nil {
 		return err
 	}
 
 	return c.Quit()
+}
+
+func setupClient(host string, addr string) (*ClientTLS, error) {
+	// Set up authentication information.
+	auth := smtp.PlainAuth(
+		"",
+		os.Getenv("MAIL_USERNAME"),
+		os.Getenv("MAIL_PASSWORD"),
+		os.Getenv("MAIL_HOST"),
+	)
+
+	tlsconfig := &tls.Config{ServerName: host}
+
+	conn, err := tls.Dial("tcp", addr, tlsconfig)
+	if err != nil {
+		return nil, err
+	}
+
+	// defer conn.Close()
+
+	c, err := smtp.NewClient(conn, host)
+	if err != nil {
+		return nil, err
+	}
+
+	if err = c.Auth(auth); err != nil {
+		return nil, err
+	}
+
+	return &ClientTLS{
+		c,
+		conn,
+	}, nil
+}
+
+func writeData(c *smtp.Client, message string) error {
+	w, err := c.Data()
+	if err != nil {
+		return err
+	}
+
+	_, err = w.Write([]byte(message))
+	if err != nil {
+		return err
+	}
+
+	err = w.Close()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func setupFromTo(c *smtp.Client, from string, to string) error {
+	if err := c.Mail(from); err != nil {
+		return err
+	}
+
+	if err := c.Rcpt(to); err != nil {
+		return err
+	}
+
+	return nil
 }
