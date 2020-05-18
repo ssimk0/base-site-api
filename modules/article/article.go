@@ -19,5 +19,5 @@ func New(config *config.Config, api *fiber.Group) {
 	articles.Post("/", handler.Create)
 	articles.Put("/:id", handler.Update)
 	articles.Delete("/:id", handler.Remove)
-	articles.Get("/:id", handler.GetDetail)
+	articles.Get("/:slug", handler.GetDetail)
 }

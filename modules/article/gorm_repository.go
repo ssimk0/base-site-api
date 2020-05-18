@@ -20,11 +20,22 @@ func NewRepository(db *gorm.DB) *GormRepository {
 	}
 }
 
-// Find published article by slug
+// Find published article by id
 func (r *GormRepository) Find(id uint) (*models.Article, error) {
 	article := models.Article{}
 
 	if err := r.db.Set("gorm:auto_preload", true).Where("published = 1").First(&article, id).Error; err != nil {
+		return nil, err
+	}
+
+	return &article, nil
+}
+
+// FindBySlug published article by slug
+func (r *GormRepository) FindBySlug(slug string) (*models.Article, error) {
+	article := models.Article{}
+
+	if err := r.db.Set("gorm:auto_preload", true).Where("published = 1").Where("slug = ?", slug).First(&article).Error; err != nil {
 		return nil, err
 	}
 

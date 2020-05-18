@@ -122,18 +122,9 @@ func (h *ArticleHandler) Remove(c *fiber.Ctx) {
 }
 
 func (h *ArticleHandler) GetDetail(c *fiber.Ctx) {
-	id := c.Params("id")
-	uID, err := strconv.ParseUint(id, 16, 32)
+	slug := c.Params("slug")
 
-	if err != nil {
-		c.Status(400).Send(responses.ErrorResponse{
-			Message: "Problem with parsing the article",
-			Error:   err.Error(),
-		})
-		return
-	}
-
-	article, err := h.service.Find(uint(uID))
+	article, err := h.service.Find(slug)
 
 	if err != nil {
 		c.Status(500).Send(responses.ErrorResponse{

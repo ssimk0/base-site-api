@@ -20,8 +20,8 @@ func NewService(r Repository) *GormService {
 }
 
 // Find return article by ID and increase viewed by 1
-func (s *GormService) Find(id uint) (*models.Article, error) {
-	article, err := s.repository.Find(id)
+func (s *GormService) Find(slug string) (*models.Article, error) {
+	article, err := s.repository.FindBySlug(slug)
 
 	if err != nil {
 		return nil, err
@@ -30,7 +30,7 @@ func (s *GormService) Find(id uint) (*models.Article, error) {
 	(*article).Viewed += 1
 
 	// update viewed is not critical error can be ignored
-	_ = s.repository.Update(article, id)
+	_ = s.repository.Update(article, article.ID)
 
 	return article, nil
 }
