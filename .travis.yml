@@ -11,4 +11,4 @@ go_import_path: base-site-api
 install:
   - go get
 
-script: go test
+script: go test ./...

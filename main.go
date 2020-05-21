@@ -44,6 +44,10 @@ func main() {
 		log.Fatal(err)
 	}
 
+	NewApp(c)
+}
+
+func NewApp(c *config.Config) *fiber.Fiber {
 	// SETUP APP
 	app := fiber.New(&fiber.Settings{
 		Prefork:       true,
@@ -56,6 +60,8 @@ func main() {
 	configureAPIRoutes(app, c)
 
 	startServer(app, c)
+
+	return app
 }
 
 func startServer(app *fiber.Fiber, c *config.Config) {

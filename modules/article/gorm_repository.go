@@ -55,14 +55,28 @@ func (r *GormRepository) FindAll(order string) ([]*models.Article, error) {
 
 // Update the article
 func (r *GormRepository) Update(article *models.Article, id uint) error {
-	return r.db.Update(models.Article{
-		Title:     article.Title,
-		Body:      article.Body,
-		Short:     article.Short,
-		Slug:      article.Slug,
-		Published: article.Published,
-		Viewed:    article.Viewed,
-	}).Error
+	a, err := r.Find(id)
+	if err != nil {
+		return err
+	}
+	if article.Title != "" {
+		a.Title = article.Title
+	}
+	if article.Body != "" {
+		a.Body = article.Body
+	}
+	if article.Short != "" {
+		a.Short = article.Short
+	}
+	if article.Slug != "" {
+		a.Slug = article.Slug
+	}
+	if article.Viewed != 0 {
+		a.Viewed = article.Viewed
+	}
+	a.Published = article.Published
+
+	return r.db.Save(a).Error
 }
 
 // Store new article in db and return ID
