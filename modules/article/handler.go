@@ -11,10 +11,10 @@ import (
 
 type ArticleHandler struct {
 	modules.Handler
-	service Service
+	service ServiceI
 }
 
-func NewHandler(s Service) *ArticleHandler {
+func NewHandler(s ServiceI) *ArticleHandler {
 	return &ArticleHandler{
 		service: s,
 	}
