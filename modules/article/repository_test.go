@@ -100,7 +100,7 @@ func (s *RepositoryTestSuite) TestFindAll() {
 	data := s.prepareTestData()
 	r := NewRepository(s.conn)
 
-	articles, err := r.FindAll("created_at")
+	articles, count, err := r.FindAll("created_at", 0, 10)
 
 	if err != nil {
 		s.T().Errorf("Error List article %s", err)
@@ -109,13 +109,14 @@ func (s *RepositoryTestSuite) TestFindAll() {
 	assert.Len(s.T(), articles, len(data))
 
 	assert.Equal(s.T(), articles[0].Title, data[0].Title)
+	assert.Equal(s.T(), count, 3)
 }
 
 func (s *RepositoryTestSuite) TestFindAllOrderViewed() {
 	data := s.prepareTestData()
 	r := NewRepository(s.conn)
 
-	articles, err := r.FindAll("viewed desc")
+	articles, count, err := r.FindAll("viewed desc", 0, 10)
 
 	if err != nil {
 		s.T().Errorf("Error List article %s", err)
@@ -124,6 +125,7 @@ func (s *RepositoryTestSuite) TestFindAllOrderViewed() {
 	assert.Len(s.T(), articles, len(data))
 
 	assert.Equal(s.T(), articles[0].Slug, "test2")
+	assert.Equal(s.T(), count, 3)
 }
 
 func (s *RepositoryTestSuite) TestFind() {

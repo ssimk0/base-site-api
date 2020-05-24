@@ -2,6 +2,7 @@ package article
 
 import (
 	"base-site-api/models"
+	"base-site-api/modules"
 	"fmt"
 	"github.com/gosimple/slug"
 
@@ -10,6 +11,7 @@ import (
 
 // GormService implementation of article Service interface
 type GormService struct {
+	modules.Service
 	repository Repository
 }
 
@@ -36,14 +38,14 @@ func (s *GormService) Find(slug string) (*models.Article, error) {
 }
 
 // FindAll articles and sort them by created_at or viewed
-func (s *GormService) FindAll(sort string) ([]*models.Article, error) {
+func (s *GormService) FindAll(sort string, page int, size int) ([]*models.Article, int, error) {
 	order := "created_at desc"
 
 	if sort == "viewed" || sort == "created_at" {
 		order = fmt.Sprintf("%s desc", sort)
 	}
-
-	return s.repository.FindAll(order)
+	l, o := s.CalculateLimitAndOffset(page, size)
+	return s.repository.FindAll(order, l, o)
 }
 
 // Update simple update article

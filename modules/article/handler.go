@@ -2,12 +2,15 @@ package article
 
 import (
 	"base-site-api/models"
+	"base-site-api/modules"
 	"base-site-api/responses"
+	"base-site-api/utils"
 	"github.com/gofiber/fiber"
 	"strconv"
 )
 
 type ArticleHandler struct {
+	modules.Handler
 	service Service
 }
 
@@ -18,7 +21,9 @@ func NewHandler(s Service) *ArticleHandler {
 }
 
 func (h *ArticleHandler) List(c *fiber.Ctx) {
-	articles, err := h.service.FindAll(c.Query("sort"))
+	page, size := utils.ParsePagination(c)
+
+	articles, count, err := h.service.FindAll(c.Query("sort"), page, size)
 
 	if err != nil {
 		c.Status(500).Send(responses.ErrorResponse{
@@ -28,7 +33,14 @@ func (h *ArticleHandler) List(c *fiber.Ctx) {
 		return
 	}
 
-	c.JSON(&articles)
+	p := h.CalculatePagination(page, size, count)
+
+	a := PaginatedArticles{
+		p,
+		articles,
+	}
+
+	c.JSON(&a)
 }
 
 func (h *ArticleHandler) Create(c *fiber.Ctx) {

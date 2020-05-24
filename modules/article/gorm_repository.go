@@ -43,14 +43,15 @@ func (r *GormRepository) FindBySlug(slug string) (*models.Article, error) {
 }
 
 // FindAll list all published articles also with order
-func (r *GormRepository) FindAll(order string) ([]*models.Article, error) {
+func (r *GormRepository) FindAll(order string, offset int, limit int) ([]*models.Article, int, error) {
 	var articles []*models.Article
+	var count int
 
-	if err := r.db.Set("gorm:auto_preload", true).Model(&models.Article{}).Order(order).Where("published = 1").Find(&articles).Error; err != nil {
-		return nil, err
+	if err := r.db.Set("gorm:auto_preload", true).Model(&models.Article{}).Offset(offset).Limit(limit).Order(order).Where("published = 1").Find(&articles).Count(&count).Error; err != nil {
+		return nil, 0, err
 	}
 
-	return articles, nil
+	return articles, count, nil
 }
 
 // Update the article
