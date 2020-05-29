@@ -52,8 +52,8 @@ func (s *Service) Login(username string, password string) (string, error) {
 	claims := jwt.StandardClaims{
 		ExpiresAt: time.Now().Add(oneWeek()).Unix(),
 		Issuer:    fmt.Sprintf("%s.api.go-with-jwt.it", os.Getenv("GO_ENV")),
-		Id:        strconv.FormatUint(uint64(u.ID), 16),
-		Subject:   strconv.FormatUint(uint64(u.ID), 16),
+		Id:        strconv.FormatUint(uint64(u.ID), 10),
+		Subject:   strconv.FormatUint(uint64(u.ID), 10),
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)

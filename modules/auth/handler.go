@@ -19,7 +19,7 @@ func NewHandler(s ServiceI) *AuthHandler {
 }
 
 func (h *AuthHandler) Login(c *fiber.Ctx) {
-	r := LoginRequest{}
+	r := &LoginRequest{}
 
 	if err := c.BodyParser(r); err != nil {
 		c.Status(403).JSON(&responses.ErrorResponse{
