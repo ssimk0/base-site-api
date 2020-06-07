@@ -2,7 +2,7 @@ package responses
 
 type SuccessResponse struct {
 	Success bool `json:"success"`
-	Id      uint `json:"id"`
+	ID      uint `json:"id"`
 }
 
 type ErrorResponse struct {

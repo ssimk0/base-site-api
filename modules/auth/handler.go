@@ -8,17 +8,17 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type AuthHandler struct {
-	service ServiceI
+type Handler struct {
+	service Service
 }
 
-func NewHandler(s ServiceI) *AuthHandler {
-	return &AuthHandler{
+func NewHandler(s Service) *Handler {
+	return &Handler{
 		service: s,
 	}
 }
 
-func (h *AuthHandler) Login(c *fiber.Ctx) {
+func (h *Handler) Login(c *fiber.Ctx) {
 	r := &LoginRequest{}
 
 	if err := c.BodyParser(r); err != nil {
@@ -44,7 +44,7 @@ func (h *AuthHandler) Login(c *fiber.Ctx) {
 	})
 }
 
-func (h *AuthHandler) RegisterUser(c *fiber.Ctx) {
+func (h *Handler) RegisterUser(c *fiber.Ctx) {
 	u := &UserRequest{}
 
 	if err := c.BodyParser(u); err != nil {
@@ -67,11 +67,11 @@ func (h *AuthHandler) RegisterUser(c *fiber.Ctx) {
 
 	c.Status(201).JSON(responses.SuccessResponse{
 		Success: true,
-		Id:      0,
+		ID:      0,
 	})
 }
 
-func (h *AuthHandler) ForgotPassword(c *fiber.Ctx) {
+func (h *Handler) ForgotPassword(c *fiber.Ctx) {
 	u := &models.User{}
 
 	if err := c.BodyParser(u); err != nil {
@@ -98,11 +98,11 @@ func (h *AuthHandler) ForgotPassword(c *fiber.Ctx) {
 
 	c.JSON(responses.SuccessResponse{
 		Success: true,
-		Id:      0,
+		ID:      0,
 	})
 }
 
-func (h *AuthHandler) ResetPassword(c *fiber.Ctx) {
+func (h *Handler) ResetPassword(c *fiber.Ctx) {
 	u := UserRequest{}
 	token := c.Params("token")
 
@@ -137,6 +137,6 @@ func (h *AuthHandler) ResetPassword(c *fiber.Ctx) {
 
 	c.JSON(responses.SuccessResponse{
 		Success: true,
-		Id:      0,
+		ID:      0,
 	})
 }

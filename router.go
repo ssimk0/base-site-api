@@ -18,7 +18,7 @@ func setupV1ApiEndpoints(api *fiber.Group, config *config.Config) {
 }
 
 // SETTINGS FOR GROUPS
-func configureAPIRoutes(app *fiber.Fiber, config *config.Config) {
+func configureAPIRoutes(app *fiber.App, config *config.Config) {
 	api := app.Group("/api", cors.New(cors.Config{
 		AllowOrigins: []string{os.Getenv("ALLOWED_ORIGIN")},
 	}))

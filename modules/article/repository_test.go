@@ -11,13 +11,13 @@ import (
 	"testing"
 )
 
-type RepositoryTestSuite struct {
+type ArticleTestSuite struct {
 	suite.Suite
 	conn        *gorm.DB
 	cleanupHook func()
 }
 
-func (s *RepositoryTestSuite) SetupTest() {
+func (s *ArticleTestSuite) SetupTest() {
 	var err error
 	s.conn, err = gorm.Open("sqlite3", "/tmp/gorm.db")
 	if err != nil {
@@ -30,15 +30,15 @@ func (s *RepositoryTestSuite) SetupTest() {
 	)
 }
 
-func (s *RepositoryTestSuite) BeforeTest(suiteName, testName string) {
+func (s *ArticleTestSuite) BeforeTest(suiteName, testName string) {
 	s.cleanupHook = utils.DeleteCreatedEntities(s.conn)
 }
 
-func (s *RepositoryTestSuite) AfterTest(suiteName, testName string) {
+func (s *ArticleTestSuite) AfterTest(suiteName, testName string) {
 	s.cleanupHook()
 }
 
-func (s *RepositoryTestSuite) getTestArticle() *models.Article {
+func (s *ArticleTestSuite) getTestArticle() *models.Article {
 	return &models.Article{
 		Title:     "Test",
 		Body:      "Body",
@@ -48,7 +48,7 @@ func (s *RepositoryTestSuite) getTestArticle() *models.Article {
 	}
 }
 
-func (s *RepositoryTestSuite) prepareTestData() []*models.Article {
+func (s *ArticleTestSuite) prepareTestData() []*models.Article {
 	articles := []*models.Article{
 		{
 			Title:     "Test",
@@ -83,7 +83,7 @@ func (s *RepositoryTestSuite) prepareTestData() []*models.Article {
 	return articles
 }
 
-func (s *RepositoryTestSuite) TestStore() {
+func (s *ArticleTestSuite) TestStore() {
 	a := s.getTestArticle()
 	r := NewRepository(s.conn)
 
@@ -96,7 +96,7 @@ func (s *RepositoryTestSuite) TestStore() {
 	assert.NotEqual(s.T(), 0, id)
 }
 
-func (s *RepositoryTestSuite) TestFindAll() {
+func (s *ArticleTestSuite) TestFindAll() {
 	data := s.prepareTestData()
 	r := NewRepository(s.conn)
 
@@ -112,7 +112,7 @@ func (s *RepositoryTestSuite) TestFindAll() {
 	assert.Equal(s.T(), count, 3)
 }
 
-func (s *RepositoryTestSuite) TestFindAllOrderViewed() {
+func (s *ArticleTestSuite) TestFindAllOrderViewed() {
 	data := s.prepareTestData()
 	r := NewRepository(s.conn)
 
@@ -128,7 +128,7 @@ func (s *RepositoryTestSuite) TestFindAllOrderViewed() {
 	assert.Equal(s.T(), count, 3)
 }
 
-func (s *RepositoryTestSuite) TestFind() {
+func (s *ArticleTestSuite) TestFind() {
 	data := s.prepareTestData()
 	r := NewRepository(s.conn)
 
@@ -141,7 +141,7 @@ func (s *RepositoryTestSuite) TestFind() {
 	assert.Equal(s.T(), article.Title, data[0].Title)
 }
 
-func (s *RepositoryTestSuite) TestFindBySlug() {
+func (s *ArticleTestSuite) TestFindBySlug() {
 	data := s.prepareTestData()
 	r := NewRepository(s.conn)
 
@@ -154,7 +154,7 @@ func (s *RepositoryTestSuite) TestFindBySlug() {
 	assert.Equal(s.T(), article.Title, data[0].Title)
 }
 
-func (s *RepositoryTestSuite) TestUpdate() {
+func (s *ArticleTestSuite) TestUpdate() {
 	data := s.prepareTestData()
 	r := NewRepository(s.conn)
 
@@ -172,7 +172,7 @@ func (s *RepositoryTestSuite) TestUpdate() {
 	assert.Equal(s.T(), a.Title, "New Title")
 }
 
-func (s *RepositoryTestSuite) TestDelete() {
+func (s *ArticleTestSuite) TestDelete() {
 	data := s.prepareTestData()
 	r := NewRepository(s.conn)
 
@@ -189,5 +189,5 @@ func (s *RepositoryTestSuite) TestDelete() {
 }
 
 func TestArticleRepositoryTestSuite(t *testing.T) {
-	suite.Run(t, new(RepositoryTestSuite))
+	suite.Run(t, new(ArticleTestSuite))
 }

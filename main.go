@@ -47,7 +47,7 @@ func main() {
 	NewApp(c)
 }
 
-func NewApp(c *config.Config) *fiber.Fiber {
+func NewApp(c *config.Config) *fiber.App {
 	// SETUP APP
 	app := fiber.New(&fiber.Settings{
 		Prefork:       true,
@@ -64,7 +64,7 @@ func NewApp(c *config.Config) *fiber.Fiber {
 	return app
 }
 
-func startServer(app *fiber.Fiber, c *config.Config) {
+func startServer(app *fiber.App, c *config.Config) {
 
 	err := app.Listen(c.Constants.ADDRESS)
 

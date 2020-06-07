@@ -16,18 +16,27 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-// Service implementation ServiceI interface with gorm.DB
-type Service struct {
+// Serviceå interface for Auth
+type Service interface {
+	Login(username string, password string) (string, error)
+	UserInfo(userID uint) (*models.User, error)
+	RegisterUser(u *UserRequest) error
+	ForgotPassword(email string) error
+	ResetPassword(token string, newPassword string) error
+}
+
+// service implementation ServiceI interface with gorm.DB
+type service struct {
 	repository Repository
 	signingKey []byte
 	templates  *template.Template
 }
 
-// NewService return instance of Service
-func NewService(repository Repository, signingKey []byte) *Service {
+// NewService return instance of service
+func NewService(repository Repository, signingKey []byte) Service {
 	tpl := template.Must(template.ParseGlob("templates/emails/*.html"))
 
-	return &Service{
+	return &service{
 		repository,
 		signingKey,
 		tpl,
@@ -35,7 +44,7 @@ func NewService(repository Repository, signingKey []byte) *Service {
 }
 
 // Login func which return a new JWT token
-func (s *Service) Login(username string, password string) (string, error) {
+func (s *service) Login(username string, password string) (string, error) {
 	var tokenString string
 	u, err := s.repository.FindUserByEmail(username)
 
@@ -68,7 +77,7 @@ func (s *Service) Login(username string, password string) (string, error) {
 }
 
 // UserInfo return necessary userinfo
-func (s *Service) UserInfo(userID uint) (*models.User, error) {
+func (s *service) UserInfo(userID uint) (*models.User, error) {
 	return s.repository.Find(userID)
 }
 
@@ -78,7 +87,7 @@ type forgotPasswordMailData struct {
 }
 
 // ForgotPassword send email with ForgotPasswordToken
-func (s *Service) ForgotPassword(email string) error {
+func (s *service) ForgotPassword(email string) error {
 	user, err := s.repository.FindUserByEmail(email)
 
 	if err != nil {
@@ -112,7 +121,7 @@ func (s *Service) ForgotPassword(email string) error {
 }
 
 // ResetPassword set new password for use if have valid token
-func (s *Service) ResetPassword(token string, newPassword string) error {
+func (s *service) ResetPassword(token string, newPassword string) error {
 	t, err := s.repository.GetForgotPasswordToken(token)
 	if err != nil {
 		return err
@@ -138,7 +147,7 @@ func (s *Service) ResetPassword(token string, newPassword string) error {
 }
 
 // RegisterUser prepare, validate new user and save it to database
-func (s *Service) RegisterUser(u *UserRequest) error {
+func (s *service) RegisterUser(u *UserRequest) error {
 	if u.Password != u.PasswordConfirm {
 		return fmt.Errorf("Passwords are not same")
 	}

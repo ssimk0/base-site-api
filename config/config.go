@@ -8,6 +8,7 @@ import (
 	"base-site-api/models"
 
 	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
 
 // Constants for whole application setup
@@ -34,6 +35,8 @@ func initDB(env string) (*gorm.DB, error) {
 		&models.Article{},
 		&models.User{},
 		&models.ForgotPasswordToken{},
+		&models.PageCategory{},
+		&models.Page{},
 	)
 
 	return conn, nil

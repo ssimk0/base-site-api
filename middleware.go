@@ -10,7 +10,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-func configureGlobalMiddleware(app *fiber.Fiber) {
+func configureGlobalMiddleware(app *fiber.App) {
 	app.Use(recover.New(recover.Config{
 		Handler: func(c *fiber.Ctx, err error) {
 			log.Error(err)

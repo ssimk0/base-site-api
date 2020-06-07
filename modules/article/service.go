@@ -9,20 +9,29 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// Service implementation of article ServiceI interface
-type Service struct {
+// Service interface for Article model
+type Service interface {
+	Find(slug string) (*models.Article, error)
+	FindAll(sort string, page int, size int) ([]*models.Article, int, error)
+	Update(article *models.Article, id uint) error
+	Store(article *models.Article, userID uint) (*models.Article, error)
+	Delete(id uint, userID uint) error
+}
+
+// service implementation of article Service interface
+type service struct {
 	modules.Service
 	repository Repository
 }
 
-func NewService(r Repository) *Service {
-	return &Service{
+func NewService(r Repository) Service {
+	return &service{
 		repository: r,
 	}
 }
 
 // Find return article by ID and increase viewed by 1
-func (s *Service) Find(slug string) (*models.Article, error) {
+func (s *service) Find(slug string) (*models.Article, error) {
 	article, err := s.repository.FindBySlug(slug)
 
 	if err != nil {
@@ -38,7 +47,7 @@ func (s *Service) Find(slug string) (*models.Article, error) {
 }
 
 // FindAll articles and sort them by created_at or viewed
-func (s *Service) FindAll(sort string, page int, size int) ([]*models.Article, int, error) {
+func (s *service) FindAll(sort string, page int, size int) ([]*models.Article, int, error) {
 	order := "created_at desc"
 
 	if sort == "viewed" || sort == "created_at" {
@@ -49,12 +58,12 @@ func (s *Service) FindAll(sort string, page int, size int) ([]*models.Article, i
 }
 
 // Update simple update article
-func (s *Service) Update(article *models.Article, id uint) error {
+func (s *service) Update(article *models.Article, id uint) error {
 	return s.repository.Update(article, id)
 }
 
 // Storre create a new article and return instance of it
-func (s *Service) Store(article *models.Article, userID uint) (*models.Article, error) {
+func (s *service) Store(article *models.Article, userID uint) (*models.Article, error) {
 	article.Slug = slug.Make(article.Title)
 	id, err := s.repository.Store(article, userID)
 
@@ -66,7 +75,7 @@ func (s *Service) Store(article *models.Article, userID uint) (*models.Article, 
 }
 
 // Delete article set the deleted_at and make it unavailable to retrieve
-func (s *Service) Delete(id uint, userID uint) error {
+func (s *service) Delete(id uint, userID uint) error {
 	log.Infof("Article with id %d deleted by user with id %d", id, userID)
 
 	return s.repository.Delete(id)
