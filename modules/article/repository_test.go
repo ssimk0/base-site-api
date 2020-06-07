@@ -2,8 +2,7 @@ package article
 
 import (
 	"base-site-api/models"
-	"base-site-api/utils"
-	"github.com/jinzhu/gorm"
+	"base-site-api/modules"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
@@ -12,32 +11,14 @@ import (
 )
 
 type ArticleTestSuite struct {
-	suite.Suite
-	conn        *gorm.DB
-	cleanupHook func()
+	modules.RepositoryTestSuite
 }
 
 func (s *ArticleTestSuite) SetupTest() {
-	var err error
-	s.conn, err = gorm.Open("sqlite3", "/tmp/gorm.db")
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	s.conn.LogMode(true)
-	s.conn.Debug().AutoMigrate(
+	s.Setup()
+	s.Conn.Debug().AutoMigrate(
 		&models.Article{},
 	)
-}
-
-func (s *ArticleTestSuite) BeforeTest(suiteName, testName string) {
-	log.Debugf("Before test %s from suite %s", suiteName, testName)
-	s.cleanupHook = utils.DeleteCreatedEntities(s.conn)
-}
-
-func (s *ArticleTestSuite) AfterTest(suiteName, testName string) {
-	log.Debugf("After test %s from suite %s", suiteName, testName)
-	s.cleanupHook()
 }
 
 func (s *ArticleTestSuite) getTestArticle() *models.Article {
@@ -77,7 +58,7 @@ func (s *ArticleTestSuite) prepareTestData() []*models.Article {
 	}
 
 	for _, a := range articles {
-		if err := s.conn.Create(a).Error; err != nil {
+		if err := s.Conn.Create(a).Error; err != nil {
 			panic(err)
 		}
 	}
@@ -87,7 +68,7 @@ func (s *ArticleTestSuite) prepareTestData() []*models.Article {
 
 func (s *ArticleTestSuite) TestStore() {
 	a := s.getTestArticle()
-	r := NewRepository(s.conn)
+	r := NewRepository(s.Conn)
 
 	id, err := r.Store(a, 1)
 
@@ -100,7 +81,7 @@ func (s *ArticleTestSuite) TestStore() {
 
 func (s *ArticleTestSuite) TestFindAll() {
 	data := s.prepareTestData()
-	r := NewRepository(s.conn)
+	r := NewRepository(s.Conn)
 
 	articles, count, err := r.FindAll("created_at", 0, 10)
 
@@ -116,7 +97,7 @@ func (s *ArticleTestSuite) TestFindAll() {
 
 func (s *ArticleTestSuite) TestFindAllOrderViewed() {
 	data := s.prepareTestData()
-	r := NewRepository(s.conn)
+	r := NewRepository(s.Conn)
 
 	articles, count, err := r.FindAll("viewed desc", 0, 10)
 
@@ -132,7 +113,7 @@ func (s *ArticleTestSuite) TestFindAllOrderViewed() {
 
 func (s *ArticleTestSuite) TestFind() {
 	data := s.prepareTestData()
-	r := NewRepository(s.conn)
+	r := NewRepository(s.Conn)
 
 	article, err := r.Find(data[0].ID)
 
@@ -145,7 +126,7 @@ func (s *ArticleTestSuite) TestFind() {
 
 func (s *ArticleTestSuite) TestFindBySlug() {
 	data := s.prepareTestData()
-	r := NewRepository(s.conn)
+	r := NewRepository(s.Conn)
 
 	article, err := r.FindBySlug(data[0].Slug)
 
@@ -158,7 +139,7 @@ func (s *ArticleTestSuite) TestFindBySlug() {
 
 func (s *ArticleTestSuite) TestUpdate() {
 	data := s.prepareTestData()
-	r := NewRepository(s.conn)
+	r := NewRepository(s.Conn)
 
 	article := data[0]
 	article.Title = "New Title"
@@ -169,14 +150,14 @@ func (s *ArticleTestSuite) TestUpdate() {
 		s.T().Errorf("Error Update article %s", err)
 	}
 	a := &models.Article{}
-	s.conn.First(a, article.ID)
+	s.Conn.First(a, article.ID)
 
 	assert.Equal(s.T(), a.Title, "New Title")
 }
 
 func (s *ArticleTestSuite) TestDelete() {
 	data := s.prepareTestData()
-	r := NewRepository(s.conn)
+	r := NewRepository(s.Conn)
 
 	err := r.Delete(data[0].ID)
 
@@ -185,7 +166,7 @@ func (s *ArticleTestSuite) TestDelete() {
 	}
 
 	a := &models.Article{}
-	s.conn.First(a, data[0].ID)
+	s.Conn.First(a, data[0].ID)
 	// Not found
 	assert.Equal(s.T(), uint(0), a.ID)
 }

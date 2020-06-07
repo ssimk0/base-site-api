@@ -1,5 +1,5 @@
 package page
 
 type Handler struct {
-	service ServiceI
+	service Service
 }
