@@ -135,7 +135,7 @@ func (h *Handler) Update(c *fiber.Ctx) {
 
 	h.JSON(c, 200, &responses.SuccessResponse{
 		Success: true,
-		ID:      page.ID,
+		ID:      id,
 	})
 }
 

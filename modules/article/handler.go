@@ -114,7 +114,7 @@ func (h *Handler) Update(c *fiber.Ctx) {
 
 	r := responses.SuccessResponse{
 		Success: true,
-		ID:      article.ID,
+		ID:      id,
 	}
 
 	h.JSON(c, 400, &r)
@@ -143,7 +143,7 @@ func (h *Handler) Remove(c *fiber.Ctx) {
 
 	r := responses.SuccessResponse{
 		Success: true,
-		ID:      uint(uID),
+		ID:      id,
 	}
 
 	h.JSON(c, 400, &r)
