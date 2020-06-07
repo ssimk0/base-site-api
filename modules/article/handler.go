@@ -8,9 +8,9 @@ import (
 	"base-site-api/utils"
 	"github.com/gofiber/fiber"
 	log "github.com/sirupsen/logrus"
-	"strconv"
 )
 
+// Handler article
 type Handler struct {
 	modules.Handler
 	service Service
@@ -46,7 +46,6 @@ func (h *Handler) List(c *fiber.Ctx) {
 }
 
 func (h *Handler) Create(c *fiber.Ctx) {
-	userID := c.Locals("userID").(uint)
 
 	article := &models.Article{}
 
@@ -57,12 +56,12 @@ func (h *Handler) Create(c *fiber.Ctx) {
 
 		h.JSON(c, 400, &responses.ErrorResponse{
 			Message: "Problem with parsing the article",
-			Error:   errors.BadRequest.Error(),
+			Error:   errors.ErrBadRequest.Error(),
 		})
 		return
 	}
 
-	a, err := h.service.Store(article, userID)
+	a, err := h.service.Store(article, h.ParseUserId(c))
 
 	if err != nil {
 		h.JSON(c, 500, &responses.ErrorResponse{
@@ -81,9 +80,7 @@ func (h *Handler) Create(c *fiber.Ctx) {
 }
 
 func (h *Handler) Update(c *fiber.Ctx) {
-	article := &models.Article{}
-
-	err := c.BodyParser(article)
+	id, err := h.ParseID(c)
 
 	if err != nil {
 		h.JSON(c, 400, &responses.ErrorResponse{
@@ -93,7 +90,19 @@ func (h *Handler) Update(c *fiber.Ctx) {
 		return
 	}
 
-	err = h.service.Update(article, article.ID)
+	article := &models.Article{}
+
+	err = c.BodyParser(article)
+
+	if err != nil {
+		h.JSON(c, 400, &responses.ErrorResponse{
+			Message: "Problem with parsing the article",
+			Error:   err.Error(),
+		})
+		return
+	}
+
+	err = h.service.Update(article, id)
 
 	if err != nil {
 		h.JSON(c, 500, &responses.ErrorResponse{
@@ -112,10 +121,7 @@ func (h *Handler) Update(c *fiber.Ctx) {
 }
 
 func (h *Handler) Remove(c *fiber.Ctx) {
-	userID := c.Locals("userID").(uint)
-
-	id := c.Params("id")
-	uID, err := strconv.ParseUint(id, 10, 32)
+	id, err := h.ParseID(c)
 
 	if err != nil {
 		h.JSON(c, 400, &responses.ErrorResponse{
@@ -125,7 +131,7 @@ func (h *Handler) Remove(c *fiber.Ctx) {
 		return
 	}
 
-	err = h.service.Delete(uint(uID), userID)
+	err = h.service.Delete(id, h.ParseUserId(c))
 
 	if err != nil {
 		h.JSON(c, 500, &responses.ErrorResponse{

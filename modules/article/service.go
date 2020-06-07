@@ -62,7 +62,7 @@ func (s *service) Update(article *models.Article, id uint) error {
 	return s.repository.Update(article, id)
 }
 
-// Storre create a new article and return instance of it
+// Store create a new article and return instance of it
 func (s *service) Store(article *models.Article, userID uint) (*models.Article, error) {
 	article.Slug = slug.Make(article.Title)
 	id, err := s.repository.Store(article, userID)

@@ -9,6 +9,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+// Handler auth
 type Handler struct {
 	modules.Handler
 	service Service

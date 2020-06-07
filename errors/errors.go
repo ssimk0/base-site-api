@@ -3,7 +3,7 @@ package errors
 import "errors"
 
 var (
-	BadRequest          = errors.New("BAD_REQUEST")
-	InternalServerError = errors.New("INTERNAL_SERVER_ERROR")
-	NotFound            = errors.New("NOT_FOUND")
+	ErrBadRequest          = errors.New("BAD_REQUEST")
+	ErrInternalServerError = errors.New("INTERNAL_SERVER_ERROR")
+	ErrNotFound            = errors.New("NOT_FOUND")
 )

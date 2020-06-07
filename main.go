@@ -47,6 +47,7 @@ func main() {
 	NewApp(c)
 }
 
+// NewApp function prepare whole app setup
 func NewApp(c *config.Config) *fiber.App {
 	// SETUP APP
 	app := fiber.New(&fiber.Settings{

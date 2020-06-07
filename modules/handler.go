@@ -3,6 +3,7 @@ package modules
 import (
 	"github.com/gofiber/fiber"
 	"math"
+	"strconv"
 )
 
 type Handler struct {
@@ -21,4 +22,18 @@ func (h *Handler) JSON(c *fiber.Ctx, status int, data interface{}) {
 	if err := c.Status(status).JSON(data); err != nil {
 		c.Next(err)
 	}
+}
+
+func (h *Handler) ParseUserId(c *fiber.Ctx) uint {
+	return c.Locals("userID").(uint)
+}
+
+func (h *Handler) ParseID(c *fiber.Ctx) (uint, error) {
+	id := c.Params("id")
+	uid, err := strconv.ParseUint(id, 10, 32)
+	if err != nil {
+		return uint(0), err
+	}
+
+	return uint(uid), err
 }

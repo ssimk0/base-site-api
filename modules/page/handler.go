@@ -7,9 +7,9 @@ import (
 	"base-site-api/responses"
 	"github.com/gofiber/fiber"
 	log "github.com/sirupsen/logrus"
-	"strconv"
 )
 
+// Handler page
 type Handler struct {
 	modules.Handler
 	service Service
@@ -27,7 +27,7 @@ func (h *Handler) ListCategories(c *fiber.Ctx) {
 	if err != nil {
 		log.Debugf("Error while getting list categories %s", err)
 		h.JSON(c, 500, responses.ErrorResponse{
-			Error:   errors.InternalServerError.Error(),
+			Error:   errors.ErrInternalServerError.Error(),
 			Message: "Problem while listing categories",
 		})
 		return
@@ -42,7 +42,7 @@ func (h *Handler) ListPages(c *fiber.Ctx) {
 	if err != nil {
 		log.Debugf("Error while getting pages by category slug %s", err)
 		h.JSON(c, 404, responses.ErrorResponse{
-			Error:   errors.NotFound.Error(),
+			Error:   errors.ErrNotFound.Error(),
 			Message: "Pages for category not found",
 		})
 		return
@@ -57,7 +57,7 @@ func (h *Handler) GetDetail(c *fiber.Ctx) {
 	if err != nil {
 		log.Debugf("Error while getting page %s", err)
 		h.JSON(c, 404, responses.ErrorResponse{
-			Error:   errors.NotFound.Error(),
+			Error:   errors.ErrNotFound.Error(),
 			Message: "Page not found",
 		})
 		return
@@ -68,7 +68,6 @@ func (h *Handler) GetDetail(c *fiber.Ctx) {
 
 func (h *Handler) Create(c *fiber.Ctx) {
 	page := &models.Page{}
-	userID := c.Locals("userID").(uint)
 	categorySlug := c.Params("page-category")
 
 	err := c.BodyParser(page)
@@ -76,18 +75,18 @@ func (h *Handler) Create(c *fiber.Ctx) {
 	if err != nil {
 		log.Debugf("Error while parsing page create %s", err)
 		h.JSON(c, 400, responses.ErrorResponse{
-			Error:   errors.BadRequest.Error(),
+			Error:   errors.ErrBadRequest.Error(),
 			Message: "Cannot parse page",
 		})
 		return
 	}
 
-	pageId, err := h.service.Create(page, categorySlug, userID)
+	pageId, err := h.service.Create(page, categorySlug, h.ParseUserId(c))
 
 	if err != nil {
 		log.Debugf("Error while create page %s", err)
 		h.JSON(c, 500, responses.ErrorResponse{
-			Error:   errors.InternalServerError.Error(),
+			Error:   errors.ErrInternalServerError.Error(),
 			Message: "Cannot create page",
 		})
 		return
@@ -102,23 +101,33 @@ func (h *Handler) Create(c *fiber.Ctx) {
 func (h *Handler) Update(c *fiber.Ctx) {
 	page := &models.Page{}
 
-	err := c.BodyParser(page)
+	id, err := h.ParseID(c)
+
+	if err != nil {
+		h.JSON(c, 400, &responses.ErrorResponse{
+			Message: "Problem with parsing id ofthe article",
+			Error:   err.Error(),
+		})
+		return
+	}
+
+	err = c.BodyParser(page)
 
 	if err != nil {
 		log.Debugf("Error while parsing page update %s", err)
 		h.JSON(c, 400, responses.ErrorResponse{
-			Error:   errors.BadRequest.Error(),
+			Error:   errors.ErrBadRequest.Error(),
 			Message: "Cannot parse page",
 		})
 		return
 	}
 
-	err = h.service.Update(page, page.ID)
+	err = h.service.Update(page, id)
 
 	if err != nil {
 		log.Debugf("Error while update page %s", err)
 		h.JSON(c, 500, responses.ErrorResponse{
-			Error:   errors.NotFound.Error(),
+			Error:   errors.ErrNotFound.Error(),
 			Message: "Cannot update page",
 		})
 		return
@@ -131,10 +140,7 @@ func (h *Handler) Update(c *fiber.Ctx) {
 }
 
 func (h *Handler) Remove(c *fiber.Ctx) {
-	userID := c.Locals("userID").(uint)
-
-	id := c.Params("id")
-	uID, err := strconv.ParseUint(id, 10, 32)
+	id, err := h.ParseID(c)
 
 	if err != nil {
 		h.JSON(c, 400, &responses.ErrorResponse{
@@ -144,7 +150,7 @@ func (h *Handler) Remove(c *fiber.Ctx) {
 		return
 	}
 
-	err = h.service.Delete(uint(uID), userID)
+	err = h.service.Delete(id, h.ParseUserId(c))
 
 	if err != nil {
 		h.JSON(c, 500, &responses.ErrorResponse{
@@ -156,7 +162,7 @@ func (h *Handler) Remove(c *fiber.Ctx) {
 
 	r := responses.SuccessResponse{
 		Success: true,
-		ID:      uint(uID),
+		ID:      id,
 	}
 
 	h.JSON(c, 400, &r)
