@@ -10,7 +10,7 @@ type Repository interface {
 	FindCategories() ([]*models.PageCategory, error)
 	FindCategoryBySlug(slug string) (*models.PageCategory, error)
 	FindBySlug(slug string) (*models.Page, error)
-	FindAll(categorySlug string) ([]*models.Page, error)
+	FindAllByCategorySlug(categorySlug string) ([]*models.Page, error)
 	Update(page *models.Page, id uint) error
 	Store(page *models.Page, userID uint) (uint, error)
 	Delete(id uint) error
@@ -47,7 +47,7 @@ func (r *repository) FindCategoryBySlug(slug string) (*models.PageCategory, erro
 	return &c, nil
 }
 
-func (r *repository) FindAll(categorySlug string) ([]*models.Page, error) {
+func (r *repository) FindAllByCategorySlug(categorySlug string) ([]*models.Page, error) {
 	var pages []*models.Page
 	category, err := r.FindCategoryBySlug(categorySlug)
 	if err != nil {

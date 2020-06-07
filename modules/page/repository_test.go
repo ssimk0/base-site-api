@@ -116,7 +116,7 @@ func (s *PageTestSuite) TestFindAll() {
 	p, c := s.prepareTestData()
 	r := NewRepository(s.Conn)
 
-	pages, err := r.FindAll(c[0].Slug)
+	pages, err := r.FindAllByCategorySlug(c[0].Slug)
 
 	if err != nil {
 		s.T().Errorf("Error find page category by slug %s", err)

@@ -8,16 +8,16 @@ import (
 
 // TODO: prepare whole new module
 func New(config *config.Config, api *fiber.Group) {
-	//handler := NewHandler(NewService(NewRepository(config.Database)))
+	handler := NewHandler(NewService(NewRepository(config.Database)))
 
-	pages := api.Group("/v1/page")
+	pages := api.Group("/v1/pages")
 	pages.Use(auth.New(&auth.Config{
 		SigningKey: config.SigningKey,
 		Filter:     auth.FilterGetOnly,
 	}))
 
-	//page.Get("/", handler.ListCategories)
-	//page.Get("/:page-category", handler.ListPages)
+	pages.Get("/", handler.ListCategories)
+	pages.Get("/:page-category", handler.ListPages)
 	//page.Get("/:slug", handler.GetDetail)
 	//page.Post("/:page-category", handler.Create)
 	//page.Put("/:id", handler.Update)
