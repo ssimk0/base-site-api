@@ -31,12 +31,12 @@ func (s *ArticleTestSuite) SetupTest() {
 }
 
 func (s *ArticleTestSuite) BeforeTest(suiteName, testName string) {
-	log.Debugf("Before test {} from suite {}", suiteName, testName)
+	log.Debugf("Before test %s from suite %s", suiteName, testName)
 	s.cleanupHook = utils.DeleteCreatedEntities(s.conn)
 }
 
 func (s *ArticleTestSuite) AfterTest(suiteName, testName string) {
-	log.Debugf("After test {} from suite {}", suiteName, testName)
+	log.Debugf("After test %s from suite %s", suiteName, testName)
 	s.cleanupHook()
 }
 
