@@ -5,9 +5,9 @@ import (
 	"base-site-api/utils"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
-	"log"
 	"testing"
 )
 
@@ -31,10 +31,12 @@ func (s *ArticleTestSuite) SetupTest() {
 }
 
 func (s *ArticleTestSuite) BeforeTest(suiteName, testName string) {
+	log.Debugf("Before test {} from suite {}", suiteName, testName)
 	s.cleanupHook = utils.DeleteCreatedEntities(s.conn)
 }
 
 func (s *ArticleTestSuite) AfterTest(suiteName, testName string) {
+	log.Debugf("After test {} from suite {}", suiteName, testName)
 	s.cleanupHook()
 }
 

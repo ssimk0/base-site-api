@@ -28,7 +28,7 @@ func (h *Handler) List(c *fiber.Ctx) {
 	articles, count, err := h.service.FindAll(c.Query("sort"), page, size)
 
 	if err != nil {
-		c.Status(500).Send(responses.ErrorResponse{
+		h.JSON(c, 500, &responses.ErrorResponse{
 			Message: "Problem with getting the articles",
 			Error:   err.Error(),
 		})
@@ -42,9 +42,7 @@ func (h *Handler) List(c *fiber.Ctx) {
 		articles,
 	}
 
-	if err := c.JSON(&a); err != nil {
-		c.Next(err)
-	}
+	h.JSON(c, 400, &a)
 }
 
 func (h *Handler) Create(c *fiber.Ctx) {
@@ -57,7 +55,7 @@ func (h *Handler) Create(c *fiber.Ctx) {
 	if err != nil {
 		log.Errorf("Error while parsing article %s", err)
 
-		c.Status(400).Send(responses.ErrorResponse{
+		h.JSON(c, 400, &responses.ErrorResponse{
 			Message: "Problem with parsing the article",
 			Error:   errors.BadRequest.Error(),
 		})
@@ -67,7 +65,7 @@ func (h *Handler) Create(c *fiber.Ctx) {
 	a, err := h.service.Store(article, userID)
 
 	if err != nil {
-		c.Status(500).Send(responses.ErrorResponse{
+		h.JSON(c, 500, &responses.ErrorResponse{
 			Message: "Problem with getting the articles",
 			Error:   err.Error(),
 		})
@@ -79,9 +77,7 @@ func (h *Handler) Create(c *fiber.Ctx) {
 		ID:      a.ID,
 	}
 
-	if err := c.JSON(&r); err != nil {
-		c.Next(err)
-	}
+	h.JSON(c, 400, &r)
 }
 
 func (h *Handler) Update(c *fiber.Ctx) {
@@ -90,7 +86,7 @@ func (h *Handler) Update(c *fiber.Ctx) {
 	err := c.BodyParser(article)
 
 	if err != nil {
-		c.Status(400).Send(responses.ErrorResponse{
+		h.JSON(c, 400, &responses.ErrorResponse{
 			Message: "Problem with parsing the article",
 			Error:   err.Error(),
 		})
@@ -100,7 +96,7 @@ func (h *Handler) Update(c *fiber.Ctx) {
 	err = h.service.Update(article, article.ID)
 
 	if err != nil {
-		c.Status(500).Send(responses.ErrorResponse{
+		h.JSON(c, 500, &responses.ErrorResponse{
 			Message: "Problem with getting the articles",
 			Error:   err.Error(),
 		})
@@ -112,9 +108,7 @@ func (h *Handler) Update(c *fiber.Ctx) {
 		ID:      article.ID,
 	}
 
-	if err := c.JSON(&r); err != nil {
-		c.Next(err)
-	}
+	h.JSON(c, 400, &r)
 }
 
 func (h *Handler) Remove(c *fiber.Ctx) {
@@ -124,7 +118,7 @@ func (h *Handler) Remove(c *fiber.Ctx) {
 	uID, err := strconv.ParseUint(id, 10, 32)
 
 	if err != nil {
-		c.Status(400).Send(responses.ErrorResponse{
+		h.JSON(c, 400, &responses.ErrorResponse{
 			Message: "Problem with parsing the article",
 			Error:   err.Error(),
 		})
@@ -134,7 +128,7 @@ func (h *Handler) Remove(c *fiber.Ctx) {
 	err = h.service.Delete(uint(uID), userID)
 
 	if err != nil {
-		c.Status(500).Send(responses.ErrorResponse{
+		h.JSON(c, 500, &responses.ErrorResponse{
 			Message: "Problem with getting the articles",
 			Error:   err.Error(),
 		})
@@ -146,9 +140,7 @@ func (h *Handler) Remove(c *fiber.Ctx) {
 		ID:      uint(uID),
 	}
 
-	if err := c.JSON(&r); err != nil {
-		c.Next(err)
-	}
+	h.JSON(c, 400, &r)
 }
 
 func (h *Handler) GetDetail(c *fiber.Ctx) {
@@ -157,14 +149,12 @@ func (h *Handler) GetDetail(c *fiber.Ctx) {
 	a, err := h.service.Find(slug)
 
 	if err != nil {
-		c.Status(500).Send(responses.ErrorResponse{
+		h.JSON(c, 500, &responses.ErrorResponse{
 			Message: "Problem with getting the articles",
 			Error:   err.Error(),
 		})
 		return
 	}
 
-	if err := c.JSON(&a); err != nil {
-		c.Next(err)
-	}
+	h.JSON(c, 400, &a)
 }

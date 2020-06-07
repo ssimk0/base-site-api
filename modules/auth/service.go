@@ -55,7 +55,7 @@ func (s *service) Login(username string, password string) (string, error) {
 	pwdCompare := bcrypt.CompareHashAndPassword([]byte(u.PasswordHash), []byte(password))
 
 	if pwdCompare != nil {
-		return tokenString, fmt.Errorf("Error while comparing passwords %v", pwdCompare)
+		return tokenString, fmt.Errorf("error while comparing passwords %v", pwdCompare)
 	}
 
 	claims := jwt.StandardClaims{
@@ -149,7 +149,7 @@ func (s *service) ResetPassword(token string, newPassword string) error {
 // RegisterUser prepare, validate new user and save it to database
 func (s *service) RegisterUser(u *UserRequest) error {
 	if u.Password != u.PasswordConfirm {
-		return fmt.Errorf("Passwords are not same")
+		return fmt.Errorf("passwords are not same")
 	}
 	log.Errorf("%s %s %s", u.Email, u.FirstName, u.LastName)
 	pass, err := hashPassword(u.Password)
@@ -173,7 +173,7 @@ func oneWeek() time.Duration {
 func hashPassword(password string) (string, error) {
 	ph, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
-		return "", fmt.Errorf("Error while hasing Passwords with error: %s", err)
+		return "", fmt.Errorf("error while hasing Passwords with error: %s", err)
 	}
 
 	return string(ph), nil
