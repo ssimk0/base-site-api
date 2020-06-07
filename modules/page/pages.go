@@ -18,9 +18,9 @@ func New(config *config.Config, api *fiber.Group) {
 
 	pages.Get("/", handler.ListCategories)
 	pages.Get("/:page-category", handler.ListPages)
-	//page.Get("/:slug", handler.GetDetail)
-	//page.Post("/:page-category", handler.Create)
-	//page.Put("/:id", handler.Update)
-	//page.Delete("/:id", handler.Remove)
+	pages.Get("/:slug", handler.GetDetail)
+	pages.Post("/:page-category", handler.Create)
+	pages.Put("/:id", handler.Update)
+	pages.Delete("/:id", handler.Remove)
 
 }

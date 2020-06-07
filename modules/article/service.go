@@ -75,6 +75,7 @@ func (s *service) Store(article *models.Article, userID uint) (*models.Article, 
 }
 
 // Delete article set the deleted_at and make it unavailable to retrieve
+// TODO: check if you have permission to delete
 func (s *service) Delete(id uint, userID uint) error {
 	log.Infof("Article with id %d deleted by user with id %d", id, userID)
 
