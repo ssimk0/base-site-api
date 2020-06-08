@@ -1,6 +1,7 @@
 package main
 
 import (
+	"base-site-api/responses"
 	"github.com/joho/godotenv"
 	"os"
 
@@ -54,6 +55,21 @@ func NewApp(c *config.Config) *fiber.App {
 		Prefork:       true,
 		CaseSensitive: true,
 		StrictRouting: true,
+		ErrorHandler: func(ctx *fiber.Ctx, err error) {
+			// Statuscode defaults to 500
+			code := fiber.StatusInternalServerError
+
+			// Retreive the custom statuscode if it's an fiber.*Error
+			if e, ok := err.(*fiber.Error); ok {
+				code = e.Code
+			}
+
+			// Return HTTP response
+			ctx.Status(code).JSON(responses.ErrorResponse{
+				Error:   err.Error(),
+				Message: "",
+			})
+		},
 	})
 
 	configureGlobalMiddleware(app)

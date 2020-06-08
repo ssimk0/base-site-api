@@ -1,7 +1,6 @@
 package article
 
 import (
-	"base-site-api/errors"
 	"base-site-api/models"
 	"base-site-api/modules"
 	"base-site-api/responses"
@@ -28,10 +27,9 @@ func (h *Handler) List(c *fiber.Ctx) {
 	articles, count, err := h.service.FindAll(c.Query("sort"), page, size)
 
 	if err != nil {
-		h.JSON(c, 500, &responses.ErrorResponse{
-			Message: "Problem with getting the articles",
-			Error:   err.Error(),
-		})
+		log.Errorf("Error while getting list of articles: %s", err)
+		h.Error(c, 500)
+
 		return
 	}
 
@@ -42,7 +40,7 @@ func (h *Handler) List(c *fiber.Ctx) {
 		articles,
 	}
 
-	h.JSON(c, 400, &a)
+	h.JSON(c, 200, &a)
 }
 
 func (h *Handler) Create(c *fiber.Ctx) {
@@ -52,22 +50,18 @@ func (h *Handler) Create(c *fiber.Ctx) {
 	err := c.BodyParser(article)
 
 	if err != nil {
-		log.Errorf("Error while parsing article %s", err)
+		log.Debugf("Error while parsing article %s", err)
+		h.Error(c, 400)
 
-		h.JSON(c, 400, &responses.ErrorResponse{
-			Message: "Problem with parsing the article",
-			Error:   errors.ErrBadRequest.Error(),
-		})
 		return
 	}
 
 	a, err := h.service.Store(article, h.ParseUserId(c))
 
 	if err != nil {
-		h.JSON(c, 500, &responses.ErrorResponse{
-			Message: "Problem with getting the articles",
-			Error:   err.Error(),
-		})
+		log.Errorf("Error while creating article: %s", err)
+		h.Error(c, 500)
+
 		return
 	}
 
@@ -76,17 +70,16 @@ func (h *Handler) Create(c *fiber.Ctx) {
 		ID:      a.ID,
 	}
 
-	h.JSON(c, 400, &r)
+	h.JSON(c, 201, &r)
 }
 
 func (h *Handler) Update(c *fiber.Ctx) {
 	id, err := h.ParseID(c)
 
 	if err != nil {
-		h.JSON(c, 400, &responses.ErrorResponse{
-			Message: "Problem with parsing the article",
-			Error:   err.Error(),
-		})
+		log.Debugf("Error while parsing update article ID: %s", c.Params("id"))
+		h.Error(c, 400)
+
 		return
 	}
 
@@ -95,20 +88,18 @@ func (h *Handler) Update(c *fiber.Ctx) {
 	err = c.BodyParser(article)
 
 	if err != nil {
-		h.JSON(c, 400, &responses.ErrorResponse{
-			Message: "Problem with parsing the article",
-			Error:   err.Error(),
-		})
+		log.Debugf("Error while parsing update request article: %s ", err)
+		h.Error(c, 400)
+
 		return
 	}
 
 	err = h.service.Update(article, id)
 
 	if err != nil {
-		h.JSON(c, 500, &responses.ErrorResponse{
-			Message: "Problem with getting the articles",
-			Error:   err.Error(),
-		})
+		log.Errorf("Error while updating article: %s", err)
+		h.Error(c, 500)
+
 		return
 	}
 
@@ -117,27 +108,25 @@ func (h *Handler) Update(c *fiber.Ctx) {
 		ID:      id,
 	}
 
-	h.JSON(c, 400, &r)
+	h.JSON(c, 200, &r)
 }
 
 func (h *Handler) Remove(c *fiber.Ctx) {
 	id, err := h.ParseID(c)
 
 	if err != nil {
-		h.JSON(c, 400, &responses.ErrorResponse{
-			Message: "Problem with parsing the article",
-			Error:   err.Error(),
-		})
+		log.Debugf("Error while parsing article id remove: %s", err)
+		h.Error(c, 400)
+
 		return
 	}
 
 	err = h.service.Delete(id, h.ParseUserId(c))
 
 	if err != nil {
-		h.JSON(c, 500, &responses.ErrorResponse{
-			Message: "Problem with getting the articles",
-			Error:   err.Error(),
-		})
+		log.Errorf("Error while removing article: %s", err)
+		h.Error(c, 500)
+
 		return
 	}
 
@@ -146,7 +135,7 @@ func (h *Handler) Remove(c *fiber.Ctx) {
 		ID:      id,
 	}
 
-	h.JSON(c, 400, &r)
+	h.JSON(c, 200, &r)
 }
 
 func (h *Handler) GetDetail(c *fiber.Ctx) {
@@ -155,12 +144,11 @@ func (h *Handler) GetDetail(c *fiber.Ctx) {
 	a, err := h.service.Find(slug)
 
 	if err != nil {
-		h.JSON(c, 500, &responses.ErrorResponse{
-			Message: "Problem with getting the articles",
-			Error:   err.Error(),
-		})
+		log.Debugf("Error while  get detail: %s", err)
+		h.Error(c, 404)
+
 		return
 	}
 
-	h.JSON(c, 400, &a)
+	h.JSON(c, 200, &a)
 }

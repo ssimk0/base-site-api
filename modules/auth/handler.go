@@ -6,7 +6,7 @@ import (
 	"base-site-api/responses"
 
 	"github.com/gofiber/fiber"
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 )
 
 // Handler auth
@@ -25,20 +25,18 @@ func (h *Handler) Login(c *fiber.Ctx) {
 	r := &LoginRequest{}
 
 	if err := c.BodyParser(r); err != nil {
-		h.JSON(c, 403, &responses.ErrorResponse{
-			Message: "Wrong password or username",
-			Error:   "AUTH_ERROR",
-		})
+		log.Debugf("Wrong request login: %s", err)
+		h.Error(c, 403)
+
 		return
 	}
 
 	token, err := h.service.Login(r.Username, r.Password)
 
 	if err != nil {
-		h.JSON(c, 403, &responses.ErrorResponse{
-			Message: "Wrong password or username",
-			Error:   "AUTH_ERROR",
-		})
+		log.Debugf("Error while login in: %s", err)
+		h.Error(c, 403)
+
 		return
 	}
 
@@ -51,20 +49,17 @@ func (h *Handler) RegisterUser(c *fiber.Ctx) {
 	u := &UserRequest{}
 
 	if err := c.BodyParser(u); err != nil {
-		h.JSON(c, 400, &responses.ErrorResponse{
-			Message: "Bad parameters",
-			Error:   "BAD_REQUEST",
-		})
+		h.Error(c, 400)
+
 		return
 	}
 
 	err := h.service.RegisterUser(u)
 
 	if err != nil {
-		h.JSON(c, 400, &responses.ErrorResponse{
-			Message: "Wrong password or username",
-			Error:   "BAD_REQUEST",
-		})
+		log.Errorf("Error while register user: %s", err)
+		h.Error(c, 400)
+
 		return
 	}
 
@@ -78,23 +73,19 @@ func (h *Handler) ForgotPassword(c *fiber.Ctx) {
 	u := &models.User{}
 
 	if err := c.BodyParser(u); err != nil {
-		logrus.Errorf("Error while parsing body: %s", err)
-		h.JSON(c, 400, &responses.ErrorResponse{
-			Message: "Bad parameters",
-			Error:   "BAD_REQUEST",
-		})
+		log.Errorf("Error while parsing body: %s", err)
+		h.Error(c, 400)
+
 		return
 	}
 
 	err := h.service.ForgotPassword(u.Email)
 
 	if err != nil {
-		logrus.Errorf("Error while processing forgot password: %s", err)
+		log.Errorf("Error while processing forgot password: %s", err)
 
-		h.JSON(c, 400, &responses.ErrorResponse{
-			Message: "Error while processing forgot password",
-			Error:   "BAD_REQUEST",
-		})
+		h.Error(c, 400)
+
 		return
 
 	}
@@ -110,31 +101,25 @@ func (h *Handler) ResetPassword(c *fiber.Ctx) {
 	token := c.Params("token")
 
 	if err := c.BodyParser(u); err != nil {
-		logrus.Error(err)
-		h.JSON(c, 400, &responses.ErrorResponse{
-			Message: "Bad parameters",
-			Error:   "BAD_REQUEST",
-		})
+		log.Errorf("Error while parsing reset password body: %s", err)
+		h.Error(c, 400)
+
 		return
 	}
 
 	if u.Password != u.PasswordConfirm {
-		h.JSON(c, 400, &responses.ErrorResponse{
-			Message: "Passwords are not same",
-			Error:   "BAD_REQUEST",
-		})
+		h.Error(c, 400)
+
 		return
 	}
 
 	err := h.service.ResetPassword(token, u.Password)
 
 	if err != nil {
-		logrus.Errorf("Error while processing forgot password: %s", err)
+		log.Errorf("Error while processing forgot password: %s", err)
 
-		h.JSON(c, 400, &responses.ErrorResponse{
-			Message: "Error while processing forgot password",
-			Error:   "BAD_REQUEST",
-		})
+		h.Error(c, 400)
+
 		return
 	}
 

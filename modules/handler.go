@@ -24,6 +24,14 @@ func (h *Handler) JSON(c *fiber.Ctx, status int, data interface{}) {
 	}
 }
 
+func (h *Handler) Error(c *fiber.Ctx, status int) {
+	c.Next(fiber.NewError(status))
+}
+
+func (h *Handler) ErrorWithMessage(c *fiber.Ctx, status int, message string) {
+	c.Next(fiber.NewError(status, message))
+}
+
 func (h *Handler) ParseUserId(c *fiber.Ctx) uint {
 	return c.Locals("userID").(uint)
 }
