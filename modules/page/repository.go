@@ -27,6 +27,7 @@ func NewRepository(db *gorm.DB) Repository {
 	}
 }
 
+// FindCategories return all page categories
 func (r *repository) FindCategories() ([]*models.PageCategory, error) {
 	var c []*models.PageCategory
 
@@ -37,6 +38,7 @@ func (r *repository) FindCategories() ([]*models.PageCategory, error) {
 	return c, nil
 }
 
+// FindCategoryBySlug return category based on slug
 func (r *repository) FindCategoryBySlug(slug string) (*models.PageCategory, error) {
 	var c models.PageCategory
 
@@ -47,6 +49,7 @@ func (r *repository) FindCategoryBySlug(slug string) (*models.PageCategory, erro
 	return &c, nil
 }
 
+// FindAllByCategorySlug return pages for specific page category
 func (r *repository) FindAllByCategorySlug(categorySlug string) ([]*models.Page, error) {
 	var pages []*models.Page
 	category, err := r.FindCategoryBySlug(categorySlug)
@@ -61,6 +64,7 @@ func (r *repository) FindAllByCategorySlug(categorySlug string) ([]*models.Page,
 	return pages, nil
 }
 
+// FindBySlug return page by slug
 func (r *repository) FindBySlug(slug string) (*models.Page, error) {
 	var c models.Page
 
@@ -71,6 +75,7 @@ func (r *repository) FindBySlug(slug string) (*models.Page, error) {
 	return &c, nil
 }
 
+// Find return page by id
 func (r *repository) Find(id uint) (*models.Page, error) {
 	page := models.Page{}
 
@@ -81,6 +86,7 @@ func (r *repository) Find(id uint) (*models.Page, error) {
 	return &page, nil
 }
 
+// Update the page and validate input
 func (r *repository) Update(page *models.Page, id uint) error {
 	p, err := r.Find(id)
 	if err != nil {
@@ -102,6 +108,7 @@ func (r *repository) Update(page *models.Page, id uint) error {
 	return r.db.Save(p).Error
 }
 
+// Store the page and validate input
 func (r *repository) Store(page *models.Page, userID uint) (uint, error) {
 	page.UserID = userID
 	if err := r.db.Create(page).Error; err != nil {
@@ -111,6 +118,7 @@ func (r *repository) Store(page *models.Page, userID uint) (uint, error) {
 	return page.ID, nil
 }
 
+// Delete the page by id
 func (r *repository) Delete(id uint) error {
 	if err := r.db.Where("id = ?", id).Delete(&models.Page{}).Error; err != nil {
 		return err

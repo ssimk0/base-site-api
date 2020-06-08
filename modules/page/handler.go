@@ -14,12 +14,14 @@ type Handler struct {
 	service Service
 }
 
+// NewHandler set  the service and return instance  of Handler
 func NewHandler(s Service) *Handler {
 	return &Handler{
 		service: s,
 	}
 }
 
+// ListCategories returns all page categories
 func (h *Handler) ListCategories(c *fiber.Ctx) {
 	categories, err := h.service.FindCategories()
 
@@ -33,6 +35,7 @@ func (h *Handler) ListCategories(c *fiber.Ctx) {
 	h.JSON(c, 200, categories)
 }
 
+// ListPages return all pages specific for page category
 func (h *Handler) ListPages(c *fiber.Ctx) {
 	pages, err := h.service.FindAllByCategory(c.Params("page-category"))
 
@@ -46,6 +49,7 @@ func (h *Handler) ListPages(c *fiber.Ctx) {
 	h.JSON(c, 200, pages)
 }
 
+// GetDetail return detail for page by slug
 func (h *Handler) GetDetail(c *fiber.Ctx) {
 	page, err := h.service.FindBySlug(c.Params("slug"))
 
@@ -59,6 +63,7 @@ func (h *Handler) GetDetail(c *fiber.Ctx) {
 	h.JSON(c, 200, page)
 }
 
+// Create the page
 func (h *Handler) Create(c *fiber.Ctx) {
 	page := &models.Page{}
 	categorySlug := c.Params("page-category")
@@ -87,6 +92,7 @@ func (h *Handler) Create(c *fiber.Ctx) {
 	})
 }
 
+// Update page
 func (h *Handler) Update(c *fiber.Ctx) {
 	page := &models.Page{}
 
@@ -123,6 +129,7 @@ func (h *Handler) Update(c *fiber.Ctx) {
 	})
 }
 
+// Remove page
 func (h *Handler) Remove(c *fiber.Ctx) {
 	id, err := h.ParseID(c)
 

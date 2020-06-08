@@ -6,7 +6,7 @@ import (
 	"github.com/gofiber/fiber"
 )
 
-// TODO: prepare whole new module
+// New prepare whole module and connect it with App
 func New(config *config.Config, api *fiber.Group) {
 	handler := NewHandler(NewService(NewRepository(config.Database)))
 
