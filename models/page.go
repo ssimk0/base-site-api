@@ -1,13 +1,13 @@
 package models
 
-// Page
+// PageCategory model
 type PageCategory struct {
 	Model
 	Name string `json:"name" gorm:"not null"`
 	Slug string `json:"slug" gorm:"unique_index;not null"`
 }
 
-// Page
+// Page model linked to PageCategory
 type Page struct {
 	Model
 	Title      string       `json:"title" gorm:"not null"`

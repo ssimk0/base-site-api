@@ -38,7 +38,9 @@ func NewS3() *S3Storage {
 }
 
 const (
+	// SMALL image path
 	SMALL = "resized/small"
+	// LARGE image path
 	LARGE = "reduced"
 )
 

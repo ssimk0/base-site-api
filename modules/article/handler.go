@@ -59,7 +59,7 @@ func (h *Handler) Create(c *fiber.Ctx) {
 		return
 	}
 
-	a, err := h.service.Store(article, h.ParseUserId(c))
+	a, err := h.service.Store(article, h.ParseUserID(c))
 
 	if err != nil {
 		log.Errorf("Error while creating article: %s", err)
@@ -126,7 +126,7 @@ func (h *Handler) Remove(c *fiber.Ctx) {
 		return
 	}
 
-	err = h.service.Delete(id, h.ParseUserId(c))
+	err = h.service.Delete(id, h.ParseUserID(c))
 
 	if err != nil {
 		log.Errorf("Error while removing article: %s", err)

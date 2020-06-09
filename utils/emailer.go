@@ -7,7 +7,7 @@ import (
 	"os"
 )
 
-type ClientTLS struct {
+type clientTLS struct {
 	smtpClient *smtp.Client
 	tlsConn    *tls.Conn
 }
@@ -57,7 +57,7 @@ func SendMail(to string, body []byte) error {
 	return c.Quit()
 }
 
-func setupClient(host string, addr string) (*ClientTLS, error) {
+func setupClient(host string, addr string) (*clientTLS, error) {
 	// Set up authentication information.
 	auth := smtp.PlainAuth(
 		"",
@@ -84,7 +84,7 @@ func setupClient(host string, addr string) (*ClientTLS, error) {
 		return nil, err
 	}
 
-	return &ClientTLS{
+	return &clientTLS{
 		c,
 		conn,
 	}, nil

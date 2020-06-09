@@ -37,8 +37,8 @@ func (h *Handler) ErrorWithMessage(c *fiber.Ctx, status int, message string) {
 	c.Next(fiber.NewError(status, message))
 }
 
-// ParseUserId parse user id from context and convert it to uint
-func (h *Handler) ParseUserId(c *fiber.Ctx) uint {
+// ParseUserID parse user id from context and convert it to uint
+func (h *Handler) ParseUserID(c *fiber.Ctx) uint {
 	return c.Locals("userID").(uint)
 }
 

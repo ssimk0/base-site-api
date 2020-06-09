@@ -63,7 +63,7 @@ func (h *Handler) GetDetail(c *fiber.Ctx) {
 	h.JSON(c, 200, page)
 }
 
-// Store the page
+// Create the page
 func (h *Handler) Create(c *fiber.Ctx) {
 	page := &models.Page{}
 	categorySlug := c.Params("page-category")
@@ -77,7 +77,7 @@ func (h *Handler) Create(c *fiber.Ctx) {
 		return
 	}
 
-	pageId, err := h.service.Store(page, categorySlug, h.ParseUserId(c))
+	pageID, err := h.service.Store(page, categorySlug, h.ParseUserID(c))
 
 	if err != nil {
 		log.Errorf("Error while create page %s", err)
@@ -88,7 +88,7 @@ func (h *Handler) Create(c *fiber.Ctx) {
 
 	h.JSON(c, 201, &responses.SuccessResponse{
 		Success: true,
-		ID:      pageId,
+		ID:      pageID,
 	})
 }
 
@@ -140,7 +140,7 @@ func (h *Handler) Remove(c *fiber.Ctx) {
 		return
 	}
 
-	err = h.service.Delete(id, h.ParseUserId(c))
+	err = h.service.Delete(id, h.ParseUserID(c))
 
 	if err != nil {
 		log.Errorf("Problem while removing page: %s", err)

@@ -1,6 +1,6 @@
 package models
 
-// Article
+// Article model linked with author
 type Article struct {
 	Model
 	Title     string `json:"title" gorm:"not null"`

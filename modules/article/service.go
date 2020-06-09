@@ -24,6 +24,7 @@ type service struct {
 	repository Repository
 }
 
+// NewService return instance of service for article
 func NewService(r Repository) Service {
 	return &service{
 		repository: r,

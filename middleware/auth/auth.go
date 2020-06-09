@@ -10,15 +10,18 @@ import (
 	"github.com/gofiber/fiber"
 )
 
+// Config for auth middleware
 type Config struct {
 	SigningKey []byte
 	Filter     func(c *fiber.Ctx) bool
 }
 
+// FilterGetOnly filter out request based on method GET
 func FilterGetOnly(c *fiber.Ctx) bool {
 	return c.Method() == "GET"
 }
 
+// New return the middleware function
 func New(cfg *Config) func(*fiber.Ctx) {
 	// Return middleware handler
 	return func(c *fiber.Ctx) {
