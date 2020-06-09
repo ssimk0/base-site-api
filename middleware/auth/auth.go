@@ -59,13 +59,13 @@ func New(cfg *Config) func(*fiber.Ctx) {
 
 		// getting claims
 		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-			userId, err := strconv.ParseUint(claims["jti"].(string), 10, 32)
+			userID, err := strconv.ParseUint(claims["jti"].(string), 10, 32)
 			if err != nil {
 				c.Status(http.StatusUnauthorized).Send(fmt.Errorf("failed to validate token: %v", claims))
 				return
 			}
 
-			c.Locals("userID", uint(userId))
+			c.Locals("userID", uint(userID))
 		} else {
 			c.Status(http.StatusUnauthorized).Send(fmt.Errorf("failed to validate token: %v", claims))
 			return

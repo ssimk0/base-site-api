@@ -16,7 +16,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-// Serviceå interface for Auth
+// Service interface for Auth
 type Service interface {
 	Login(username string, password string) (string, error)
 	UserInfo(userID uint) (*models.User, error)

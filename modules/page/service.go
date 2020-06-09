@@ -16,7 +16,7 @@ type Service interface {
 	Delete(id uint, userID uint) error
 }
 
-// Service return instance of service implementation
+// NewService return instance of service implementation
 func NewService(r Repository) Service {
 	return &service{
 		r,

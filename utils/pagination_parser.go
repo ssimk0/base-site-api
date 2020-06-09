@@ -5,6 +5,7 @@ import (
 	"strconv"
 )
 
+// ParsePagination helper function which parse pagination from query params or return default
 func ParsePagination(c *fiber.Ctx) (int, int) {
 	p := c.Query("p")
 	s := c.Query("s")

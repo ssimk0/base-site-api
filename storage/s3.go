@@ -25,7 +25,7 @@ type S3Storage struct {
 	acl    string
 }
 
-// New S3 return instance of s3Storage with setup whole config from env
+// NewS3 return instance of s3Storage with setup whole config from env
 func NewS3() *S3Storage {
 	return &S3Storage{
 		config: &aws.Config{

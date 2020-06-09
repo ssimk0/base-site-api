@@ -27,12 +27,12 @@ func (h *Handler) JSON(c *fiber.Ctx, status int, data interface{}) {
 	}
 }
 
-//  Error Handle Error response
+// Error Handle Error response
 func (h *Handler) Error(c *fiber.Ctx, status int) {
 	c.Next(fiber.NewError(status))
 }
 
-//  ErrorWithMessage Handle Error response with custom message
+// ErrorWithMessage Handle Error response with custom message
 func (h *Handler) ErrorWithMessage(c *fiber.Ctx, status int, message string) {
 	c.Next(fiber.NewError(status, message))
 }

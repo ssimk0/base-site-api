@@ -39,7 +39,7 @@ func (s *service) Find(slug string) (*models.Article, error) {
 		return nil, err
 	}
 
-	(*article).Viewed += 1
+	(*article).Viewed++
 
 	// update viewed is not critical error can be ignored
 	_ = s.repository.Update(article, article.ID)
