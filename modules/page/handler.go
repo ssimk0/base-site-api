@@ -63,7 +63,7 @@ func (h *Handler) GetDetail(c *fiber.Ctx) {
 	h.JSON(c, 200, page)
 }
 
-// Create the page
+// Store the page
 func (h *Handler) Create(c *fiber.Ctx) {
 	page := &models.Page{}
 	categorySlug := c.Params("page-category")
@@ -77,7 +77,7 @@ func (h *Handler) Create(c *fiber.Ctx) {
 		return
 	}
 
-	pageId, err := h.service.Create(page, categorySlug, h.ParseUserId(c))
+	pageId, err := h.service.Store(page, categorySlug, h.ParseUserId(c))
 
 	if err != nil {
 		log.Errorf("Error while create page %s", err)

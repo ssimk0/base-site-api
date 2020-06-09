@@ -6,6 +6,7 @@ import (
 	"github.com/gofiber/fiber"
 )
 
+// New configure module and register all routes
 func New(config *config.Config, api *fiber.Group) {
 	handler := NewHandler(NewService(NewRepository(config.Database)))
 

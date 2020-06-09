@@ -163,7 +163,7 @@ func (s *service) RegisterUser(u *UserRequest) error {
 		LastName:     u.LastName,
 	}
 	log.Errorf("%s %s %s", user.Email, user.FirstName, user.LastName)
-	return s.repository.CreateUser(&user)
+	return s.repository.StoreUser(&user)
 }
 
 func oneWeek() time.Duration {

@@ -10,7 +10,7 @@ type Repository interface {
 	FindUserByEmail(email string) (*models.User, error)
 	Find(id uint) (*models.User, error)
 	Update(user *models.User, id uint) error
-	CreateUser(user *models.User) error
+	StoreUser(user *models.User) error
 	StoreForgotPasswordToken(token *models.ForgotPasswordToken) (uint, error)
 	GetForgotPasswordToken(token string) (*models.ForgotPasswordToken, error)
 }
@@ -82,7 +82,7 @@ func (r *repository) GetForgotPasswordToken(token string) (*models.ForgotPasswor
 	return &t, nil
 }
 
-// CreateUser new instance
-func (r *repository) CreateUser(user *models.User) error {
+// StoreUser new instance
+func (r *repository) StoreUser(user *models.User) error {
 	return r.db.Create(user).Error
 }

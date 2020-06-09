@@ -5,7 +5,7 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-//Repository interface for Page model
+// Repository interface for Page model
 type Repository interface {
 	FindCategories() ([]*models.PageCategory, error)
 	FindCategoryBySlug(slug string) (*models.PageCategory, error)

@@ -15,12 +15,14 @@ type Handler struct {
 	service Service
 }
 
+// NewHandler return instance of Handler
 func NewHandler(s Service) *Handler {
 	return &Handler{
 		service: s,
 	}
 }
 
+// Login handler return the JWT token
 func (h *Handler) Login(c *fiber.Ctx) {
 	r := &LoginRequest{}
 
@@ -45,6 +47,7 @@ func (h *Handler) Login(c *fiber.Ctx) {
 	})
 }
 
+// RegisterUser validate and register the user
 func (h *Handler) RegisterUser(c *fiber.Ctx) {
 	u := &UserRequest{}
 
@@ -69,6 +72,7 @@ func (h *Handler) RegisterUser(c *fiber.Ctx) {
 	})
 }
 
+// ForgotPassword based on email
 func (h *Handler) ForgotPassword(c *fiber.Ctx) {
 	u := &models.User{}
 
@@ -96,6 +100,7 @@ func (h *Handler) ForgotPassword(c *fiber.Ctx) {
 	})
 }
 
+// ResetPassword based on token from ForgotPassword
 func (h *Handler) ResetPassword(c *fiber.Ctx) {
 	u := UserRequest{}
 	token := c.Params("token")

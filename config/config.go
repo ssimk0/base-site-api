@@ -37,6 +37,9 @@ func initDB(env string) (*gorm.DB, error) {
 		&models.ForgotPasswordToken{},
 		&models.PageCategory{},
 		&models.Page{},
+		&models.UploadType{},
+		&models.UploadCategory{},
+		&models.Upload{},
 	)
 
 	return conn, nil

@@ -3,7 +3,6 @@ package storage
 import (
 	"base-site-api/utils"
 	"bytes"
-	"errors"
 	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -66,10 +65,6 @@ func (s3 *S3Storage) Store(f *multipart.FileHeader, p string) (*UploadFile, erro
 			img, err = jpeg.Decode(r)
 		} else if ext == "png" {
 			img, err = png.Decode(r)
-		}
-
-		if img == nil {
-			return nil, errors.New("img nil")
 		}
 
 		width := 1920

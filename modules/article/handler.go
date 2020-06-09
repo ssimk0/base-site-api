@@ -15,12 +15,14 @@ type Handler struct {
 	service Service
 }
 
+// NewHandler returrn instance of Handler
 func NewHandler(s Service) *Handler {
 	return &Handler{
 		service: s,
 	}
 }
 
+// List provider list of paginated active articles
 func (h *Handler) List(c *fiber.Ctx) {
 	page, size := utils.ParsePagination(c)
 
@@ -43,6 +45,7 @@ func (h *Handler) List(c *fiber.Ctx) {
 	h.JSON(c, 200, &a)
 }
 
+// Create handle creating article and validation
 func (h *Handler) Create(c *fiber.Ctx) {
 
 	article := &models.Article{}
@@ -73,6 +76,7 @@ func (h *Handler) Create(c *fiber.Ctx) {
 	h.JSON(c, 201, &r)
 }
 
+// Update handle update article and validation
 func (h *Handler) Update(c *fiber.Ctx) {
 	id, err := h.ParseID(c)
 
@@ -111,6 +115,7 @@ func (h *Handler) Update(c *fiber.Ctx) {
 	h.JSON(c, 200, &r)
 }
 
+// Remove handle deleting articles
 func (h *Handler) Remove(c *fiber.Ctx) {
 	id, err := h.ParseID(c)
 
@@ -138,6 +143,7 @@ func (h *Handler) Remove(c *fiber.Ctx) {
 	h.JSON(c, 200, &r)
 }
 
+// GetDetail return specific article based on slug
 func (h *Handler) GetDetail(c *fiber.Ctx) {
 	slug := c.Params("slug")
 
