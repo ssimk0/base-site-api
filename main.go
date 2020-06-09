@@ -56,10 +56,10 @@ func NewApp(c *config.Config) *fiber.App {
 		CaseSensitive: true,
 		StrictRouting: true,
 		ErrorHandler: func(ctx *fiber.Ctx, err error) {
-			// Statuscode defaults to 500
+			// Status code defaults to 500
 			code := fiber.StatusInternalServerError
 
-			// Retreive the custom statuscode if it's an fiber.*Error
+			// Retrieve the custom status code if it's an fiber.*Error
 			if e, ok := err.(*fiber.Error); ok {
 				code = e.Code
 			}

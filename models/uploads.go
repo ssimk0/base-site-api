@@ -3,10 +3,11 @@ package models
 // Upload store information about  specific file mainly URL to s3
 type Upload struct {
 	Model
-	File       string         `json:"file" gorm:"not null"`
-	Thumbnail  string         `json:"thumbnail"`
-	CategoryID uint           `json:"-" gorm:"not null"`
-	Category   UploadCategory `json:"category" gorm:"foreignkey:CategoryID"`
+	File        string         `json:"file" gorm:"not null"`
+	Thumbnail   string         `json:"thumbnail"`
+	Description string         `json:"description"`
+	CategoryID  uint           `json:"-" gorm:"not null"`
+	Category    UploadCategory `json:"category" gorm:"foreignkey:CategoryID"`
 }
 
 // UploadCategory will be used to build tree structure of uploads
