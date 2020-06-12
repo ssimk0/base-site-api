@@ -10,6 +10,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// TODO: wrote middleware for user permission
 func configureGlobalMiddleware(app *fiber.App) {
 	app.Use(recover.New(recover.Config{
 		Handler: func(c *fiber.Ctx, err error) {
@@ -20,5 +21,4 @@ func configureGlobalMiddleware(app *fiber.App) {
 	}))
 	app.Use(logger.New())
 	app.Use(helmet.New())
-	//app.Use(middleware.New())
 }
