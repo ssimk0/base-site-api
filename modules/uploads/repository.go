@@ -14,6 +14,7 @@ type Repository interface {
 	Find(id uint) (*models.Upload, error)
 	FindCategory(id uint) (*models.UploadCategory, error)
 	FindCategoryBySlug(slug string) (*models.UploadCategory, error)
+	FindTypeBySlug(slug string) (*models.UploadType, error)
 	Store(upload *models.Upload) (uint, error)
 	StoreCategory(category *models.UploadCategory) (uint, error)
 	Delete(id uint) error
@@ -104,6 +105,16 @@ func (r *repository) FindCategoryBySlug(slug string) (*models.UploadCategory, er
 	}
 
 	return &category, nil
+}
+
+func (r *repository) FindTypeBySlug(slug string) (*models.UploadType, error) {
+	t := models.UploadType{}
+
+	if err := r.db.Where("slug = ?", slug).First(&t).Error; err != nil {
+		return nil, err
+	}
+
+	return &t, nil
 }
 
 // UpdateCategory only subpath now

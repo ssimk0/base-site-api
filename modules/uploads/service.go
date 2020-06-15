@@ -3,6 +3,7 @@ package uploads
 import (
 	"base-site-api/models"
 	"base-site-api/storage"
+	"github.com/gosimple/slug"
 	"mime/multipart"
 )
 
@@ -60,4 +61,20 @@ func (s *service) Store(file *multipart.FileHeader, filename string, categorySlu
 	}
 
 	return f, nil
+}
+
+func (s *service) StoreCategory(categoryName string, subPath string, typeSlug string) (uint, error) {
+	t, err := s.r.FindTypeBySlug(typeSlug)
+	if err != nil {
+		return 0, err
+	}
+
+	c := models.UploadCategory{
+		Name:    categoryName,
+		SubPath: subPath,
+		TypeID:  t.ID,
+		Slug:    slug.Make(categoryName),
+	}
+
+	return s.r.StoreCategory(&c)
 }
