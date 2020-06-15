@@ -124,7 +124,7 @@ func (s *UploadTestSuite) TestUpdateUploadCategory() {
 	_, c, _ := s.prepareTestData()
 	r := NewRepository(s.Conn)
 
-	err := r.UpdateCategory("updated", c[0].ID)
+	err := r.UpdateCategory("New name", "updated", c[0].ID)
 	if err != nil {
 		s.T().Errorf("Error update upload %s", err)
 	}
@@ -132,6 +132,7 @@ func (s *UploadTestSuite) TestUpdateUploadCategory() {
 	s.Conn.Find(&category, c[0].ID)
 
 	assert.Equal(s.T(), category.SubPath, "updated")
+	assert.Equal(s.T(), category.Name, "New name")
 }
 
 func (s *UploadTestSuite) TestUpdateUpload() {
@@ -229,11 +230,26 @@ func (s *UploadTestSuite) TestFindUpload() {
 	a, err := r.Find(u[0].ID)
 
 	if err != nil {
-		s.T().Errorf("Error delete upload %s", err)
+		s.T().Errorf("Error find upload %s", err)
 	}
 
 	// found
 	assert.Equal(s.T(), u[0].ID, a.ID)
+}
+
+func (s *UploadTestSuite) TestFindTypeBySlug() {
+	_, _, t := s.prepareTestData()
+	r := NewRepository(s.Conn)
+
+	a, err := r.FindTypeBySlug(t.Slug)
+
+	if err != nil {
+		s.T().Errorf("Error find type upload %s", err)
+	}
+
+	// found
+	assert.NotEqual(s.T(), 0, t.ID)
+	assert.Equal(s.T(), t.ID, a.ID)
 }
 
 func (s *UploadTestSuite) TestFindUploadCategoryBySlug() {
