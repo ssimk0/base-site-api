@@ -2,6 +2,7 @@ package main
 
 import (
 	"base-site-api/modules/page"
+	"base-site-api/modules/uploads"
 	"os"
 
 	"base-site-api/config"
@@ -17,6 +18,7 @@ func setupV1ApiEndpoints(api *fiber.Group, config *config.Config) {
 	article.New(config, api)
 	auth.New(config, api)
 	page.New(config, api)
+	uploads.New(config, api)
 }
 
 // SETTINGS FOR GROUPS
