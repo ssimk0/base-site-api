@@ -2,6 +2,7 @@ package uploads
 
 import (
 	"base-site-api/models"
+	"base-site-api/modules"
 	"base-site-api/storage"
 	"github.com/gosimple/slug"
 	"mime/multipart"
@@ -10,7 +11,7 @@ import (
 // Service interface for uploads
 type Service interface {
 	UploadCategories(typeSlug string) ([]*models.UploadCategory, error)
-	UploadsByCategory(categorySlug string) ([]*models.Upload, error)
+	UploadsByCategory(categorySlug string, page int, size int) ([]*models.Upload, int, error)
 	Store(file *multipart.FileHeader, filename string, categorySlug string) (*storage.UploadFile, error)
 	StoreCategory(categoryName string, subPath string, typeSlug string) (uint, error)
 	UpdateCategory(categoryName string, subPath string, id uint) error
@@ -27,18 +28,20 @@ func NewService(r Repository) Service {
 }
 
 type service struct {
+	modules.Service
 	repository Repository
 	s3         *storage.S3Storage
 }
 
 // UploadCategories by type slug
 func (s *service) UploadCategories(typeSlug string) ([]*models.UploadCategory, error) {
-	return s.UploadCategories(typeSlug)
+	return s.repository.FindCategoriesByType(typeSlug)
 }
 
 // Uploads by category slug
-func (s *service) UploadsByCategory(categorySlug string) ([]*models.Upload, error) {
-	return s.UploadsByCategory(categorySlug)
+func (s *service) UploadsByCategory(categorySlug string, page int, size int) ([]*models.Upload, int, error) {
+	l, o := s.CalculateLimitAndOffset(page, size)
+	return s.repository.FindUploadsByCategory(categorySlug, l, o)
 }
 
 // Store upload the file and save the row to db with all information about the file itself

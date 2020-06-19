@@ -8,7 +8,7 @@ import (
 // Repository interface of uploads
 type Repository interface {
 	FindCategoriesByType(typeSlug string) ([]*models.UploadCategory, error)
-	FindUploadsByCategory(categorySlug string) ([]*models.Upload, error)
+	FindUploadsByCategory(categorySlug string, offset int, limit int) ([]*models.Upload, int, error)
 	Update(desc string, id uint) error
 	UpdateCategory(categoryName string, subpath string, id uint) error
 	Find(id uint) (*models.Upload, error)
@@ -48,20 +48,21 @@ func (r *repository) FindCategoriesByType(typeSlug string) ([]*models.UploadCate
 }
 
 // FindUploadsByCategory return all uploads for the category
-func (r *repository) FindUploadsByCategory(categorySlug string) ([]*models.Upload, error) {
+func (r *repository) FindUploadsByCategory(categorySlug string, offset int, limit int) ([]*models.Upload, int, error) {
 	var u []*models.Upload
+	var count int
 
 	var c models.UploadCategory
 
 	if err := r.db.Where("slug = ?", categorySlug).Find(&c).Error; err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
-	if err := r.db.Where("category_id = ? ", c.ID).Find(&u).Error; err != nil {
-		return nil, err
+	if err := r.db.Where("category_id = ? ", c.ID).Offset(offset).Limit(limit).Find(&u).Count(&count).Error; err != nil {
+		return nil, 0, err
 	}
 
-	return u, nil
+	return u, count, nil
 }
 
 // Update for the upload

@@ -8,5 +8,5 @@ import (
 // PaginatedArticles struct for articles list and Pagination for api response
 type PaginatedArticles struct {
 	*modules.Pagination
-	Articles []*models.Article `json:"articless"`
+	Articles []*models.Article `json:"articles"`
 }

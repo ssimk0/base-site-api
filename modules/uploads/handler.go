@@ -2,6 +2,7 @@ package uploads
 
 import (
 	"base-site-api/modules"
+	"base-site-api/utils"
 	"github.com/gofiber/fiber"
 	log "github.com/sirupsen/logrus"
 )
@@ -35,8 +36,9 @@ func (h *Handler) ListCategories(c *fiber.Ctx) {
 
 func (h *Handler) ListUploads(c *fiber.Ctx) {
 	s := c.Params("upload-category")
+	page, size := utils.ParsePagination(c)
 
-	uploads, err := h.service.UploadsByCategory(s)
+	uploads, count, err := h.service.UploadsByCategory(s, page, size)
 
 	if err != nil {
 		log.Debugf("Error while getting upload by category slug %s", err)
@@ -45,5 +47,10 @@ func (h *Handler) ListUploads(c *fiber.Ctx) {
 		return
 	}
 
-	h.JSON(c, 200, uploads)
+	p := h.CalculatePagination(page, size, count)
+
+	h.JSON(c, 200, PaginatedUploads{
+		p,
+		uploads,
+	})
 }
