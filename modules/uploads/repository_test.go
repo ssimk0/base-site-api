@@ -111,12 +111,13 @@ func (s *UploadTestSuite) TestFindUploadsByCategory() {
 	u, c, _ := s.prepareTestData()
 	r := NewRepository(s.Conn)
 
-	uploads, err := r.FindUploadsByCategory(c[0].Slug)
+	uploads, count, err := r.FindUploadsByCategory(c[0].Slug, 0, 10)
 	if err != nil {
 		s.T().Errorf("Error find uploads category by slug %s", err)
 	}
 
 	assert.Len(s.T(), uploads, len(u))
+	assert.Equal(s.T(), 3, count)
 	assert.Equal(s.T(), u[0].File, uploads[0].File)
 }
 
