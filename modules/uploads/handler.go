@@ -54,3 +54,27 @@ func (h *Handler) ListUploads(c *fiber.Ctx) {
 		uploads,
 	})
 }
+
+func (h *Handler) Upload(c *fiber.Ctx) {
+	file, err := c.FormFile("file")
+	s := c.Params("upload-category")
+	t := c.Params("type")
+
+	if err != nil {
+		log.Debugf("Error while parsing upload %s", err)
+		h.Error(c, 400)
+
+		return
+	}
+
+	r, err := h.service.Store(file, s, t)
+
+	if err != nil {
+		log.Debugf("Error while upload %s", err)
+		h.Error(c, 400)
+
+		return
+	}
+
+	h.JSON(c, 200, r)
+}

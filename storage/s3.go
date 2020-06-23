@@ -46,15 +46,15 @@ const (
 
 // UploadFile is return value from Store function from S3Storage
 type UploadFile struct {
-	URL      string
-	URLSmall string
-	IsImage  bool
+	URL      string `json:"url"`
+	URLSmall string `json:"url-small"`
+	IsImage  bool   `json:"-"`
 }
 
 // Store file in s3 in path what you want
 func (s3 *S3Storage) Store(f *multipart.FileHeader, p string) (*UploadFile, error) {
 	ext := s3.getExt(f.Filename)
-	filename := fmt.Sprintf("%s%s", utils.GenerateRandomString(10), ext)
+	filename := fmt.Sprintf("%s.%s", utils.GenerateRandomString(10), ext)
 	r, err := f.Open()
 	if err != nil {
 		return nil, err
