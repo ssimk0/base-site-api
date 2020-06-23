@@ -13,7 +13,7 @@ import (
 type Service interface {
 	UploadCategories(typeSlug string) ([]*models.UploadCategory, error)
 	UploadsByCategory(categorySlug string, page int, size int) ([]*models.Upload, int, error)
-	Store(file *multipart.FileHeader, categorySlug string, typeSlug string) (*storage.UploadFile, error)
+	Store(file *multipart.FileHeader, categorySlug string, typeSlug string) (*models.Upload, error)
 	StoreCategory(categoryName string, subPath string, typeSlug string) (uint, error)
 	UpdateCategory(categoryName string, subPath string, id uint) error
 	Update(description string, id uint) error
@@ -46,7 +46,7 @@ func (s *service) UploadsByCategory(categorySlug string, page int, size int) ([]
 }
 
 // Store upload the file and save the row to db with all information about the file itself
-func (s *service) Store(file *multipart.FileHeader, categorySlug string, typeSlug string) (*storage.UploadFile, error) {
+func (s *service) Store(file *multipart.FileHeader, categorySlug string, typeSlug string) (*models.Upload, error) {
 	category, err := s.repository.FindCategoryBySlug(categorySlug)
 	if err != nil {
 		return nil, err
@@ -81,7 +81,7 @@ func (s *service) Store(file *multipart.FileHeader, categorySlug string, typeSlu
 		return nil, err
 	}
 
-	return f, nil
+	return &u, nil
 }
 
 func (s *service) StoreCategory(categoryName string, subPath string, typeSlug string) (uint, error) {
