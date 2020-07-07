@@ -26,7 +26,7 @@ type Config struct {
 }
 
 func initDB(env string) (*gorm.DB, error) {
-	conn, err := gorm.Open("mysql", os.Getenv("DB_URI"))
+	conn, err := gorm.Open(os.Getenv("DB_DIALECT"), os.Getenv("DB_URI"))
 	if err != nil {
 		return nil, err
 	}
