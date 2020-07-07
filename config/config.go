@@ -8,8 +8,8 @@ import (
 	"base-site-api/models"
 
 	"github.com/jinzhu/gorm"
-	// mysql driver needed for gorm
-	_ "github.com/jinzhu/gorm/dialects/mysql"
+	// sqlite driver needed for gorm
+	_ "github.com/jinzhu/gorm/dialects/sqlite"
 )
 
 // Constants for whole application setup
