@@ -2,8 +2,9 @@ package modules
 
 import (
 	"base-site-api/utils"
+
 	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	_ "github.com/jinzhu/gorm/dialects/sqlite" // Need to be imported for sqlite to make it work
 	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/suite"
 )
