@@ -9,6 +9,15 @@ type UserRequest struct {
 	PasswordConfirm string `json:"password_confirmation"`
 }
 
+// UserInfoResponse struct return all needed params
+type UserInfoResponse struct {
+	Email     string `json:"email"`
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+	IsAdmin   bool   `json:"is_admin"`
+	CanEdit   bool   `json:"can_edit"`
+}
+
 // LoginRequest struct handle params for login
 type LoginRequest struct {
 	Username string `json:"email"`

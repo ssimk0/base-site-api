@@ -33,8 +33,7 @@ func New(cfg *Config) func(*fiber.Ctx) {
 
 		// Get authorization header
 		tokenString := c.Get(fiber.HeaderAuthorization)
-
-		if len(tokenString) == 0 {
+		if len(tokenString) < 7 {
 			c.Status(http.StatusUnauthorized).Send(fmt.Errorf("no token set in headers"))
 			return
 		}

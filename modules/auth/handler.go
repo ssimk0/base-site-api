@@ -72,6 +72,26 @@ func (h *Handler) RegisterUser(c *fiber.Ctx) {
 	})
 }
 
+func (h *Handler) GetUserInfo(c *fiber.Ctx) {
+	userID := h.ParseUserID(c)
+	u, err := h.service.UserInfo(userID)
+	if err != nil {
+		log.Errorf("Error while getting the userinfo: %s", err)
+
+		h.Error(c, 500)
+
+		return
+	}
+
+	h.JSON(c, 200, UserInfoResponse{
+		Email:     u.Email,
+		FirstName: u.FirstName,
+		LastName:  u.LastName,
+		IsAdmin:   u.IsAdmin,
+		CanEdit:   u.CanEdit,
+	})
+}
+
 // ForgotPassword based on email
 func (h *Handler) ForgotPassword(c *fiber.Ctx) {
 	u := &models.User{}
