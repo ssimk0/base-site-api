@@ -51,15 +51,32 @@ func (r *repository) Find(id uint) (*models.User, error) {
 
 // Update instance the user
 func (r *repository) Update(user *models.User, id uint) error {
+	u, err := r.Find(user.ID)
+	if err != nil {
+		return err
+	}
 
-	return r.db.Update(models.User{
-		ID:           id,
-		Email:        user.Email,
-		FirstName:    user.LastName,
-		PasswordHash: user.PasswordHash,
-		CanEdit:      user.CanEdit, // TODO: make sure that is only changed by admin
-		IsAdmin:      user.IsAdmin,
-	}).Error
+	if user.Email != "" {
+		u.Email = user.Email
+	}
+
+	if user.PasswordHash != "" {
+		u.PasswordHash = user.PasswordHash
+	}
+
+	if user.FirstName != "" {
+		u.FirstName = user.FirstName
+	}
+
+	if user.CanEdit {
+		u.CanEdit = user.CanEdit
+	}
+
+	if user.IsAdmin {
+		u.IsAdmin = user.IsAdmin
+	}
+
+	return r.db.Save(u).Error
 }
 
 // StoreForgotPasswordToken and return id

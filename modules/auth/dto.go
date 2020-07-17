@@ -9,6 +9,12 @@ type UserRequest struct {
 	PasswordConfirm string `json:"password_confirmation"`
 }
 
+// ResetPasswordRequest handle params for reset password
+type ResetPasswordRequest struct {
+	Password        string `json:"password"`
+	PasswordConfirm string `json:"password_confirmation"`
+}
+
 // UserInfoResponse struct return all needed params
 type UserInfoResponse struct {
 	Email     string `json:"email"`

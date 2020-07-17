@@ -122,7 +122,7 @@ func (h *Handler) ForgotPassword(c *fiber.Ctx) {
 
 // ResetPassword based on token from ForgotPassword
 func (h *Handler) ResetPassword(c *fiber.Ctx) {
-	u := UserRequest{}
+	u := &ResetPasswordRequest{}
 	token := c.Params("token")
 
 	if err := c.BodyParser(u); err != nil {
@@ -141,7 +141,7 @@ func (h *Handler) ResetPassword(c *fiber.Ctx) {
 	err := h.service.ResetPassword(token, u.Password)
 
 	if err != nil {
-		log.Errorf("Error while processing forgot password: %s", err)
+		log.Errorf("Error while processing reset password: %s", err)
 
 		h.Error(c, 400)
 
