@@ -11,9 +11,9 @@ func postOnlyFilter(c *fiber.Ctx) bool {
 }
 
 // New setup whole module with all routes
-func New(config *config.Config, api *fiber.Group) {
+func New(config *config.Config, api *fiber.Router) {
 	handler := NewHandler(NewService(NewRepository(config.Database), config.SigningKey))
-	a := api.Group("/v1/auth")
+	a := (*api).Group("/v1/auth")
 	a.Use(auth.New(&auth.Config{
 		SigningKey: config.SigningKey,
 		Filter:     postOnlyFilter,

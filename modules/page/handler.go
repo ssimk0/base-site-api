@@ -37,7 +37,7 @@ func (h *Handler) ListCategories(c *fiber.Ctx) {
 
 // ListPages return all pages specific for page category
 func (h *Handler) ListPages(c *fiber.Ctx) {
-	pages, err := h.service.FindAllByCategory(c.Params("page-category"))
+	pages, err := h.service.FindAllByCategory(c.Params("pageCategory"))
 
 	if err != nil {
 		log.Debugf("Error while getting pages by category slug %s", err)
@@ -66,7 +66,7 @@ func (h *Handler) GetDetail(c *fiber.Ctx) {
 // Create the page
 func (h *Handler) Create(c *fiber.Ctx) {
 	page := &models.Page{}
-	categorySlug := c.Params("page-category")
+	categorySlug := c.Params("pageCategory")
 
 	err := c.BodyParser(page)
 

@@ -7,10 +7,10 @@ import (
 )
 
 // New configure module and register all routes
-func New(config *config.Config, api *fiber.Group) {
+func New(config *config.Config, api *fiber.Router) {
 	handler := NewHandler(NewService(NewRepository(config.Database)))
 
-	articles := api.Group("/v1/articles")
+	articles := (*api).Group("/v1/articles")
 	articles.Use(auth.New(&auth.Config{
 		SigningKey: config.SigningKey,
 		Filter:     auth.FilterGetOnly,

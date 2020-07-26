@@ -14,7 +14,7 @@ import (
 )
 
 // ENDPOINTS
-func setupV1ApiEndpoints(api *fiber.Group, config *config.Config) {
+func setupV1ApiEndpoints(api *fiber.Router, config *config.Config) {
 	article.New(config, api)
 	auth.New(config, api)
 	page.New(config, api)
@@ -27,5 +27,5 @@ func configureAPIRoutes(app *fiber.App, config *config.Config) {
 		AllowOrigins: []string{os.Getenv("ALLOWED_ORIGIN")},
 	}))
 
-	setupV1ApiEndpoints(api, config)
+	setupV1ApiEndpoints(&api, config)
 }

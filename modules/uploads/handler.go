@@ -37,7 +37,7 @@ func (h *Handler) ListCategories(c *fiber.Ctx) {
 }
 
 func (h *Handler) ListUploads(c *fiber.Ctx) {
-	s := c.Params("upload-category")
+	s := c.Params("uploadCategory")
 	page, size := utils.ParsePagination(c)
 
 	uploads, count, err := h.service.UploadsByCategory(s, page, size)
@@ -59,7 +59,7 @@ func (h *Handler) ListUploads(c *fiber.Ctx) {
 
 func (h *Handler) Upload(c *fiber.Ctx) {
 	file, err := c.FormFile("file")
-	s := c.Params("upload-category")
+	s := c.Params("uploadCategory")
 	t := c.Params("type")
 
 	if err != nil {
