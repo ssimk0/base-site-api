@@ -10,7 +10,7 @@ type Repository interface {
 	FindCategoriesByType(typeSlug string) ([]*models.UploadCategory, error)
 	FindUploadsByCategory(categorySlug string, offset int, limit int) ([]*models.Upload, int, error)
 	Update(desc string, id uint) error
-	UpdateCategory(categoryName string, subpath string, id uint) error
+	UpdateCategory(categoryName string, subpath string, thum string, id uint) error
 	Find(id uint) (*models.Upload, error)
 	FindCategory(id uint) (*models.UploadCategory, error)
 	FindCategoryBySlug(slug string) (*models.UploadCategory, error)
@@ -119,13 +119,16 @@ func (r *repository) FindTypeBySlug(slug string) (*models.UploadType, error) {
 }
 
 // UpdateCategory only subpath and name now
-func (r *repository) UpdateCategory(categoryName string, subpath string, id uint) error {
+func (r *repository) UpdateCategory(categoryName string, subpath string, thum string, id uint) error {
 	u, err := r.FindCategory(id)
 	if err != nil {
 		return err
 	}
 	u.SubPath = subpath
 	u.Name = categoryName
+	if thum != "" {
+		u.Thumbnail = thum
+	}
 	return r.db.Save(&u).Error
 }
 

@@ -14,11 +14,12 @@ type Upload struct {
 // also main part of querying specific uploads
 type UploadCategory struct {
 	Model
-	Name    string     `json:"name" gorm:"not null"`
-	Slug    string     `json:"slug" gorm:"unique_index;not null"`
-	SubPath string     `json:"subpath" gorm:"not null"`
-	Type    UploadType `json:"type" gorm:"foreignkey:TypeID"`
-	TypeID  uint       `json:"-" gorm:"not null"`
+	Name      string     `json:"name" gorm:"not null"`
+	Slug      string     `json:"slug" gorm:"unique_index;not null"`
+	SubPath   string     `json:"subpath" gorm:"not null"`
+	Thumbnail string     `json:"thumbnail"`
+	Type      UploadType `json:"type" gorm:"foreignkey:TypeID"`
+	TypeID    uint       `json:"-" gorm:"not null"`
 }
 
 // UploadType will be used to enable uploads for specific parts of site

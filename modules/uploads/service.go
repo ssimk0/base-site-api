@@ -6,6 +6,7 @@ import (
 	"base-site-api/storage"
 	"fmt"
 	"github.com/gosimple/slug"
+	log "github.com/sirupsen/logrus"
 	"mime/multipart"
 )
 
@@ -81,6 +82,12 @@ func (s *service) Store(file *multipart.FileHeader, categorySlug string, typeSlu
 		return nil, err
 	}
 
+	if c.Thumbnail == "" {
+		err := s.repository.UpdateCategory(c.Name, c.SubPath, u.Thumbnail, c.ID)
+		if err != nil {
+			log.Errorf("Error while update the category %s", err.Error())
+		}
+	}
 	return &u, nil
 }
 
@@ -115,7 +122,7 @@ func (s *service) UpdateCategory(categoryName string, subPath string, id uint) e
 		subPath = c.SubPath
 	}
 
-	return s.repository.UpdateCategory(categoryName, subPath, id)
+	return s.repository.UpdateCategory(categoryName, subPath, "", id)
 }
 
 func (s *service) Update(desc string, id uint) error {
