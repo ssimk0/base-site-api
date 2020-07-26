@@ -125,7 +125,7 @@ func (s *UploadTestSuite) TestUpdateUploadCategory() {
 	_, c, _ := s.prepareTestData()
 	r := NewRepository(s.Conn)
 
-	err := r.UpdateCategory("New name", "updated", c[0].ID)
+	err := r.UpdateCategory("New name", "updated", "", c[0].ID)
 	if err != nil {
 		s.T().Errorf("Error update upload %s", err)
 	}
