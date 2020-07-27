@@ -14,6 +14,7 @@ func New(config *config.Config, api *fiber.Router) {
 	articles.Use(auth.New(&auth.Config{
 		SigningKey: config.SigningKey,
 		Filter:     auth.FilterGetOnly,
+		DB:         config.Database,
 	}))
 
 	articles.Get("/", handler.List)

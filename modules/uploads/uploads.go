@@ -14,6 +14,7 @@ func New(config *config.Config, api *fiber.Router) {
 	pages.Use(auth.New(&auth.Config{
 		SigningKey: config.SigningKey,
 		Filter:     auth.FilterGetOnly,
+		DB:         config.Database,
 	}))
 
 	pages.Get("/:type", handler.ListCategories)

@@ -1,7 +1,9 @@
 package auth
 
 import (
+	"base-site-api/models"
 	"fmt"
+	"github.com/jinzhu/gorm"
 	"net/http"
 	"strconv"
 	"strings"
@@ -14,6 +16,7 @@ import (
 type Config struct {
 	SigningKey []byte
 	Filter     func(c *fiber.Ctx) bool
+	DB         *gorm.DB
 }
 
 // FilterGetOnly filter out request based on method GET
@@ -64,7 +67,21 @@ func New(cfg *Config) func(*fiber.Ctx) {
 				return
 			}
 
-			c.Locals("userID", uint(userID))
+			user := models.User{}
+
+			if err := cfg.DB.First(&user, userID).Error; err != nil {
+				c.Status(http.StatusUnauthorized).Send(fmt.Errorf("failed to validate token: %v", claims))
+				return
+			}
+
+			if user.CanEdit || user.IsAdmin {
+				c.Locals("userID", uint(userID))
+			} else {
+
+				c.Status(http.StatusUnauthorized).Send(fmt.Errorf("failed to validate token: %v", claims))
+				return
+			}
+
 		} else {
 			c.Status(http.StatusUnauthorized).Send(fmt.Errorf("failed to validate token: %v", claims))
 			return
