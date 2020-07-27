@@ -41,7 +41,7 @@ func (r *repository) FindCategoriesByType(typeSlug string) ([]*models.UploadCate
 		return nil, err
 	}
 
-	if err := r.db.Where("type_id = ? ", t.ID).Find(&c).Error; err != nil {
+	if err := r.db.Set("gorm:auto_preload", true).Where("type_id = ? ", t.ID).Find(&c).Error; err != nil {
 		return nil, err
 	}
 	return c, nil
@@ -53,12 +53,11 @@ func (r *repository) FindUploadsByCategory(categorySlug string, offset int, limi
 	var count int
 
 	var c models.UploadCategory
-
 	if err := r.db.Where("slug = ?", categorySlug).Find(&c).Error; err != nil {
 		return nil, 0, err
 	}
 
-	if err := r.db.Where("category_id = ? ", c.ID).Offset(offset).Limit(limit).Find(&u).Count(&count).Error; err != nil {
+	if err := r.db.Set("gorm:auto_preload", true).Where("category_id = ? ", c.ID).Offset(offset).Limit(limit).Find(&u).Count(&count).Error; err != nil {
 		return nil, 0, err
 	}
 
@@ -90,7 +89,7 @@ func (r *repository) Find(id uint) (*models.Upload, error) {
 func (r *repository) FindCategory(id uint) (*models.UploadCategory, error) {
 	category := models.UploadCategory{}
 
-	if err := r.db.First(&category, id).Error; err != nil {
+	if err := r.db.Set("gorm:auto_preload", true).First(&category, id).Error; err != nil {
 		return nil, err
 	}
 
@@ -101,7 +100,7 @@ func (r *repository) FindCategory(id uint) (*models.UploadCategory, error) {
 func (r *repository) FindCategoryBySlug(slug string) (*models.UploadCategory, error) {
 	category := models.UploadCategory{}
 
-	if err := r.db.Where("slug = ?", slug).First(&category).Error; err != nil {
+	if err := r.db.Set("gorm:auto_preload", true).Where("slug = ?", slug).First(&category).Error; err != nil {
 		return nil, err
 	}
 
