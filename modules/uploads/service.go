@@ -83,7 +83,7 @@ func (s *service) Store(file *multipart.FileHeader, categorySlug string, typeSlu
 	}
 
 	if c.Thumbnail == "" {
-		err := s.repository.UpdateCategory(c.Name, c.SubPath, u.Thumbnail, c.ID)
+		err := s.repository.UpdateCategory(c.Name, c.SubPath, u.File, c.ID)
 		if err != nil {
 			log.Errorf("Error while update the category %s", err.Error())
 		}
