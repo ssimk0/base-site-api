@@ -64,8 +64,8 @@ func (r *repository) Update(user *models.User, id uint) error {
 		u.PasswordHash = user.PasswordHash
 	}
 
-	if user.FirstName != "" {
-		u.FirstName = user.FirstName
+	if user.LastName != "" {
+		u.LastName = user.LastName
 	}
 
 	if user.CanEdit {
