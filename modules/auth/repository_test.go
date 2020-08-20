@@ -3,10 +3,11 @@ package auth
 import (
 	"base-site-api/models"
 	"base-site-api/modules"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/suite"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/suite"
 )
 
 type AuthTestSuite struct {
@@ -167,14 +168,14 @@ func (s *AuthTestSuite) TestStoreForgotToken() {
 		Token: "token",
 	}
 
-	tokenId, err := r.StoreForgotPasswordToken(&t)
+	tokenID, err := r.StoreForgotPasswordToken(&t)
 
 	if err != nil {
 		s.T().Errorf("Error find token %s", err)
 	}
 	token := &models.ForgotPasswordToken{}
 
-	s.Conn.Find(token, tokenId)
+	s.Conn.Find(token, tokenID)
 
 	assert.Equal(s.T(), t.Token, token.Token)
 }

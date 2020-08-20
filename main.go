@@ -2,8 +2,9 @@ package main
 
 import (
 	"base-site-api/responses"
-	"github.com/joho/godotenv"
 	"os"
+
+	"github.com/joho/godotenv"
 
 	"base-site-api/config"
 
@@ -52,9 +53,10 @@ func main() {
 func NewApp(c *config.Config) *fiber.App {
 	// SETUP APP
 	app := fiber.New(&fiber.Settings{
-		Prefork:       true,
-		CaseSensitive: true,
-		StrictRouting: true,
+		Prefork:               true,
+		CaseSensitive:         true,
+		StrictRouting:         true,
+		DisableStartupMessage: true,
 		ErrorHandler: func(ctx *fiber.Ctx, err error) {
 			// Status code defaults to 500
 			code := fiber.StatusInternalServerError

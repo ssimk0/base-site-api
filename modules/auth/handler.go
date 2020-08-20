@@ -72,6 +72,7 @@ func (h *Handler) RegisterUser(c *fiber.Ctx) {
 	})
 }
 
+// GetUserInfo return all necessary information about the user based on JWT token
 func (h *Handler) GetUserInfo(c *fiber.Ctx) {
 	userID := h.ParseUserID(c)
 	u, err := h.service.UserInfo(userID)
