@@ -6,8 +6,11 @@ import (
 	"github.com/gofiber/fiber"
 )
 
+type Article struct {
+}
+
 // New configure module and register all routes
-func New(config *config.Config, api *fiber.Router) {
+func (m Article) New(config *config.Config, api *fiber.Router) {
 	handler := NewHandler(NewService(NewRepository(config.Database)))
 
 	articles := (*api).Group("/v1/articles")

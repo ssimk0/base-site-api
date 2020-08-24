@@ -1,24 +1,34 @@
-package main
+package app
 
 import (
+	"base-site-api/modules/auth"
 	"base-site-api/modules/page"
 	"base-site-api/modules/uploads"
 	"os"
 
 	"base-site-api/config"
 	"base-site-api/modules/article"
-	"base-site-api/modules/auth"
-
 	"github.com/gofiber/cors"
 	"github.com/gofiber/fiber"
 )
 
+// Module is interface of api module for plug and play system to make more esier to integrate them
+type Module interface {
+	New(config *config.Config, api *fiber.Router)
+}
+
 // ENDPOINTS
 func setupV1ApiEndpoints(api *fiber.Router, config *config.Config) {
-	article.New(config, api)
-	auth.New(config, api)
-	page.New(config, api)
-	uploads.New(config, api)
+	modules := []Module{
+		article.Article{},
+		auth.Auth{},
+		page.Pages{},
+		uploads.Uploads{},
+	}
+
+	for _, module := range modules {
+		module.New(config, api)
+	}
 }
 
 // SETTINGS FOR GROUPS

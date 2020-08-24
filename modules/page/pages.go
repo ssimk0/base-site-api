@@ -7,8 +7,11 @@ import (
 	"github.com/gofiber/fiber"
 )
 
+type Pages struct {
+}
+
 // New prepare whole module and connect it with App
-func New(config *config.Config, api *fiber.Router) {
+func (m Pages) New(config *config.Config, api *fiber.Router) {
 	handler := NewHandler(NewService(NewRepository(config.Database)))
 
 	pages := (*api).Group("/v1/pages")

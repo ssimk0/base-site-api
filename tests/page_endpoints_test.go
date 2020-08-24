@@ -1,0 +1,227 @@
+package tests
+
+import (
+	"base-site-api/app"
+	"base-site-api/config"
+	"base-site-api/models"
+	"base-site-api/modules"
+	"encoding/json"
+	"net/http"
+	"testing"
+
+	"github.com/gofiber/fiber"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/suite"
+)
+
+type PageEndpointsTestSuite struct {
+	app *fiber.App
+	modules.RepositoryTestSuite
+}
+
+func (s *PageEndpointsTestSuite) SetupTest() {
+	s.Setup()
+	s.Conn.Debug().AutoMigrate(
+		&models.Page{},
+		&models.PageCategory{},
+	)
+
+	c := config.Config{
+		Constants: config.Constants{
+			ADDRESS:      "127.0.0.1:8081",
+			ENV:          "test",
+			TemplatePath: "../templates",
+		},
+		Database: s.Conn,
+	}
+
+	s.app = app.NewApp(&c)
+}
+
+func (s *PageEndpointsTestSuite) getTestPage() *models.Page {
+	return &models.Page{
+		Title:      "Test",
+		Body:       "Body",
+		Slug:       "test",
+		UserID:     uint(1),
+		CategoryID: uint(1),
+	}
+}
+
+func (s *PageEndpointsTestSuite) getTestPageCategory() *models.PageCategory {
+	return &models.PageCategory{
+		Name: "Test",
+		Slug: "test",
+	}
+}
+
+func (s *PageEndpointsTestSuite) prepareTestData() ([]*models.Page, []*models.PageCategory) {
+	pages := []*models.Page{
+		{
+			Title: "Test",
+			Body:  "Body",
+			Slug:  "test1",
+		},
+		{
+			Title: "Test 2",
+			Body:  "Body 2",
+			Slug:  "test2",
+		},
+		{
+			Title: "Test 3 ",
+			Body:  "Body 3",
+			Slug:  "test3",
+		},
+	}
+
+	categories := []*models.PageCategory{
+		{
+			Name: "Oznamy",
+			Slug: "oznamy",
+		},
+		{
+			Name: "Sluzby",
+			Slug: "sluzby",
+		},
+	}
+
+	for _, a := range categories {
+		if err := s.Conn.Create(a).Error; err != nil {
+			panic(err)
+		}
+	}
+
+	for _, a := range pages {
+		a.Category = *categories[0]
+		if err := s.Conn.Create(a).Error; err != nil {
+			panic(err)
+		}
+	}
+
+	return pages, categories
+}
+
+func (s *PageEndpointsTestSuite) TestFindPageCategories() {
+
+	_, c := s.prepareTestData()
+
+	req, _ := http.NewRequest(
+		"GET",
+		"/api/v1/pages",
+		nil,
+	)
+
+	// Perform the request plain with the app.
+	// The -1 disables request latency.
+	res, err := s.app.Test(req, -1)
+
+	if err != nil {
+		s.T().Errorf("Error while calling /api/v1/pages %s", err)
+	}
+
+	// // verify that no error occured, that is not expected
+	assert.Equal(s.T(), res.StatusCode, 200)
+
+	d := json.NewDecoder(res.Body)
+	resData := []*models.PageCategory{}
+	err = d.Decode(&resData)
+
+	if err != nil {
+		s.T().Errorf("Error while decoding response of /api/v1/pages %s", err)
+	}
+
+	assert.Equal(s.T(), resData[0].Slug, c[0].Slug)
+	assert.Equal(s.T(), resData[1].Slug, c[1].Slug)
+}
+
+func (s *PageEndpointsTestSuite) TestFindPagesOfCategory() {
+
+	p, _ := s.prepareTestData()
+
+	req, _ := http.NewRequest(
+		"GET",
+		"/api/v1/pages/oznamy",
+		nil,
+	)
+
+	// Perform the request plain with the app.
+	// The -1 disables request latency.
+	res, err := s.app.Test(req, -1)
+
+	if err != nil {
+		s.T().Errorf("Error while calling /api/v1/pages/oznamy %s", err)
+	}
+
+	// // verify that no error occured, that is not expected
+	assert.Equal(s.T(), res.StatusCode, 200)
+
+	d := json.NewDecoder(res.Body)
+	resData := []*models.Page{}
+	err = d.Decode(&resData)
+
+	if err != nil {
+		s.T().Errorf("Error while decoding response of /api/v1/pages/oznamy %s", err)
+	}
+
+	assert.Equal(s.T(), resData[0].Slug, p[0].Slug)
+	assert.Equal(s.T(), resData[1].Slug, p[1].Slug)
+	assert.Len(s.T(), resData, 3)
+}
+
+func (s *PageEndpointsTestSuite) TestFindEmptyPagesOfCategory() {
+
+	s.prepareTestData()
+
+	req, _ := http.NewRequest(
+		"GET",
+		"/api/v1/pages/sluzby",
+		nil,
+	)
+
+	// Perform the request plain with the app.
+	// The -1 disables request latency.
+	res, err := s.app.Test(req, -1)
+
+	if err != nil {
+		s.T().Errorf("Error while calling /api/v1/pages/sluzby %s", err)
+	}
+
+	// // verify that no error occured, that is not expected
+	assert.Equal(s.T(), res.StatusCode, 200)
+
+	d := json.NewDecoder(res.Body)
+	resData := []*models.Page{}
+	err = d.Decode(&resData)
+
+	if err != nil {
+		s.T().Errorf("Error while decoding response of /api/v1/pages/sluzby %s", err)
+	}
+
+	assert.Len(s.T(), resData, 0)
+}
+
+func (s *PageEndpointsTestSuite) TestFindNotFoundPagesOfCategory() {
+
+	s.prepareTestData()
+
+	req, _ := http.NewRequest(
+		"GET",
+		"/api/v1/pages/other",
+		nil,
+	)
+
+	// Perform the request plain with the app.
+	// The -1 disables request latency.
+	res, err := s.app.Test(req, -1)
+
+	if err != nil {
+		s.T().Errorf("Error while calling /api/v1/pages/other %s", err)
+	}
+
+	// // verify that no error occured, that is not expected
+	assert.Equal(s.T(), res.StatusCode, 404)
+}
+
+func TestEndpointsTestSuite(t *testing.T) {
+	suite.Run(t, new(PageEndpointsTestSuite))
+}

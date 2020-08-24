@@ -33,9 +33,8 @@ type service struct {
 }
 
 // NewService return instance of service
-func NewService(repository Repository, signingKey []byte) Service {
-	tpl := template.Must(template.ParseGlob("templates/emails/*.html"))
-
+func NewService(repository Repository, signingKey []byte, templatePath string) Service {
+	tpl := template.Must(template.ParseGlob(fmt.Sprintf("%s/emails/*.html", templatePath)))
 	return &service{
 		repository,
 		signingKey,

@@ -1,11 +1,11 @@
 package main
 
 import (
-	"base-site-api/responses"
 	"os"
 
 	"github.com/joho/godotenv"
 
+	"base-site-api/app"
 	"base-site-api/config"
 
 	"github.com/gofiber/fiber"
@@ -46,41 +46,8 @@ func main() {
 		log.Fatal(err)
 	}
 
-	NewApp(c)
-}
-
-// NewApp function prepare whole app setup
-func NewApp(c *config.Config) *fiber.App {
-	// SETUP APP
-	app := fiber.New(&fiber.Settings{
-		Prefork:               true,
-		CaseSensitive:         true,
-		StrictRouting:         true,
-		DisableStartupMessage: true,
-		ErrorHandler: func(ctx *fiber.Ctx, err error) {
-			// Status code defaults to 500
-			code := fiber.StatusInternalServerError
-
-			// Retrieve the custom status code if it's an fiber.*Error
-			if e, ok := err.(*fiber.Error); ok {
-				code = e.Code
-			}
-
-			// Return HTTP response
-			ctx.Status(code).JSON(responses.ErrorResponse{
-				Error:   err.Error(),
-				Message: "",
-			})
-		},
-	})
-
-	configureGlobalMiddleware(app)
-
-	configureAPIRoutes(app, c)
-
+	app := app.NewApp(c)
 	startServer(app, c)
-
-	return app
 }
 
 func startServer(app *fiber.App, c *config.Config) {

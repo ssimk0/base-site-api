@@ -14,8 +14,9 @@ import (
 
 // Constants for whole application setup
 type Constants struct {
-	ADDRESS string
-	ENV     string
+	ADDRESS      string
+	ENV          string
+	TemplatePath string
 }
 
 // Config application with all constants and database
@@ -53,6 +54,7 @@ func New() (*Config, error) {
 	constants := Constants{}
 	constants.ENV = os.Getenv("GO_ENV")
 	constants.ADDRESS = os.Getenv("ADDRESS")
+	constants.TemplatePath = os.Getenv("TEMPLATE_PATH")
 
 	signingKey, err := ioutil.ReadFile(os.Getenv("JWT_KEY_PATH"))
 

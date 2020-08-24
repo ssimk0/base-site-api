@@ -24,7 +24,7 @@ func (s *RepositoryTestSuite) Setup() {
 		log.Fatal(err)
 	}
 
-	s.Conn.LogMode(true)
+	// s.Conn.LogMode(true)
 }
 
 // BeforeTest enable hook for cleaning database
