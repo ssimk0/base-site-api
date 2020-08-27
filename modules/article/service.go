@@ -4,9 +4,10 @@ import (
 	"base-site-api/models"
 	"base-site-api/modules"
 	"fmt"
+
 	"github.com/gosimple/slug"
 
-	log "github.com/sirupsen/logrus"
+	"base-site-api/log"
 )
 
 // Service interface for Article model

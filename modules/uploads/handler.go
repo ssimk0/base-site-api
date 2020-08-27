@@ -1,12 +1,13 @@
 package uploads
 
 import (
+	"base-site-api/log"
 	"base-site-api/models"
 	"base-site-api/modules"
 	"base-site-api/responses"
 	"base-site-api/utils"
+
 	"github.com/gofiber/fiber"
-	log "github.com/sirupsen/logrus"
 )
 
 // Handler for the uploads

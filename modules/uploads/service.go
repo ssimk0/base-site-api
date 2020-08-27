@@ -1,13 +1,14 @@
 package uploads
 
 import (
+	"base-site-api/log"
 	"base-site-api/models"
 	"base-site-api/modules"
 	"base-site-api/storage"
 	"fmt"
-	"github.com/gosimple/slug"
-	log "github.com/sirupsen/logrus"
 	"mime/multipart"
+
+	"github.com/gosimple/slug"
 )
 
 // Service interface for uploads

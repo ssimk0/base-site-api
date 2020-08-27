@@ -5,8 +5,9 @@ import (
 	"base-site-api/modules"
 	"base-site-api/responses"
 
+	"base-site-api/log"
+
 	"github.com/gofiber/fiber"
-	log "github.com/sirupsen/logrus"
 )
 
 // Handler auth

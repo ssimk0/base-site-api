@@ -3,11 +3,12 @@ package app
 import (
 	//"base-site-api/middleware"
 
+	"base-site-api/log"
+
 	"github.com/gofiber/fiber"
 	"github.com/gofiber/helmet"
 	"github.com/gofiber/logger"
 	"github.com/gofiber/recover"
-	log "github.com/sirupsen/logrus"
 )
 
 // TODO: wrote middleware for user permission
@@ -19,6 +20,8 @@ func configureGlobalMiddleware(app *fiber.App) {
 		},
 		Log: true,
 	}))
-	app.Use(logger.New())
+	app.Use(logger.New(logger.Config{
+		Output: log.Writer(),
+	}))
 	app.Use(helmet.New())
 }

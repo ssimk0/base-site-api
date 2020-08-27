@@ -1,13 +1,14 @@
 package article
 
 import (
+	"base-site-api/log"
 	"base-site-api/models"
 	"base-site-api/modules"
+	"testing"
+
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
-	log "github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
-	"testing"
 )
 
 type ArticleTestSuite struct {

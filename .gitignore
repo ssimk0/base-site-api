@@ -17,3 +17,5 @@
 .env
 .idea/
 tmp/
+
+logrus.log

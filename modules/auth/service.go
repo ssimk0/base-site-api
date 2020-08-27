@@ -1,11 +1,11 @@
 package auth
 
 import (
+	"base-site-api/log"
 	"base-site-api/models"
 	"base-site-api/utils"
 	"bytes"
 	"fmt"
-	log "github.com/sirupsen/logrus"
 	"html/template"
 	"os"
 	"strconv"

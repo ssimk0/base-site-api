@@ -1,11 +1,12 @@
 package page
 
 import (
+	"base-site-api/log"
 	"base-site-api/models"
 	"base-site-api/modules"
 	"base-site-api/responses"
+
 	"github.com/gofiber/fiber"
-	log "github.com/sirupsen/logrus"
 )
 
 // Handler page

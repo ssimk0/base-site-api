@@ -1,9 +1,10 @@
 package page
 
 import (
+	"base-site-api/log"
 	"base-site-api/models"
+
 	"github.com/gosimple/slug"
-	log "github.com/sirupsen/logrus"
 )
 
 // Service interface for pages

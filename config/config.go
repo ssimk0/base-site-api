@@ -1,7 +1,7 @@
 package config
 
 import (
-	log "github.com/sirupsen/logrus"
+	"base-site-api/log"
 	"io/ioutil"
 	"os"
 
