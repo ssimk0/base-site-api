@@ -10,8 +10,8 @@ import (
 
 var logger *log.Logger
 
-// SetupLogger init setup logger
-func SetupLogger() {
+// init setup logger
+func init() {
 	var logLevel log.Level
 	var err error
 
@@ -31,7 +31,7 @@ func SetupLogger() {
 	}
 
 	if err != nil {
-		logger.Fatalf("Fatal while loading env: %s", err)
+		logger.Warnf("Fatal while loading env: %s", err)
 	}
 
 	if os.Getenv("GO_ENV") == "development" {

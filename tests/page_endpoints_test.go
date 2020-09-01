@@ -1,41 +1,25 @@
 package tests
 
 import (
-	"base-site-api/app"
-	"base-site-api/config"
 	"base-site-api/models"
-	"base-site-api/modules"
 	"encoding/json"
 	"net/http"
 	"testing"
 
-	"github.com/gofiber/fiber"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
 
 type PageEndpointsTestSuite struct {
-	app *fiber.App
-	modules.RepositoryTestSuite
+	EndpointsTestSuite
 }
 
 func (s *PageEndpointsTestSuite) SetupTest() {
-	s.Setup()
+	s.SetupApp()
 	s.Conn.Debug().AutoMigrate(
 		&models.Page{},
 		&models.PageCategory{},
 	)
-
-	c := config.Config{
-		Constants: config.Constants{
-			ADDRESS:      "127.0.0.1:8081",
-			ENV:          "test",
-			TemplatePath: "../templates",
-		},
-		Database: s.Conn,
-	}
-
-	s.app = app.NewApp(&c)
 }
 
 func (s *PageEndpointsTestSuite) getTestPage() *models.Page {

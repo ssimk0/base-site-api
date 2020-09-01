@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	log.SetupLogger()
+	// log.SetupLogger()
 
 	c, err := config.New()
 
