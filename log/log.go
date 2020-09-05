@@ -1,9 +1,11 @@
 package log
 
 import (
+	"fmt"
 	"io"
 	"os"
 
+	"github.com/getsentry/sentry-go"
 	"github.com/joho/godotenv"
 	log "github.com/sirupsen/logrus"
 )
@@ -49,6 +51,21 @@ func init() {
 		}
 		file.Close()
 	})
+
+	initSentry()
+}
+
+func initSentry() {
+	err := sentry.Init(sentry.ClientOptions{
+		// Either set your DSN here or set the SENTRY_DSN environment variable.
+		Dsn: os.Getenv("SENTRY_DNS"),
+		// Enable printing of SDK debug messages.
+		// Useful when getting started or trying to figure something out.
+		Debug: false,
+	})
+	if err != nil {
+		log.Fatalf("sentry.Init: %s", err)
+	}
 }
 
 // Info log
@@ -72,22 +89,26 @@ func Debugf(format string, args ...interface{}) {
 }
 
 // Error log
-func Error(args ...interface{}) {
-	logger.Error(args...)
+func Error(err error) {
+	sentry.CaptureException(err)
+	logger.Error(err)
 }
 
 // Errorf log with format
 func Errorf(format string, args ...interface{}) {
+	sentry.CaptureException(fmt.Errorf(format, args...))
 	logger.Errorf(format, args...)
 }
 
 // Fatal log
-func Fatal(args ...interface{}) {
-	logger.Fatal(args...)
+func Fatal(err error) {
+	sentry.CaptureException(err)
+	logger.Fatal(err)
 }
 
 // Fatalf log with format
 func Fatalf(format string, args ...interface{}) {
+	sentry.CaptureException(fmt.Errorf(format, args...))
 	logger.Fatalf(format, args...)
 }
 

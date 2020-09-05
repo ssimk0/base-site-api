@@ -26,6 +26,6 @@ func startServer(app *fiber.App, c *config.Config) {
 	err := app.Listen(c.Constants.ADDRESS)
 
 	if err != nil {
-		log.Fatal(err.Error())
+		log.Fatal(err)
 	}
 }

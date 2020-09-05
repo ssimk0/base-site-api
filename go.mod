@@ -5,6 +5,7 @@ go 1.14
 require (
 	github.com/aws/aws-sdk-go v1.34.14
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
+	github.com/getsentry/sentry-go v0.7.0
 	github.com/gofiber/cors v0.2.2
 	github.com/gofiber/fiber v1.14.5
 	github.com/gofiber/helmet v0.1.2
