@@ -33,7 +33,7 @@ func initDB(env string) (*gorm.DB, error) {
 	}
 
 	conn.LogMode(env == "development")
-	conn.Debug().AutoMigrate(
+	conn.AutoMigrate(
 		&models.Article{},
 		&models.User{},
 		&models.ForgotPasswordToken{},

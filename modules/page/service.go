@@ -10,7 +10,7 @@ import (
 // Service interface for pages
 type Service interface {
 	FindCategories() ([]*models.PageCategory, error)
-	FindBySlug(slug string) (*models.Page, error)
+	FindBySlug(slug string) (*PageDetail, error)
 	FindAllByCategory(categorySlug string) ([]*models.Page, error)
 	Update(page *models.Page, id uint) error
 	Store(page *models.Page, categorySlug string, userID uint) (uint, error)
@@ -34,8 +34,16 @@ func (s *service) FindCategories() ([]*models.PageCategory, error) {
 }
 
 // FindBySlug return page by slug
-func (s *service) FindBySlug(slug string) (*models.Page, error) {
-	return s.repository.FindBySlug(slug)
+func (s *service) FindBySlug(slug string) (*PageDetail, error) {
+	page, children, err := s.repository.FindBySlug(slug)
+	if err != nil {
+		return nil, err
+	}
+
+	return &PageDetail{
+		*page,
+		children,
+	}, err
 }
 
 //  FindAllByCategory return pages based on category slug

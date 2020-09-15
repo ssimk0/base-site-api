@@ -2,6 +2,7 @@ package tests
 
 import (
 	"base-site-api/models"
+	"base-site-api/modules/page"
 	"encoding/json"
 	"net/http"
 	"testing"
@@ -103,7 +104,7 @@ func (s *PageEndpointsTestSuite) TestFindPageCategories() {
 		s.T().Errorf("Error while calling /api/v1/pages %s", err)
 	}
 
-	// // verify that no error occured, that is not expected
+	// // verify that no error occurred, that is not expected
 	assert.Equal(s.T(), res.StatusCode, 200)
 
 	d := json.NewDecoder(res.Body)
@@ -136,20 +137,20 @@ func (s *PageEndpointsTestSuite) TestFindPagesOfCategory() {
 		s.T().Errorf("Error while calling /api/v1/pages/oznamy %s", err)
 	}
 
-	// // verify that no error occured, that is not expected
+	// // verify that no error occurred, that is not expected
 	assert.Equal(s.T(), res.StatusCode, 200)
 
 	d := json.NewDecoder(res.Body)
-	resData := []*models.Page{}
+	var resData []*page.PageDetail
 	err = d.Decode(&resData)
 
 	if err != nil {
 		s.T().Errorf("Error while decoding response of /api/v1/pages/oznamy %s", err)
 	}
 
+	assert.Len(s.T(), resData, 3)
 	assert.Equal(s.T(), resData[0].Slug, p[0].Slug)
 	assert.Equal(s.T(), resData[1].Slug, p[1].Slug)
-	assert.Len(s.T(), resData, 3)
 }
 
 func (s *PageEndpointsTestSuite) TestFindEmptyPagesOfCategory() {
@@ -170,7 +171,7 @@ func (s *PageEndpointsTestSuite) TestFindEmptyPagesOfCategory() {
 		s.T().Errorf("Error while calling /api/v1/pages/sluzby %s", err)
 	}
 
-	// // verify that no error occured, that is not expected
+	// // verify that no error occurred, that is not expected
 	assert.Equal(s.T(), res.StatusCode, 200)
 
 	d := json.NewDecoder(res.Body)
@@ -202,7 +203,7 @@ func (s *PageEndpointsTestSuite) TestFindNotFoundPagesOfCategory() {
 		s.T().Errorf("Error while calling /api/v1/pages/other %s", err)
 	}
 
-	// // verify that no error occured, that is not expected
+	// // verify that no error occurred, that is not expected
 	assert.Equal(s.T(), res.StatusCode, 404)
 }
 
