@@ -54,7 +54,11 @@ func (r *repository) FindAll(order string, offset int, limit int) ([]*models.Art
 	var articles []*models.Article
 	var count int
 
-	if err := r.db.Set("gorm:auto_preload", true).Model(&models.Article{}).Offset(offset).Limit(limit).Order(order).Where("published = 1").Find(&articles).Count(&count).Error; err != nil {
+	if err := r.db.Set("gorm:auto_preload", true).Model(&models.Article{}).Order(order).Where("published = 1").Count(&count).Error; err != nil {
+		return nil, 0, err
+	}
+
+	if err := r.db.Set("gorm:auto_preload", true).Model(&models.Article{}).Offset(offset).Limit(limit).Order(order).Where("published = 1").Find(&articles).Error; err != nil {
 		return nil, 0, err
 	}
 
