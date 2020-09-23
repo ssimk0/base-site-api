@@ -31,7 +31,7 @@ func NewRepository(db *gorm.DB) Repository {
 func (r *repository) FindCategories() ([]*models.PageCategory, error) {
 	var c []*models.PageCategory
 
-	if err := r.db.Find(&c).Error; err != nil {
+	if err := r.db.Set("gorm:auto_preload", true).Find(&c).Error; err != nil {
 		return nil, err
 	}
 
@@ -42,7 +42,7 @@ func (r *repository) FindCategories() ([]*models.PageCategory, error) {
 func (r *repository) FindCategoryBySlug(slug string) (*models.PageCategory, error) {
 	var c models.PageCategory
 
-	if err := r.db.Model(&models.PageCategory{}).Where("slug = ?", slug).First(&c).Error; err != nil {
+	if err := r.db.Set("gorm:auto_preload", true).Model(&models.PageCategory{}).Where("slug = ?", slug).First(&c).Error; err != nil {
 		return nil, err
 	}
 
@@ -69,7 +69,7 @@ func (r *repository) FindBySlug(slug string) (*models.Page, []*models.Page, erro
 	var c models.Page
 	var child []*models.Page
 
-	if err := r.db.Model(c).Where("slug = ?", slug).Find(&c).Error; err != nil {
+	if err := r.db.Set("gorm:auto_preload", true).Model(c).Where("slug = ?", slug).Find(&c).Error; err != nil {
 		return nil, nil, err
 	}
 
@@ -84,7 +84,7 @@ func (r *repository) FindBySlug(slug string) (*models.Page, []*models.Page, erro
 func (r *repository) Find(id uint) (*models.Page, error) {
 	page := models.Page{}
 
-	if err := r.db.First(&page, id).Error; err != nil {
+	if err := r.db.Set("gorm:auto_preload", true).First(&page, id).Error; err != nil {
 		return nil, err
 	}
 
