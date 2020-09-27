@@ -5,21 +5,16 @@ import (
 
 	"base-site-api/log"
 
-	"github.com/gofiber/fiber"
-	"github.com/gofiber/helmet"
-	"github.com/gofiber/logger"
-	"github.com/gofiber/recover"
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/gofiber/helmet/v2"
+
+	"github.com/gofiber/fiber/v2/middleware/recover"
 )
 
 // TODO: wrote middleware for user permission
 func configureGlobalMiddleware(app *fiber.App) {
-	app.Use(recover.New(recover.Config{
-		Handler: func(c *fiber.Ctx, err error) {
-			log.Error(err)
-			c.SendStatus(500)
-		},
-		Log: true,
-	}))
+	app.Use(recover.New())
 	app.Use(logger.New(logger.Config{
 		Output: log.Writer(),
 	}))

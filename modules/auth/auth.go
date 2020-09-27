@@ -3,7 +3,7 @@ package auth
 import (
 	"base-site-api/config"
 	"base-site-api/middleware/auth"
-	"github.com/gofiber/fiber"
+	"github.com/gofiber/fiber/v2"
 )
 
 func postOnlyFilter(c *fiber.Ctx) bool {
