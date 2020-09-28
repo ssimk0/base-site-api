@@ -1,7 +1,7 @@
 package modules
 
 import (
-	"github.com/gofiber/fiber"
+	"github.com/gofiber/fiber/v2"
 	"math"
 	"strconv"
 )
@@ -21,20 +21,22 @@ func (h *Handler) CalculatePagination(page int, size int, count int) *Pagination
 }
 
 // JSON handle json response and error handling for handler
-func (h *Handler) JSON(c *fiber.Ctx, status int, data interface{}) {
+func (h *Handler) JSON(c *fiber.Ctx, status int, data interface{}) error {
 	if err := c.Status(status).JSON(data); err != nil {
-		c.Next(err)
+		return err
 	}
+
+	return nil
 }
 
 // Error Handle Error response
-func (h *Handler) Error(c *fiber.Ctx, status int) {
-	c.Next(fiber.NewError(status))
+func (h *Handler) Error(c *fiber.Ctx, status int) error {
+	return fiber.NewError(status)
 }
 
 // ErrorWithMessage Handle Error response with custom message
-func (h *Handler) ErrorWithMessage(c *fiber.Ctx, status int, message string) {
-	c.Next(fiber.NewError(status, message))
+func (h *Handler) ErrorWithMessage(c *fiber.Ctx, status int, message string) error {
+	return fiber.NewError(status, message)
 }
 
 // ParseUserID parse user id from context and convert it to uint

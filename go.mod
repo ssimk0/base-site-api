@@ -3,14 +3,11 @@ module base-site-api
 go 1.14
 
 require (
-	github.com/aws/aws-sdk-go v1.34.23
+	github.com/aws/aws-sdk-go v1.34.32
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/getsentry/sentry-go v0.7.0
-	github.com/gofiber/cors v0.2.2
-	github.com/gofiber/fiber v1.14.6
-	github.com/gofiber/helmet v0.1.2
-	github.com/gofiber/logger v0.2.4
-	github.com/gofiber/recover v0.1.2
+	github.com/gofiber/fiber/v2 v2.0.2
+	github.com/gofiber/helmet/v2 v2.0.0
 	github.com/gorilla/schema v1.2.0 // indirect
 	github.com/gosimple/slug v1.9.0
 	github.com/jinzhu/gorm v1.9.16
@@ -22,6 +19,6 @@ require (
 	github.com/stretchr/testify v1.6.1
 	github.com/valyala/fasttemplate v1.2.1 // indirect
 	golang.org/x/crypto v0.0.0-20200820211705-5c72a883971a
-	golang.org/x/sys v0.0.0-20200909081042-eff7692f9009 // indirect
+	golang.org/x/sys v0.0.0-20200926100807-9d91bd62050c // indirect
 	gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776 // indirect
 )

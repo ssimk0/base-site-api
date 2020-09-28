@@ -7,7 +7,7 @@ import (
 
 	"base-site-api/log"
 
-	"github.com/gofiber/fiber"
+	"github.com/gofiber/fiber/v2"
 )
 
 // Handler auth
@@ -24,68 +24,58 @@ func NewHandler(s Service) *Handler {
 }
 
 // Login handler return the JWT token
-func (h *Handler) Login(c *fiber.Ctx) {
+func (h *Handler) Login(c *fiber.Ctx) error {
 	r := &LoginRequest{}
 
 	if err := c.BodyParser(r); err != nil {
 		log.Debugf("Wrong request login: %s", err)
-		h.Error(c, 403)
-
-		return
+		return h.Error(c, 403)
 	}
 
 	token, err := h.service.Login(r.Username, r.Password)
 
 	if err != nil {
 		log.Debugf("Error while login in: %s", err)
-		h.Error(c, 403)
-
-		return
+		return h.Error(c, 403)
 	}
 
-	h.JSON(c, 200, &TokenResponse{
+	return h.JSON(c, 200, &TokenResponse{
 		Token: token,
 	})
 }
 
 // RegisterUser validate and register the user
-func (h *Handler) RegisterUser(c *fiber.Ctx) {
+func (h *Handler) RegisterUser(c *fiber.Ctx) error {
 	u := &UserRequest{}
 
 	if err := c.BodyParser(u); err != nil {
-		h.Error(c, 400)
-
-		return
+		return h.Error(c, 400)
 	}
 
 	err := h.service.RegisterUser(u)
 
 	if err != nil {
 		log.Errorf("Error while register user: %s", err)
-		h.Error(c, 400)
-
-		return
+		return h.Error(c, 400)
 	}
 
-	h.JSON(c, 201, &responses.SuccessResponse{
+	return h.JSON(c, 201, &responses.SuccessResponse{
 		Success: true,
 		ID:      0,
 	})
 }
 
 // GetUserInfo return all necessary information about the user based on JWT token
-func (h *Handler) GetUserInfo(c *fiber.Ctx) {
+func (h *Handler) GetUserInfo(c *fiber.Ctx) error {
 	userID := h.ParseUserID(c)
 	u, err := h.service.UserInfo(userID)
 	if err != nil {
 		log.Errorf("Error while getting the userinfo: %s", err)
 
-		h.Error(c, 500)
-
-		return
+		return h.Error(c, 500)
 	}
 
-	h.JSON(c, 200, UserInfoResponse{
+	return h.JSON(c, 200, UserInfoResponse{
 		Email:     u.Email,
 		FirstName: u.FirstName,
 		LastName:  u.LastName,
@@ -95,14 +85,12 @@ func (h *Handler) GetUserInfo(c *fiber.Ctx) {
 }
 
 // ForgotPassword based on email
-func (h *Handler) ForgotPassword(c *fiber.Ctx) {
+func (h *Handler) ForgotPassword(c *fiber.Ctx) error {
 	u := &models.User{}
 
 	if err := c.BodyParser(u); err != nil {
 		log.Errorf("Error while parsing body: %s", err)
-		h.Error(c, 400)
-
-		return
+		return h.Error(c, 400)
 	}
 
 	err := h.service.ForgotPassword(u.Email)
@@ -110,34 +98,27 @@ func (h *Handler) ForgotPassword(c *fiber.Ctx) {
 	if err != nil {
 		log.Errorf("Error while processing forgot password: %s", err)
 
-		h.Error(c, 400)
-
-		return
-
+		return h.Error(c, 400)
 	}
 
-	h.JSON(c, 200, &responses.SuccessResponse{
+	return h.JSON(c, 200, &responses.SuccessResponse{
 		Success: true,
 		ID:      0,
 	})
 }
 
 // ResetPassword based on token from ForgotPassword
-func (h *Handler) ResetPassword(c *fiber.Ctx) {
+func (h *Handler) ResetPassword(c *fiber.Ctx) error {
 	u := &ResetPasswordRequest{}
 	token := c.Params("token")
 
 	if err := c.BodyParser(u); err != nil {
 		log.Errorf("Error while parsing reset password body: %s", err)
-		h.Error(c, 400)
-
-		return
+		return h.Error(c, 400)
 	}
 
 	if u.Password != u.PasswordConfirm {
-		h.Error(c, 400)
-
-		return
+		return h.Error(c, 400)
 	}
 
 	err := h.service.ResetPassword(token, u.Password)
@@ -145,12 +126,10 @@ func (h *Handler) ResetPassword(c *fiber.Ctx) {
 	if err != nil {
 		log.Errorf("Error while processing reset password: %s", err)
 
-		h.Error(c, 400)
-
-		return
+		return h.Error(c, 400)
 	}
 
-	h.JSON(c, 200, responses.SuccessResponse{
+	return h.JSON(c, 200, responses.SuccessResponse{
 		Success: true,
 		ID:      0,
 	})

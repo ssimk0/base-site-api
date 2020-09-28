@@ -4,18 +4,18 @@ import (
 	"base-site-api/config"
 	"base-site-api/responses"
 
-	"github.com/gofiber/fiber"
+	"github.com/gofiber/fiber/v2"
 )
 
 // NewApp function prepare whole app setup
 func NewApp(c *config.Config) *fiber.App {
 	// SETUP APP
-	app := fiber.New(&fiber.Settings{
+	app := fiber.New(fiber.Config{
 		Prefork:               true,
 		CaseSensitive:         true,
 		StrictRouting:         true,
 		DisableStartupMessage: true,
-		ErrorHandler: func(ctx *fiber.Ctx, err error) {
+		ErrorHandler: func(c *fiber.Ctx, err error) error {
 			// Status code defaults to 500
 			code := fiber.StatusInternalServerError
 
@@ -25,7 +25,7 @@ func NewApp(c *config.Config) *fiber.App {
 			}
 
 			// Return HTTP response
-			ctx.Status(code).JSON(responses.ErrorResponse{
+			return c.Status(code).JSON(responses.ErrorResponse{
 				Error:   err.Error(),
 				Message: "",
 			})

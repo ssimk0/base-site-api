@@ -4,7 +4,7 @@ import (
 	"base-site-api/config"
 	"base-site-api/middleware/auth"
 
-	"github.com/gofiber/fiber"
+	"github.com/gofiber/fiber/v2"
 )
 
 type Pages struct {

@@ -9,7 +9,7 @@ import (
 	"strings"
 
 	"github.com/dgrijalva/jwt-go"
-	"github.com/gofiber/fiber"
+	"github.com/gofiber/fiber/v2"
 )
 
 // Config for auth middleware
@@ -25,20 +25,18 @@ func FilterGetOnly(c *fiber.Ctx) bool {
 }
 
 // New return the middleware function
-func New(cfg *Config) func(*fiber.Ctx) {
+func New(cfg *Config) fiber.Handler {
 	// Return middleware handler
-	return func(c *fiber.Ctx) {
+	return func(c *fiber.Ctx) error {
 
 		if cfg.Filter != nil && cfg.Filter(c) {
-			c.Next()
-			return
+			return c.Next()
 		}
 
 		// Get authorization header
 		tokenString := c.Get(fiber.HeaderAuthorization)
 		if len(tokenString) < 7 {
-			c.Status(http.StatusUnauthorized).Send(fmt.Errorf("no token set in headers"))
-			return
+			return fiber.NewError(http.StatusUnauthorized, "no token set in headers")
 		}
 
 		if strings.HasPrefix(tokenString, "Bearer") {
@@ -55,37 +53,33 @@ func New(cfg *Config) func(*fiber.Ctx) {
 		})
 
 		if err != nil {
-			c.Status(http.StatusUnauthorized).Send(fmt.Errorf("could not parse the token, %v", err))
-			return
+			return fiber.NewError(http.StatusUnauthorized, fmt.Sprintf("could not parse the token, %v", err))
+
 		}
 
 		// getting claims
 		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 			userID, err := strconv.ParseUint(claims["jti"].(string), 10, 32)
 			if err != nil {
-				c.Status(http.StatusUnauthorized).Send(fmt.Errorf("failed to validate token: %v", claims))
-				return
+				return fiber.NewError(http.StatusUnauthorized, fmt.Sprintf("failed to validate token: %v", claims))
 			}
 
 			user := models.User{}
 
 			if err := cfg.DB.First(&user, userID).Error; err != nil {
-				c.Status(http.StatusUnauthorized).Send(fmt.Errorf("failed to validate token: %v", claims))
-				return
+				return fiber.NewError(http.StatusUnauthorized, fmt.Sprintf("failed to validate token: %v", claims))
 			}
 
 			if user.CanEdit || user.IsAdmin {
 				c.Locals("userID", uint(userID))
 			} else {
 
-				c.Status(http.StatusUnauthorized).Send(fmt.Errorf("failed to validate token: %v", claims))
-				return
+				return fiber.NewError(http.StatusUnauthorized, fmt.Sprintf("failed to validate token: %v", claims))
 			}
 
 		} else {
-			c.Status(http.StatusUnauthorized).Send(fmt.Errorf("failed to validate token: %v", claims))
-			return
+			return fiber.NewError(http.StatusUnauthorized, fmt.Sprintf("failed to validate token: %v", claims))
 		}
-		c.Next()
+		return c.Next()
 	}
 }
