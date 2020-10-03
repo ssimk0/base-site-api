@@ -21,10 +21,6 @@ func NewUploadHandler(s upload.Service) *UploadHandler {
 	}
 }
 
-type Categories struct {
-	categories *[]*upload.UploadCategory
-}
-
 func (h *UploadHandler) ListCategories(c *fiber.Ctx) error {
 	s := c.Params("type")
 

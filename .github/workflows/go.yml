@@ -44,7 +44,7 @@ jobs:
 
       - name: Build
         run: |
-          env GOOS=linux go build -o app -v *.go
+          env GOOS=linux go build -o app -v cmd/base-site-api/main.go
 
       - name: Upload artifact
         uses: actions/upload-artifact@v2

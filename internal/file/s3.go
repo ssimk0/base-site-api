@@ -65,8 +65,14 @@ func (s3 *S3Storage) Store(f *multipart.FileHeader, p string) (*UploadFile, erro
 
 		if ext == "jpg" || ext == "jpeg" {
 			img, err = jpeg.Decode(r)
+			if err != nil {
+				return nil, err
+			}
 		} else if ext == "png" {
 			img, err = png.Decode(r)
+			if err != nil {
+				return nil, err
+			}
 		}
 
 		width := 1920
@@ -141,6 +147,9 @@ func (s3 *S3Storage) uploadFile(file io.Reader, path string) (string, error) {
 func (s3 *S3Storage) uploadToS3(filePath string, file io.Reader) (*s3manager.UploadOutput, error) {
 
 	sess, err := session.NewSession(s3.config)
+	if err != nil {
+		return nil, err
+	}
 
 	uploader := s3manager.NewUploader(sess)
 

@@ -31,7 +31,7 @@ func ParsePagination(c *fiber.Ctx) (int, int) {
 			size = 10
 		}
 
-		page = int(x)
+		size = int(x)
 	}
 
 	return page, size

@@ -20,21 +20,6 @@ func (s *UploadTestSuite) SetupTest() {
 	)
 }
 
-func (s *UploadTestSuite) getTestUpload() *Upload {
-	return &Upload{
-		File:        "file",
-		Thumbnail:   "thum",
-		Description: "desc",
-	}
-}
-
-func (s *UploadTestSuite) getTestUploadCategory() *UploadCategory {
-	return &UploadCategory{
-		Name: "Test",
-		Slug: "test",
-	}
-}
-
 func (s *UploadTestSuite) prepareTestData() ([]*Upload, []*UploadCategory, *UploadType) {
 	uploadtype := &UploadType{
 		Name: "media",

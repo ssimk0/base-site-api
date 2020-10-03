@@ -30,13 +30,6 @@ func (s *PageTestSuite) getTestPage() *Page {
 	}
 }
 
-func (s *PageTestSuite) getTestPageCategory() *PageCategory {
-	return &PageCategory{
-		Name: "Test",
-		Slug: "test",
-	}
-}
-
 func (s *PageTestSuite) prepareTestData() ([]*Page, []*PageCategory) {
 	pages := []*Page{
 		{
@@ -87,15 +80,15 @@ func (s *PageTestSuite) TestFindCategories() {
 	_, categories := s.prepareTestData()
 	r := NewRepository(s.Conn)
 
-	categories, err := r.FindCategories()
+	c, err := r.FindCategories()
 
 	if err != nil {
 		s.T().Errorf("Error List page categories %s", err)
 	}
 
-	assert.Len(s.T(), categories, len(categories))
+	assert.Len(s.T(), c, len(categories))
 
-	assert.Equal(s.T(), categories[0].Name, categories[0].Name)
+	assert.Equal(s.T(), c[0].Name, categories[0].Name)
 }
 
 func (s *PageTestSuite) TestCategoryBySlug() {

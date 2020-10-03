@@ -22,23 +22,6 @@ func (s *PageEndpointsTestSuite) SetupTest() {
 	)
 }
 
-func (s *PageEndpointsTestSuite) getTestPage() *page.Page {
-	return &page.Page{
-		Title:      "Test",
-		Body:       "Body",
-		Slug:       "test",
-		UserID:     uint(1),
-		CategoryID: uint(1),
-	}
-}
-
-func (s *PageEndpointsTestSuite) getTestPageCategory() *page.PageCategory {
-	return &page.PageCategory{
-		Name: "Test",
-		Slug: "test",
-	}
-}
-
 func (s *PageEndpointsTestSuite) prepareTestData() ([]*page.Page, []*page.PageCategory) {
 	pages := []*page.Page{
 		{
