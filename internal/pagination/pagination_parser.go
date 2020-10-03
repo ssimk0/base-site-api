@@ -16,22 +16,19 @@ func ParsePagination(c *fiber.Ctx) (int, int) {
 		page = 1
 	} else {
 		x, err := strconv.ParseInt(p, 10, 32)
-		if err != nil {
-			page = 1
+		if err == nil {
+			page = int(x)
 		}
-
-		page = int(x)
 	}
 
 	if s == "" {
 		size = 10
 	} else {
 		x, err := strconv.ParseInt(s, 10, 32)
-		if err != nil {
-			size = 10
+		if err == nil {
+			size = int(x)
 		}
 
-		size = int(x)
 	}
 
 	return page, size

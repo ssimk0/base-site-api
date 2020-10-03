@@ -18,7 +18,7 @@ func (s *EndpointsTestSuite) SetupApp() {
 		Constants: http.Constants{
 			ADDRESS:      "127.0.0.1:8081",
 			ENV:          "test",
-			TemplatePath: "../templates",
+			TemplatePath: "../../templates",
 		},
 		Database: s.Conn,
 	}
