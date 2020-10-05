@@ -18,6 +18,7 @@ require (
 	github.com/mattn/go-sqlite3 v1.14.4 // indirect
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
 	github.com/sirupsen/logrus v1.7.0
+	github.com/spf13/viper v1.3.2
 	github.com/stretchr/testify v1.6.1
 	github.com/valyala/fasttemplate v1.2.1 // indirect
 	golang.org/x/crypto v0.0.0-20201002170205-7f63de1d35b0

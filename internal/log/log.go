@@ -1,6 +1,7 @@
 package log
 
 import (
+	"base-site-api/internal/app/config"
 	"fmt"
 	"io"
 	"os"
@@ -13,16 +14,11 @@ import (
 var logger *log.Logger
 
 // init setup logger
-func init() {
+func Setup(c *config.ApplicationConfiguration) {
 	var logLevel log.Level
 	var err error
 
 	logger = log.New()
-
-	file, err := os.OpenFile("logrus.log", os.O_APPEND|os.O_CREATE|os.O_RDWR, 0666)
-	if err != nil {
-		log.Fatalf("Fatal while opening out: %s", err)
-	}
 
 	logger.SetFormatter(&log.TextFormatter{})
 
@@ -43,14 +39,25 @@ func init() {
 	}
 
 	logger.SetLevel(logLevel)
-	logger.SetOutput(io.MultiWriter(os.Stdout, file))
-
-	log.RegisterExitHandler(func() {
-		if file == nil {
-			return
+	if c.LogToFile {
+		file, err := os.OpenFile("logrus.log", os.O_APPEND|os.O_CREATE|os.O_RDWR, 0666)
+		if err != nil {
+			log.Fatalf("Fatal while opening out: %s", err)
 		}
-		file.Close()
-	})
+
+		logger.SetOutput(io.MultiWriter(os.Stdout, file))
+		log.RegisterExitHandler(func() {
+			if file == nil {
+				return
+			}
+			err := file.Close()
+			if err != nil {
+				log.Debug("Problem with closing file %s", err)
+			}
+		})
+	} else {
+		logger.SetOutput(os.Stdout)
+	}
 
 	initSentry()
 }

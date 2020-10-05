@@ -1,0 +1,5 @@
+Prefork: true
+CaseSensitive: true
+StrictRouting: true
+DisableStartupMessage: true
+ServerHeader: ""

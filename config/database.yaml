@@ -1,0 +1,3 @@
+Driver: "sqlite"
+Database: "site.db"
+Debug: false

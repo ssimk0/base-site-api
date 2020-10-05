@@ -1,0 +1,3 @@
+SigningKeyPath: "jwtRS256.key"
+Debug: true
+Listen: "127.0.0.1:8081"

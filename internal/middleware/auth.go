@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"base-site-api/internal/auth"
+	"base-site-api/internal/app/models"
 	"fmt"
 	"github.com/jinzhu/gorm"
 	"net/http"
@@ -64,7 +64,7 @@ func NewAuthMiddleware(cfg *Config) fiber.Handler {
 				return fiber.NewError(http.StatusUnauthorized, fmt.Sprintf("failed to validate token: %v", claims))
 			}
 
-			user := auth.User{}
+			user := models.User{}
 
 			if err := cfg.DB.First(&user, userID).Error; err != nil {
 				return fiber.NewError(http.StatusUnauthorized, fmt.Sprintf("failed to validate token: %v", claims))
