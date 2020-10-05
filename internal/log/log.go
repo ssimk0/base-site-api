@@ -7,7 +7,6 @@ import (
 	"os"
 
 	"github.com/getsentry/sentry-go"
-	"github.com/joho/godotenv"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -16,29 +15,19 @@ var logger *log.Logger
 // init setup logger
 func Setup(c *config.ApplicationConfiguration) {
 	var logLevel log.Level
-	var err error
 
 	logger = log.New()
 
 	logger.SetFormatter(&log.TextFormatter{})
 
-	if os.Getenv("GO_ENV") == "testing" {
-		err = godotenv.Load(".test.env")
-	} else {
-		err = godotenv.Load()
-	}
-
-	if err != nil {
-		logger.Warnf("Fatal while loading env: %s", err)
-	}
-
-	if os.Getenv("GO_ENV") == "development" {
+	if c.Debug {
 		logLevel = log.DebugLevel
 	} else {
 		logLevel = log.InfoLevel
 	}
 
 	logger.SetLevel(logLevel)
+
 	if c.LogToFile {
 		file, err := os.OpenFile("logrus.log", os.O_APPEND|os.O_CREATE|os.O_RDWR, 0666)
 		if err != nil {
@@ -52,7 +41,7 @@ func Setup(c *config.ApplicationConfiguration) {
 			}
 			err := file.Close()
 			if err != nil {
-				log.Debug("Problem with closing file %s", err)
+				log.Debugf("Problem with closing file %s", err)
 			}
 		})
 	} else {
