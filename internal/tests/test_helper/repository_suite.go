@@ -2,6 +2,7 @@ package test_helper
 
 import (
 	"base-site-api/internal/app/config"
+	"base-site-api/internal/database"
 	"base-site-api/internal/log"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite" // Need to be imported for sqlite to make it work
@@ -17,18 +18,17 @@ type RepositoryTestSuite struct {
 
 // Setup prepare sqlite  database
 func (s *RepositoryTestSuite) Setup() {
-
-	var err error
 	log.Setup(&config.ApplicationConfiguration{
 		LogToFile: false,
 	})
 
-	s.Conn, err = gorm.Open("sqlite3", "/tmp/gorm.db")
-	if err != nil {
-		log.Fatal(err)
-	}
+	database.Connect(&config.DatabaseConfiguration{
+		Driver:   "sqlite",
+		Database: "/tmp/test.db",
+	})
 
-	//s.Conn.LogMode(true)
+	s.Conn = database.Instance()
+
 }
 
 // BeforeTest enable hook for cleaning database

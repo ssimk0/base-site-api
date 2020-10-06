@@ -17,8 +17,8 @@ type AuthTestSuite struct {
 func (s *AuthTestSuite) SetupTest() {
 	s.Setup()
 	s.Conn.Debug().AutoMigrate(
-		&models.User{},
 		&models.ForgotPasswordToken{},
+		&models.User{},
 	)
 }
 
