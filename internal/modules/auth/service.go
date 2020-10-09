@@ -2,13 +2,12 @@ package auth
 
 import (
 	"base-site-api/internal/app/models"
-	email2 "base-site-api/internal/email"
+	"base-site-api/internal/email"
 	"base-site-api/internal/log"
 	"base-site-api/internal/random"
 	"bytes"
 	"fmt"
 	"html/template"
-	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -22,6 +21,7 @@ type service struct {
 	repository Repository
 	signingKey []byte
 	templates  *template.Template
+	emailer    email.Emailer
 }
 
 // NewService return instance of service
@@ -31,6 +31,7 @@ func NewService(repository Repository, signingKey []byte, templatePath string) S
 		repository,
 		signingKey,
 		tpl,
+		email.Instance(),
 	}
 }
 
@@ -51,7 +52,7 @@ func (s *service) Login(username string, password string) (string, error) {
 
 	claims := jwt.StandardClaims{
 		ExpiresAt: time.Now().Add(oneWeek()).Unix(),
-		Issuer:    fmt.Sprintf("%s.api.go-with-jwt.it", os.Getenv("GO_ENV")),
+		Issuer:    "go-with-jwt.it",
 		Id:        strconv.FormatUint(uint64(u.ID), 10),
 		Subject:   strconv.FormatUint(uint64(u.ID), 10),
 	}
@@ -78,7 +79,7 @@ type forgotPasswordMailData struct {
 }
 
 // ForgotPassword send email with ForgotPasswordToken
-func (s *service) ForgotPassword(email string) error {
+func (s *service) ForgotPassword(email string, appUrl string) error {
 	user, err := s.repository.FindByEmail(email)
 
 	if err != nil {
@@ -100,14 +101,14 @@ func (s *service) ForgotPassword(email string) error {
 	w := &bytes.Buffer{}
 	err = s.templates.ExecuteTemplate(w, "forgot-password.html", forgotPasswordMailData{
 		FirstName: user.FirstName,
-		Link:      fmt.Sprintf("%s/reset-password?token=%s", os.Getenv("APP_URI"), token.Token),
+		Link:      fmt.Sprintf("%s/reset-password?token=%s", appUrl, token.Token),
 	})
 
 	if err != nil {
 		return err
 	}
 
-	err = email2.SendMail(email, w.Bytes())
+	err = s.emailer.SendMail(email, w.Bytes())
 	return err
 }
 

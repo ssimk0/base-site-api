@@ -2,9 +2,9 @@ package upload
 
 import (
 	"base-site-api/internal/app/models"
-	"base-site-api/internal/file"
 	"base-site-api/internal/log"
 	"base-site-api/internal/pagination"
+	"base-site-api/internal/storage"
 	"fmt"
 	"mime/multipart"
 
@@ -14,14 +14,14 @@ import (
 func NewService(r Repository) Service {
 	return &service{
 		repository: r,
-		s3:         file.NewS3(),
+		store:      storage.Instance(),
 	}
 }
 
 type service struct {
 	pagination.Service
 	repository Repository
-	s3         *file.S3Storage
+	store      storage.Storage
 }
 
 // UploadCategories by type slug
@@ -35,7 +35,7 @@ func (s *service) UploadsByCategory(categorySlug string, page int, size int) ([]
 	return s.repository.FindUploadsByCategory(categorySlug, l, o)
 }
 
-// Store upload the file and save the row to db with all information about the file itself
+// Store upload the storage and save the row to db with all information about the storage itself
 func (s *service) Store(file *multipart.FileHeader, categorySlug string, typeSlug string) (*models.Upload, error) {
 	category, err := s.repository.FindCategoryBySlug(categorySlug)
 	if err != nil {
@@ -46,8 +46,8 @@ func (s *service) Store(file *multipart.FileHeader, categorySlug string, typeSlu
 	if err != nil {
 		return nil, err
 	}
-
-	f, err := s.s3.Store(file, fmt.Sprintf("%s/%s", t.Slug, category.SubPath))
+	log.Debug(s.store)
+	f, err := s.store.Store(file, fmt.Sprintf("%s/%s", t.Slug, category.SubPath))
 
 	if err != nil {
 		return nil, err

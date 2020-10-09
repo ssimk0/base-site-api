@@ -36,7 +36,9 @@ func (h *UploadHandler) ListCategories(c *fiber.Ctx) error {
 
 func (h *UploadHandler) ListUploads(c *fiber.Ctx) error {
 	s := c.Params("uploadCategory")
-	page, size := pagination.ParsePagination(c)
+	qp := c.Query("p")
+	qs := c.Query("s")
+	page, size := pagination.ParsePagination(qp, qs)
 
 	uploads, count, err := h.service.UploadsByCategory(s, page, size)
 
@@ -44,7 +46,6 @@ func (h *UploadHandler) ListUploads(c *fiber.Ctx) error {
 		log.Debugf("Error while getting upload by category slug %s", err)
 		return h.Error(404)
 	}
-
 	p := h.CalculatePagination(page, size, count)
 
 	return h.JSON(c, 200, upload.PaginatedUploads{

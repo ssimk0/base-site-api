@@ -1,0 +1,5 @@
+SmtpHost: "smtp.websupport.sk"
+Port: 465
+Username: "noreply@domcek.org"
+Password: "zUd0Dan4ToR8"
+Encryption: ssl

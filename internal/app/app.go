@@ -5,8 +5,10 @@ import (
 	"base-site-api/internal/app/dto"
 	"base-site-api/internal/app/models"
 	"base-site-api/internal/database"
+	"base-site-api/internal/email"
 	"base-site-api/internal/log"
 	"base-site-api/internal/routes"
+	"base-site-api/internal/storage"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/compress"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -34,6 +36,10 @@ func New(c *config.Config) *fiber.App {
 	}
 
 	database.Connect(&c.Database)
+	// TODO: find better way to share storage and email instance
+	storage.Initialize(&c.Storage)
+	email.Initialize(&c.Email)
+
 	log.Setup(&c.App)
 
 	database.Instance().AutoMigrate(
@@ -49,6 +55,11 @@ func New(c *config.Config) *fiber.App {
 
 	// SETUP APP
 	app := fiber.New(c.Fiber)
+
+	app.Use(func(ctx *fiber.Ctx) error {
+		ctx.Locals("APP_URL", c.App.AppURL)
+		return ctx.Next()
+	})
 
 	// Use the Logger Middleware if enabled
 	if c.Enabled["logger"] {

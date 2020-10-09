@@ -1,0 +1,6 @@
+Type: "s3"
+Endpoint: "https://s3.nl-ams.scw.cloud"
+Region: "nl-ams"
+Bucket: "sk.veselahviezdicka"
+AccessKey: "SCWJPC8H8VF61Q5MB8HB"
+SecretKey: "49c8c97b-49eb-421f-a45f-4a345ae3221b"

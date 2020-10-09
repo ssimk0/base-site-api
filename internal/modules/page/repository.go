@@ -63,7 +63,7 @@ func (r *repository) FindBySlug(slug string) (*models.Page, []*models.Page, erro
 		return nil, nil, err
 	}
 
-	if err := r.db.Debug().Model(&models.Page{}).Where("parent_page_id = ?", c.ID).Find(&child).Error; err != nil {
+	if err := r.db.Set("gorm:auto_preload", true).Model(&models.Page{}).Where("parent_page_id = ?", c.ID).Find(&child).Error; err != nil {
 		return &c, nil, err
 	}
 

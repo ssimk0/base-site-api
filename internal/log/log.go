@@ -48,16 +48,17 @@ func Setup(c *config.ApplicationConfiguration) {
 		logger.SetOutput(os.Stdout)
 	}
 
-	initSentry()
+	initSentry(c.SentryDNS, c.Env)
 }
 
-func initSentry() {
+func initSentry(dns string, env string) {
 	err := sentry.Init(sentry.ClientOptions{
 		// Either set your DSN here or set the SENTRY_DSN environment variable.
-		Dsn: os.Getenv("SENTRY_DNS"),
+		Dsn: dns,
 		// Enable printing of SDK debug messages.
 		// Useful when getting started or trying to figure something out.
-		Debug: false,
+		Debug:       false,
+		Environment: env,
 	})
 	if err != nil {
 		log.Fatalf("sentry.Init: %s", err)

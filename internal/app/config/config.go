@@ -12,6 +12,8 @@ import (
 type Config struct {
 	Fiber          fiber.Config
 	App            ApplicationConfiguration
+	Storage        StorageConfiguration
+	Email          EmailConfiguration
 	Enabled        map[string]bool
 	Logger         logger.Config
 	Recover        recover.Config
@@ -40,6 +42,18 @@ func Load() (config Config, err error) {
 		return config, err
 	}
 	config.App = appConfig
+
+	storage, err := loadStorageConfiguration()
+	if err != nil {
+		return config, err
+	}
+	config.Storage = storage
+
+	email, err := loadEmailConfiguration()
+	if err != nil {
+		return config, err
+	}
+	config.Email = email
 
 	// Load the logger middleware configuration
 	loggerEnabled, loggerConfig, err := loadLoggerConfiguration()
