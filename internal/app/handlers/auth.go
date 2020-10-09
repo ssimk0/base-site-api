@@ -93,7 +93,7 @@ func (h *AuthHandler) ForgotPassword(c *fiber.Ctx) error {
 		return h.Error(400)
 	}
 
-	err := h.service.ForgotPassword(u.Email)
+	err := h.service.ForgotPassword(u.Email, c.Locals("APP_URL").(string))
 
 	if err != nil {
 		log.Errorf("Error while processing forgot password: %s", err)

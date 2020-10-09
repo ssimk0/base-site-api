@@ -1,11 +1,29 @@
 package email
 
 import (
+	"base-site-api/internal/app/config"
 	"crypto/tls"
 	"fmt"
 	"net/smtp"
-	"os"
 )
+
+type Emailer interface {
+	SendMail(to string, body []byte) error
+}
+
+var client Emailer
+
+func Initialize(c *config.EmailConfiguration) {
+	client = &SmtpClient{c}
+}
+
+func Instance() Emailer {
+	return client
+}
+
+type SmtpClient struct {
+	c *config.EmailConfiguration
+}
 
 type clientTLS struct {
 	smtpClient *smtp.Client
@@ -13,10 +31,10 @@ type clientTLS struct {
 }
 
 // SendMail trough TLS with setuped mail from ENV
-func SendMail(to string, body []byte) error {
-	host := os.Getenv("MAIL_HOST")
-	addr := fmt.Sprintf("%s:%s", host, os.Getenv("MAIL_PORT"))
-	from := os.Getenv("MAIL_USERNAME")
+func (s SmtpClient) SendMail(to string, body []byte) error {
+	host := s.c.SmtpHost
+	addr := fmt.Sprintf("%s:%s", host, s.c.Port)
+	from := s.c.Username
 
 	// Setup headers
 	headers := make(map[string]string)
@@ -32,7 +50,7 @@ func SendMail(to string, body []byte) error {
 	}
 	message += "\r\n" + string(body)
 
-	client, err := setupClient(host, addr)
+	client, err := s.setupClient(host, addr)
 
 	if err != nil {
 		return err
@@ -57,13 +75,13 @@ func SendMail(to string, body []byte) error {
 	return c.Quit()
 }
 
-func setupClient(host string, addr string) (*clientTLS, error) {
+func (s SmtpClient) setupClient(host string, addr string) (*clientTLS, error) {
 	// Set up authentication information.
 	auth := smtp.PlainAuth(
 		"",
-		os.Getenv("MAIL_USERNAME"),
-		os.Getenv("MAIL_PASSWORD"),
-		os.Getenv("MAIL_HOST"),
+		s.c.Username,
+		s.c.Password,
+		s.c.SmtpHost,
 	)
 
 	tlsconfig := &tls.Config{ServerName: host}

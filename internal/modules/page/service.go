@@ -3,6 +3,7 @@ package page
 import (
 	"base-site-api/internal/app/models"
 	"base-site-api/internal/log"
+	"database/sql"
 	"github.com/gosimple/slug"
 )
 
@@ -53,6 +54,17 @@ func (s *service) Store(page *models.Page, categorySlug string, userID uint) (ui
 	}
 	page.Slug = slug.Make(page.Title)
 	page.CategoryID = c.ID
+
+	if page.ParentPage.ID != 0 {
+		id := sql.NullInt32{}
+		err = id.Scan(page.ParentPage.ID)
+		if err != nil {
+			return 0, err
+		}
+
+		page.ParentPageID = id
+		page.ParentPage = nil
+	}
 	return s.repository.Store(page, userID)
 }
 

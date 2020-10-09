@@ -1,10 +1,12 @@
-package file
+package storage
 
 import (
+	"base-site-api/internal/app/config"
 	"base-site-api/internal/random"
 	"bytes"
 	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"github.com/nfnt/resize"
@@ -13,7 +15,6 @@ import (
 	"image/png"
 	"io"
 	"mime/multipart"
-	"os"
 	"path"
 	"strings"
 )
@@ -26,13 +27,14 @@ type S3Storage struct {
 }
 
 // NewS3 return instance of s3Storage with setup whole config from env
-func NewS3() *S3Storage {
+func NewS3(c *config.StorageConfiguration) *S3Storage {
 	return &S3Storage{
 		config: &aws.Config{
-			Region:   aws.String(os.Getenv("AWS_DEFAULT_REGION")),
-			Endpoint: aws.String(os.Getenv("AWS_ENDPOINT")),
+			Region:      aws.String(c.Region),
+			Endpoint:    aws.String(c.Endpoint),
+			Credentials: credentials.NewStaticCredentials(c.AccessKey, c.SecretKey, ""),
 		},
-		bucket: os.Getenv("AWS_BUCKET"),
+		bucket: c.Bucket,
 		acl:    "public-read",
 	}
 }
@@ -44,14 +46,7 @@ const (
 	LARGE = "reduced"
 )
 
-// UploadFile is return value from Store function from S3Storage
-type UploadFile struct {
-	URL      string `json:"url"`
-	URLSmall string `json:"url-small"`
-	IsImage  bool   `json:"-"`
-}
-
-// Store file in s3 in path what you want
+// Store storage in s3 in path what you want
 func (s3 *S3Storage) Store(f *multipart.FileHeader, p string) (*UploadFile, error) {
 	ext := s3.getExt(f.Filename)
 	filename := fmt.Sprintf("%s.%s", random.String(10), ext)

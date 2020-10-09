@@ -24,7 +24,9 @@ func NewArticleHandler(s article.Service) *ArticleHandler {
 
 // List provider list of paginated active articles
 func (h *ArticleHandler) List(c *fiber.Ctx) error {
-	page, size := pagination.ParsePagination(c)
+	p := c.Query("p")
+	s := c.Query("s")
+	page, size := pagination.ParsePagination(p, s)
 
 	articles, count, err := h.service.FindAll(c.Query("sort"), page, size)
 
@@ -33,10 +35,10 @@ func (h *ArticleHandler) List(c *fiber.Ctx) error {
 		return h.Error(500)
 	}
 
-	p := h.CalculatePagination(page, size, count)
+	r := h.CalculatePagination(page, size, count)
 
 	a := article.PaginatedArticles{
-		Pagination: p,
+		Pagination: r,
 		Articles:   articles,
 	}
 

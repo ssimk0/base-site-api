@@ -1,0 +1,5 @@
+SmtpHost:
+Port: 465
+Username:
+Password:
+Encryption: ssl

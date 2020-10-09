@@ -1,0 +1,6 @@
+Type: "s3"
+Endpoint:
+Region:
+Bucket:
+AccessKey:
+SecretKey:

@@ -1,29 +1,22 @@
 package pagination
 
 import (
-	"github.com/gofiber/fiber/v2"
 	"strconv"
 )
 
 // ParsePagination helper function which parse pagination from query params or return default
-func ParsePagination(c *fiber.Ctx) (int, int) {
-	p := c.Query("p")
-	s := c.Query("s")
-	var page int
-	var size int
+func ParsePagination(p string, s string) (int, int) {
+	page := 1
+	size := 10
 
-	if p == "" {
-		page = 1
-	} else {
+	if p != "" {
 		x, err := strconv.ParseInt(p, 10, 32)
 		if err == nil {
 			page = int(x)
 		}
 	}
 
-	if s == "" {
-		size = 10
-	} else {
+	if s != "" {
 		x, err := strconv.ParseInt(s, 10, 32)
 		if err == nil {
 			size = int(x)
