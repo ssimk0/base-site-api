@@ -13,7 +13,7 @@ func main() {
 	c, err := config.Load()
 	if err != nil {
 		// Error when loading the configurations
-		log.Fatalf("An error occurred while loading the configurations: %v", err)
+		panic("An error occurred while loading the configurations: " + err.Error())
 	}
 
 	a := app.New(&c)
