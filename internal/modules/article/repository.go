@@ -73,6 +73,9 @@ func (r *repository) Update(article *models.Article, id uint) error {
 	if article.Slug != "" {
 		a.Slug = article.Slug
 	}
+	if article.Image != "" {
+		a.Image = article.Image
+	}
 	if article.Viewed != 0 {
 		a.Viewed = article.Viewed
 	}

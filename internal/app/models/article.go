@@ -3,6 +3,7 @@ package models
 type Article struct {
 	Model
 	Title     string `json:"title" gorm:"not null"`
+	Image     string `json:"image"`
 	Body      string `json:"body" gorm:"not null"`
 	Short     string `json:"short" gorm:"not null"`
 	Slug      string `json:"slug" gorm:"unique_index;not null"`

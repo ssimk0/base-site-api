@@ -19,3 +19,5 @@
 tmp/
 
 logrus.log
+config/storage.yaml
+config/email.yaml
