@@ -7,6 +7,9 @@ import (
 	"base-site-api/internal/modules/upload"
 	"base-site-api/internal/pagination"
 	"github.com/gofiber/fiber/v2"
+	"io"
+	"net/http"
+	"os"
 )
 
 // PageHandler for the upload
@@ -32,6 +35,43 @@ func (h *UploadHandler) ListCategories(c *fiber.Ctx) error {
 	}
 
 	return h.JSON(c, 200, categories)
+}
+
+func (h *UploadHandler) LastestUpload(c *fiber.Ctx) error {
+	s := c.Params("uploadCategory")
+
+	upload, err := h.service.LatestUpload(s)
+
+	if err != nil {
+		log.Debugf("Error while getting latest upload by type slug %s", err)
+		return h.Error(404)
+	}
+
+	err = downloadFile("file", upload.File)
+
+	if err != nil {
+		return h.Error(500)
+	}
+	//return h.JSON(c, 200, categories)
+	return c.SendFile("file", false)
+}
+
+func downloadFile(filepath string, url string) error {
+	resp, err := http.Get(url)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	// Create the file
+	out, err := os.Create(filepath)
+	if err != nil {
+		return err
+	}
+	defer out.Close()
+	// Write the body to file
+	_, err = io.Copy(out, resp.Body)
+	return err
 }
 
 func (h *UploadHandler) ListUploads(c *fiber.Ctx) error {

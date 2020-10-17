@@ -46,7 +46,7 @@ func (s *service) Store(file *multipart.FileHeader, categorySlug string, typeSlu
 	if err != nil {
 		return nil, err
 	}
-	log.Debug(s.store)
+
 	f, err := s.store.Store(file, fmt.Sprintf("%s/%s", t.Slug, category.SubPath))
 
 	if err != nil {
@@ -125,4 +125,8 @@ func (s *service) Delete(id uint) error {
 
 func (s *service) DeleteCategory(id uint) error {
 	return s.repository.DeleteCategory(id)
+}
+
+func (s *service) LatestUpload(categorySlug string) (*models.Upload, error) {
+	return s.repository.FindLatestUploadByCategory(categorySlug)
 }

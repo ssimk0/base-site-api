@@ -150,3 +150,18 @@ func (r *repository) DeleteCategory(id uint) error {
 
 	return nil
 }
+
+func (r *repository) FindLatestUploadByCategory(categorySlug string) (*models.Upload, error) {
+	c, err := r.FindCategoryBySlug(categorySlug)
+	upload := models.Upload{}
+
+	if err != nil {
+		return &upload, err
+	}
+
+	if err := r.db.Set("gorm:auto_preload", true).Where("category_id = ?", c.ID).Order("created_at desc").First(&upload).Error; err != nil {
+		return nil, err
+	}
+
+	return &upload, nil
+}
