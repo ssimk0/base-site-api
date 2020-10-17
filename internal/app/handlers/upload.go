@@ -96,6 +96,7 @@ func (h *UploadHandler) ListUploads(c *fiber.Ctx) error {
 
 func (h *UploadHandler) Upload(c *fiber.Ctx) error {
 	file, err := c.FormFile("file")
+	desc := c.FormValue("description", "")
 	s := c.Params("uploadCategory")
 	t := c.Params("type")
 
@@ -104,7 +105,7 @@ func (h *UploadHandler) Upload(c *fiber.Ctx) error {
 		return h.Error(400)
 	}
 
-	r, err := h.service.Store(file, s, t)
+	r, err := h.service.Store(file, desc, s, t)
 
 	if err != nil {
 		log.Debugf("Error while upload %s", err)

@@ -36,7 +36,7 @@ func (s *service) UploadsByCategory(categorySlug string, page int, size int) ([]
 }
 
 // Store upload the storage and save the row to db with all information about the storage itself
-func (s *service) Store(file *multipart.FileHeader, categorySlug string, typeSlug string) (*models.Upload, error) {
+func (s *service) Store(file *multipart.FileHeader, desc string, categorySlug string, typeSlug string) (*models.Upload, error) {
 	category, err := s.repository.FindCategoryBySlug(categorySlug)
 	if err != nil {
 		return nil, err
@@ -60,9 +60,10 @@ func (s *service) Store(file *multipart.FileHeader, categorySlug string, typeSlu
 	}
 
 	u := models.Upload{
-		File:       f.URL,
-		Thumbnail:  f.URLSmall,
-		CategoryID: c.ID,
+		File:        f.URL,
+		Thumbnail:   f.URLSmall,
+		Description: desc,
+		CategoryID:  c.ID,
 	}
 
 	_, err = s.repository.Store(&u)
