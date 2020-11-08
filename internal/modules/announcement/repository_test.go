@@ -27,7 +27,7 @@ func (s *AnnouncementTestSuite) getTestAnnouncements() *models.Announcement {
 	expire := (time.Now()).Add(time.Hour)
 	return &models.Announcement{
 		Message:  "Test",
-		ExpireAt: expire,
+		ExpireAt: &expire,
 	}
 }
 
@@ -36,11 +36,11 @@ func (s *AnnouncementTestSuite) prepareTestData() []*models.Announcement {
 	announcements := []*models.Announcement{
 		{
 			Message:  "Test",
-			ExpireAt: expire,
+			ExpireAt: &expire,
 		},
 		{
 			Message:  "Test New",
-			ExpireAt: expire,
+			ExpireAt: &expire,
 		},
 	}
 
