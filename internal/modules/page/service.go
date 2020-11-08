@@ -37,7 +37,7 @@ func (s *service) FindBySlug(slug string) (*PageDetail, error) {
 }
 
 //  FindAllByCategory return pages based on category slug
-func (s *service) FindAllByCategory(categorySlug string) ([]*models.Page, error) {
+func (s *service) FindAllByCategory(categorySlug string) ([]*PageDetail, error) {
 	return s.repository.FindAllByCategorySlug(categorySlug)
 }
 

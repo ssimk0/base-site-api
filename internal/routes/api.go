@@ -4,6 +4,7 @@ import (
 	"base-site-api/internal/app/handlers"
 	"base-site-api/internal/database"
 	"base-site-api/internal/middleware"
+	"base-site-api/internal/modules/announcement"
 	"base-site-api/internal/modules/article"
 	"base-site-api/internal/modules/auth"
 	"base-site-api/internal/modules/page"
@@ -60,6 +61,18 @@ func Register(api *fiber.Router, signingKey []byte, templatePath string) {
 	pages.Post("/:pageCategory", ph.Create)
 	pages.Put("/:id", ph.Update)
 	pages.Delete("/:id", ph.Remove)
+
+	anh := handlers.NewAnnouncementHandler(announcement.NewService(announcement.NewRepository(database.Instance())))
+
+	announce := (*api).Group("/v1/announcement")
+	announce.Use(middleware.NewAuthMiddleware(&middleware.Config{
+		SigningKey: signingKey,
+		Filter:     middleware.FilterGetOnly,
+		DB:         database.Instance(),
+	}))
+
+	announce.Get("/", anh.Active)
+	announce.Post("/", anh.Create)
 
 	uh := handlers.NewUploadHandler(upload.NewService(upload.NewRepository(database.Instance())))
 

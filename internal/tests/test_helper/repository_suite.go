@@ -25,6 +25,7 @@ func (s *RepositoryTestSuite) Setup() {
 	database.Connect(&config.DatabaseConfiguration{
 		Driver:   "sqlite",
 		Database: "/tmp/test.db",
+		//Debug: true,
 	})
 
 	s.Conn = database.Instance()

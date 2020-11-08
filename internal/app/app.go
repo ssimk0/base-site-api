@@ -9,6 +9,7 @@ import (
 	"base-site-api/internal/log"
 	"base-site-api/internal/routes"
 	"base-site-api/internal/storage"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/compress"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -51,6 +52,7 @@ func New(c *config.Config) *fiber.App {
 		&models.User{},
 		&models.ForgotPasswordToken{},
 		&models.Article{},
+		&models.Announcement{},
 	)
 
 	// SETUP APP

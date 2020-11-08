@@ -39,19 +39,32 @@ func (r *repository) FindCategoryBySlug(slug string) (*models.PageCategory, erro
 }
 
 // FindAllByCategorySlug return pages for specific page category
-func (r *repository) FindAllByCategorySlug(categorySlug string) ([]*models.Page, error) {
+func (r *repository) FindAllByCategorySlug(categorySlug string) ([]*PageDetail, error) {
 	var pages []*models.Page
+	var result []*PageDetail
 	category, err := r.FindCategoryBySlug(categorySlug)
 
 	if err != nil {
 		return nil, err
 	}
 
-	if err := r.db.Set("gorm:auto_preload", true).Model(&models.Page{}).Where("category_id = ?", category.ID).Where("parent_page_id is null").Find(&pages).Error; err != nil {
+	if err := r.db.Set("gorm:auto_preload", true).Model(&models.Page{}).Order("created_at asc").Where("category_id = ?", category.ID).Where("parent_page_id is null").Find(&pages).Error; err != nil {
 		return nil, err
 	}
 
-	return pages, nil
+	for i := range pages {
+		var child []*models.Page
+		if err := r.db.Set("gorm:auto_preload", true).Model(&models.Page{}).Order("created_at asc").Where("parent_page_id = ?", pages[i].ID).Find(&child).Error; err != nil {
+			return nil, err
+		}
+
+		result = append(result, &PageDetail{
+			Page:     *pages[i],
+			Children: child,
+		})
+	}
+
+	return result, nil
 }
 
 // FindBySlug return page by slug
@@ -63,7 +76,7 @@ func (r *repository) FindBySlug(slug string) (*models.Page, []*models.Page, erro
 		return nil, nil, err
 	}
 
-	if err := r.db.Set("gorm:auto_preload", true).Model(&models.Page{}).Where("parent_page_id = ?", c.ID).Find(&child).Error; err != nil {
+	if err := r.db.Set("gorm:auto_preload", true).Order("created_at asc").Model(&models.Page{}).Where("parent_page_id = ?", c.ID).Find(&child).Error; err != nil {
 		return &c, nil, err
 	}
 
