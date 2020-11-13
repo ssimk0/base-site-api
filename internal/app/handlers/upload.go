@@ -10,6 +10,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"strconv"
 )
 
 // PageHandler for the upload
@@ -37,22 +38,46 @@ func (h *UploadHandler) ListCategories(c *fiber.Ctx) error {
 	return h.JSON(c, 200, categories)
 }
 
-func (h *UploadHandler) LastestUpload(c *fiber.Ctx) error {
-	s := c.Params("uploadCategory")
+func (h *UploadHandler) DownloadUpload(c *fiber.Ctx) error {
+	id := c.Params("id")
 
-	upload, err := h.service.LatestUpload(s)
+	uid, err := strconv.ParseUint(id, 10, 32)
+	if err != nil {
+		return h.Error(400)
+	}
+
+	u, err := h.service.Upload(uint(uid))
 
 	if err != nil {
 		log.Debugf("Error while getting latest upload by type slug %s", err)
 		return h.Error(404)
 	}
 
-	err = downloadFile("file", upload.File)
+	err = downloadFile("file", u.File)
 
 	if err != nil {
 		return h.Error(500)
 	}
-	//return h.JSON(c, 200, categories)
+
+	return c.SendFile("file", false)
+}
+
+func (h *UploadHandler) LastestUpload(c *fiber.Ctx) error {
+	s := c.Params("uploadCategory")
+
+	u, err := h.service.LatestUpload(s)
+
+	if err != nil {
+		log.Debugf("Error while getting latest upload by type slug %s", err)
+		return h.Error(404)
+	}
+
+	err = downloadFile("file", u.File)
+
+	if err != nil {
+		return h.Error(500)
+	}
+
 	return c.SendFile("file", false)
 }
 

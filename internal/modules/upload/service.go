@@ -131,3 +131,7 @@ func (s *service) DeleteCategory(id uint) error {
 func (s *service) LatestUpload(categorySlug string) (*models.Upload, error) {
 	return s.repository.FindLatestUploadByCategory(categorySlug)
 }
+
+func (s *service) Upload(id uint) (*models.Upload, error) {
+	return s.repository.Find(id)
+}
