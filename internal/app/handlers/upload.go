@@ -6,10 +6,12 @@ import (
 	"base-site-api/internal/log"
 	"base-site-api/internal/modules/upload"
 	"base-site-api/internal/pagination"
+	"base-site-api/internal/random"
 	"github.com/gofiber/fiber/v2"
 	"io"
 	"net/http"
 	"os"
+	"path"
 	"strconv"
 )
 
@@ -52,14 +54,14 @@ func (h *UploadHandler) DownloadUpload(c *fiber.Ctx) error {
 		log.Debugf("Error while getting latest upload by type slug %s", err)
 		return h.Error(404)
 	}
-
-	err = downloadFile("file", u.File)
+	file := path.Join("/tmp", random.String(6))
+	err = downloadFile(file, u.File)
 
 	if err != nil {
 		return h.Error(500)
 	}
 
-	return c.SendFile("file", false)
+	return c.SendFile(file, false)
 }
 
 func (h *UploadHandler) Detail(c *fiber.Ctx) error {
@@ -90,13 +92,14 @@ func (h *UploadHandler) LastestUpload(c *fiber.Ctx) error {
 		return h.Error(404)
 	}
 
-	err = downloadFile("file", u.File)
+	file := path.Join("/tmp", random.String(6))
+	err = downloadFile(file, u.File)
 
 	if err != nil {
 		return h.Error(500)
 	}
 
-	return c.SendFile("file", false)
+	return c.SendFile(file, false)
 }
 
 func downloadFile(filepath string, url string) error {
