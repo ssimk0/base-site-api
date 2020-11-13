@@ -62,6 +62,24 @@ func (h *UploadHandler) DownloadUpload(c *fiber.Ctx) error {
 	return c.SendFile("file", false)
 }
 
+func (h *UploadHandler) Detail(c *fiber.Ctx) error {
+	id := c.Params("id")
+
+	uid, err := strconv.ParseUint(id, 10, 32)
+	if err != nil {
+		return h.Error(400)
+	}
+
+	u, err := h.service.Upload(uint(uid))
+
+	if err != nil {
+		log.Debugf("Error while getting latest upload by type slug %s", err)
+		return h.Error(404)
+	}
+
+	return c.JSON(u)
+}
+
 func (h *UploadHandler) LastestUpload(c *fiber.Ctx) error {
 	s := c.Params("uploadCategory")
 

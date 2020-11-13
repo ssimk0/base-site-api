@@ -3,3 +3,4 @@ Debug: true
 Listen: "127.0.0.1:8080"
 SentryDNS: https://35e01932f0b54074a43d35972ea2ee4d@o254716.ingest.sentry.io/5418412
 AppURL: "http://localhost:3000"
+BodyLimit: 104857600
