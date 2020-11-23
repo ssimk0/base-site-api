@@ -92,6 +92,27 @@ func (s *UploadTestSuite) TestFindUploadsCategoryByTypes() {
 	assert.Equal(s.T(), c[0].Name, category[0].Name)
 }
 
+func (s *UploadTestSuite) TestFindUploadsCategoryBySlug() {
+	u, c, _ := s.prepareTestData()
+	r := NewRepository(s.Conn)
+
+	upload, err := r.FindLatestUploadByCategory(c[0].Slug)
+
+	if err != nil {
+		s.T().Errorf("Error find page category by slug %s", err)
+	}
+
+	assert.Equal(s.T(), u[2].Description, upload.Description)
+}
+
+func (s *UploadTestSuite) TestFindUploadsCategoryBySlugNotFound() {
+	r := NewRepository(s.Conn)
+
+	_, err := r.FindLatestUploadByCategory("test")
+
+	assert.NotNil(s.T(), err)
+}
+
 func (s *UploadTestSuite) TestFindUploadsByCategory() {
 	u, c, _ := s.prepareTestData()
 	r := NewRepository(s.Conn)
@@ -133,6 +154,22 @@ func (s *UploadTestSuite) TestUpdateUpload() {
 	s.Conn.Find(&upload, u[0].ID)
 
 	assert.Equal(s.T(), upload.Description, "updated desc")
+}
+
+func (s *UploadTestSuite) TestFindCategoriesByTypeNotFound() {
+	r := NewRepository(s.Conn)
+
+	_, err := r.FindCategoriesByType("desc")
+
+	assert.NotNil(s.T(), err)
+}
+
+func (s *UploadTestSuite) TestUpdateUploadNotFound() {
+	r := NewRepository(s.Conn)
+
+	err := r.Update("updated desc", 0)
+
+	assert.NotNil(s.T(), err)
 }
 
 func (s *UploadTestSuite) TestStoreUploadCategory() {
@@ -264,6 +301,14 @@ func (s *UploadTestSuite) TestFindUploadCategory() {
 
 	// found
 	assert.Equal(s.T(), c[0].ID, a.ID)
+}
+
+func (s *UploadTestSuite) TestFindUploadCategoryNotFound() {
+	r := NewRepository(s.Conn)
+
+	_, err := r.FindCategory(0)
+
+	assert.NotNil(s.T(), err)
 }
 
 func TestRepositoryTestSuite(t *testing.T) {

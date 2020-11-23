@@ -120,6 +120,14 @@ func (s *PageTestSuite) TestFindAll() {
 	assert.Equal(s.T(), p[0].Title, pages[0].Title)
 }
 
+func (s *PageTestSuite) TestFindAllNotFound() {
+	r := NewRepository(s.Conn)
+
+	_, err := r.FindAllByCategorySlug("not-found")
+
+	assert.NotNil(s.T(), err)
+}
+
 func (s *PageTestSuite) TestFindBySlug() {
 	p, _ := s.prepareTestData()
 	r := NewRepository(s.Conn)
@@ -134,12 +142,23 @@ func (s *PageTestSuite) TestFindBySlug() {
 	assert.Equal(s.T(), p[0].Title, page.Title)
 }
 
+func (s *PageTestSuite) TestFindBySlugNotFound() {
+	r := NewRepository(s.Conn)
+
+	_, _, err := r.FindBySlug("not-found")
+
+	assert.NotNil(s.T(), err)
+
+}
+
 func (s *PageTestSuite) TestUpdate() {
 	p, _ := s.prepareTestData()
 	r := NewRepository(s.Conn)
 
 	data := &models.Page{
 		Title: "new title",
+		Body:  "other",
+		Slug:  "new-title",
 	}
 
 	err := r.Update(data, p[0].ID)
@@ -152,6 +171,22 @@ func (s *PageTestSuite) TestUpdate() {
 
 	assert.NotNil(s.T(), page)
 	assert.Equal(s.T(), data.Title, page.Title)
+	assert.Equal(s.T(), data.Body, page.Body)
+	assert.Equal(s.T(), data.Slug, page.Slug)
+}
+
+func (s *PageTestSuite) TestUpdateNotFound() {
+	r := NewRepository(s.Conn)
+
+	data := &models.Page{
+		Title: "new title",
+		Body:  "other",
+		Slug:  "new-title",
+	}
+
+	err := r.Update(data, 0)
+
+	assert.NotNil(s.T(), err)
 }
 
 func (s *PageTestSuite) TestStore() {
