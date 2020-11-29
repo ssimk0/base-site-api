@@ -89,7 +89,7 @@ func (s *UploadTestSuite) TestFindUploadsCategoryByTypes() {
 	}
 
 	assert.Len(s.T(), category, len(c))
-	assert.Equal(s.T(), c[0].Name, category[0].Name)
+	assert.Equal(s.T(), c[1].Name, category[0].Name)
 }
 
 func (s *UploadTestSuite) TestFindUploadsCategoryBySlug() {
@@ -124,7 +124,7 @@ func (s *UploadTestSuite) TestFindUploadsByCategory() {
 
 	assert.Len(s.T(), uploads, len(u))
 	assert.Equal(s.T(), 3, count)
-	assert.Equal(s.T(), u[0].File, uploads[0].File)
+	assert.Equal(s.T(), u[2].File, uploads[0].File)
 }
 
 func (s *UploadTestSuite) TestUpdateUploadCategory() {
