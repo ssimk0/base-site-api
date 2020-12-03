@@ -41,7 +41,11 @@ func (r *repository) FindUploadsByCategory(categorySlug string, offset int, limi
 		return nil, 0, err
 	}
 
-	if err := r.db.Set("gorm:auto_preload", true).Where("category_id = ? ", c.ID).Order("created_at desc").Offset(offset).Limit(limit).Find(&u).Count(&count).Error; err != nil {
+	if err := r.db.Set("gorm:auto_preload", true).Model(&models.Upload{}).Order("created_at desc").Where("category_id = ? ", c.ID).Count(&count).Error; err != nil {
+		return nil, 0, err
+	}
+
+	if err := r.db.Set("gorm:auto_preload", true).Where("category_id = ? ", c.ID).Order("created_at desc").Offset(offset).Limit(limit).Find(&u).Error; err != nil {
 		return nil, 0, err
 	}
 
