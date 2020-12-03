@@ -82,6 +82,33 @@ func (h *UploadHandler) Detail(c *fiber.Ctx) error {
 	return c.JSON(u)
 }
 
+func (h *UploadHandler) EditUpload(c *fiber.Ctx) error {
+	id := c.Params("id")
+
+	uid, err := strconv.ParseUint(id, 10, 32)
+	if err != nil {
+		return h.Error(400)
+	}
+
+	u := &models.Upload{}
+
+	err = c.BodyParser(u)
+
+	if err != nil {
+		return h.Error(400)
+	}
+
+	log.Debugf("id %d, desc %s", u.Description, id)
+	err = h.service.Update(u.Description, uint(uid))
+
+	if err != nil {
+		log.Debugf("Error while edit upload %s", err)
+		return h.Error(404)
+	}
+
+	return c.JSON(u)
+}
+
 func (h *UploadHandler) LastestUpload(c *fiber.Ctx) error {
 	s := c.Params("uploadCategory")
 

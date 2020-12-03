@@ -87,6 +87,7 @@ func Register(api *fiber.Router, signingKey []byte, templatePath string) {
 	uploads.Get("/:type/:uploadCategory/latest", uh.LastestUpload)
 	uploads.Get("/:type/:uploadCategory/:id/download", uh.DownloadUpload)
 	uploads.Get("/:type/:uploadCategory/:id", uh.Detail)
+	uploads.Put("/:type/:uploadCategory/:id", uh.EditUpload)
 	uploads.Get("/:type/:uploadCategory", uh.ListUploads)
 	uploads.Post("/:type/:uploadCategory", uh.Upload)
 	uploads.Post("/:type", uh.CreateCategory)
