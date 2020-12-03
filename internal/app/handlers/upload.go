@@ -98,7 +98,6 @@ func (h *UploadHandler) EditUpload(c *fiber.Ctx) error {
 		return h.Error(400)
 	}
 
-	log.Debugf("id %d, desc %s", u.Description, id)
 	err = h.service.Update(u.Description, uint(uid))
 
 	if err != nil {
