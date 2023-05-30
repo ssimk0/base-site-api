@@ -15,7 +15,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
-	"github.com/gofiber/helmet/v2"
+	"github.com/gofiber/fiber/v2/middleware/helmet"
 )
 
 // New function prepare whole app setup
@@ -88,7 +88,7 @@ func New(c *config.Config) *fiber.App {
 
 	api := app.Group("/api")
 
-	routes.Register(&api, c.App.SigningKey, c.App.TemplatePath)
+	routes.Register(api, c.App.SigningKey, c.App.TemplatePath)
 
 	return app
 }

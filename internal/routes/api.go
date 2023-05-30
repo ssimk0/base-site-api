@@ -16,11 +16,11 @@ func postOnlyFilter(c *fiber.Ctx) bool {
 	return c.Method() == "POST"
 }
 
-func Register(api *fiber.Router, signingKey []byte, templatePath string) {
+func Register(api fiber.Router, signingKey []byte, templatePath string) {
 	ah := handlers.NewArticleHandler(article.NewService(article.NewRepository(database.Instance())))
 	authHandler := handlers.NewAuthHandler(auth.NewService(auth.NewRepository(database.Instance()), signingKey, templatePath))
 
-	articles := (*api).Group("/v1/articles")
+	articles := api.Group("/v1/articles")
 	articles.Use(middleware.NewAuthMiddleware(&middleware.Config{
 		SigningKey: signingKey,
 		Filter:     middleware.FilterGetOnly,
@@ -33,7 +33,7 @@ func Register(api *fiber.Router, signingKey []byte, templatePath string) {
 	articles.Delete("/:id", ah.Remove)
 	articles.Get("/:slug", ah.GetDetail)
 
-	a := (*api).Group("/v1/auth")
+	a := api.Group("/v1/auth")
 	a.Use(middleware.NewAuthMiddleware(&middleware.Config{
 		SigningKey: signingKey,
 		Filter:     postOnlyFilter,
@@ -48,7 +48,7 @@ func Register(api *fiber.Router, signingKey []byte, templatePath string) {
 
 	ph := handlers.NewPageHandler(page.NewService(page.NewRepository(database.Instance())))
 
-	pages := (*api).Group("/v1/pages")
+	pages := api.Group("/v1/pages")
 	pages.Use(middleware.NewAuthMiddleware(&middleware.Config{
 		SigningKey: signingKey,
 		Filter:     middleware.FilterGetOnly,
@@ -64,7 +64,7 @@ func Register(api *fiber.Router, signingKey []byte, templatePath string) {
 
 	anh := handlers.NewAnnouncementHandler(announcement.NewService(announcement.NewRepository(database.Instance())))
 
-	announce := (*api).Group("/v1/announcement")
+	announce := api.Group("/v1/announcement")
 	announce.Use(middleware.NewAuthMiddleware(&middleware.Config{
 		SigningKey: signingKey,
 		Filter:     middleware.FilterGetOnly,
@@ -76,7 +76,7 @@ func Register(api *fiber.Router, signingKey []byte, templatePath string) {
 
 	uh := handlers.NewUploadHandler(upload.NewService(upload.NewRepository(database.Instance())))
 
-	uploads := (*api).Group("/v1/uploads")
+	uploads := api.Group("/v1/uploads")
 	uploads.Use(middleware.NewAuthMiddleware(&middleware.Config{
 		SigningKey: signingKey,
 		Filter:     middleware.FilterGetOnly,
