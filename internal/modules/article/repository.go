@@ -2,17 +2,23 @@ package article
 
 import (
 	"base-site-api/internal/app/models"
+	"base-site-api/internal/log"
+	"base-site-api/internal/pagination"
+	"fmt"
+	"github.com/gosimple/slug"
 	"github.com/jinzhu/gorm"
 )
 
 // repository implementation of repository with gorm.DB
 type repository struct {
+	pagination.Service
 	db *gorm.DB
 }
 
 // NewRepository return instance of repository
 func NewRepository(db *gorm.DB) Repository {
 	return &repository{
+		pagination.Service{},
 		db,
 	}
 }
@@ -24,6 +30,10 @@ func (r *repository) Find(id uint) (*models.Article, error) {
 	if err := r.db.Set("gorm:auto_preload", true).Where("published = 1").First(&article, id).Error; err != nil {
 		return nil, err
 	}
+	article.Viewed++
+
+	// update viewed is not critical error can be ignored
+	_ = r.Update(&article, article.ID)
 
 	return &article, nil
 }
@@ -40,7 +50,14 @@ func (r *repository) FindBySlug(slug string) (*models.Article, error) {
 }
 
 // FindAll list all published articles also with order
-func (r *repository) FindAll(order string, offset int, limit int) ([]*models.Article, int, error) {
+func (r *repository) FindAll(sort string, page int, size int) ([]*models.Article, int, error) {
+	order := "created_at desc"
+
+	if sort == "viewed" || sort == "created_at" {
+		order = fmt.Sprintf("%s desc", sort)
+	}
+	limit, offset := r.CalculateLimitAndOffset(page, size)
+
 	var articles []*models.Article
 	var count int
 
@@ -87,6 +104,7 @@ func (r *repository) Update(article *models.Article, id uint) error {
 // Store new article in db and return ID
 func (r *repository) Store(article *models.Article, userID uint) (uint, error) {
 	article.UserID = userID
+	article.Slug = slug.Make(article.Title)
 	if err := r.db.Create(article).Error; err != nil {
 		return 0, err
 	}
@@ -95,7 +113,8 @@ func (r *repository) Store(article *models.Article, userID uint) (uint, error) {
 }
 
 // Delete article by ID
-func (r *repository) Delete(id uint) error {
+func (r *repository) Delete(id uint, userID uint) error {
+	log.Infof("Article with id %d deleted by user with id %d", id, userID)
 	if err := r.db.Where("id = ?", id).Delete(&models.Article{}).Error; err != nil {
 		return err
 	}

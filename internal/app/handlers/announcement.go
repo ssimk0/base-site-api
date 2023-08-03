@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"base-site-api/internal/app/dto"
+	"base-site-api/internal/app/models"
 	"base-site-api/internal/log"
 	"base-site-api/internal/modules/announcement"
 	"github.com/gofiber/fiber/v2"
@@ -9,17 +10,17 @@ import (
 
 type AnnouncementHandler struct {
 	Handler
-	service announcement.Service
+	repository announcement.Repository
 }
 
-func NewAnnouncementHandler(s announcement.Service) *AnnouncementHandler {
+func NewAnnouncementHandler(r announcement.Repository) *AnnouncementHandler {
 	return &AnnouncementHandler{
-		service: s,
+		repository: r,
 	}
 }
 
 func (h *AnnouncementHandler) Active(c *fiber.Ctx) error {
-	a, err := h.service.GetActive()
+	a, err := h.repository.GetActive()
 
 	if err != nil {
 		log.Errorf("Error while getting active announcement: %s", err)
@@ -39,7 +40,7 @@ func (h *AnnouncementHandler) Create(c *fiber.Ctx) error {
 		return h.Error(400)
 	}
 
-	ID, err := h.service.Store(data)
+	ID, err := h.repository.Store(&models.Announcement{Message: data.Message, ExpireAt: data.ExpireAt})
 
 	if err != nil {
 		log.Errorf("Error while creating announcement: %s", err)

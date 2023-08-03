@@ -11,19 +11,19 @@ import (
 // PageHandler page
 type PageHandler struct {
 	Handler
-	service page.Service
+	repository page.Repository
 }
 
-// NewHandler set  the service and return instance  of PageHandler
-func NewPageHandler(s page.Service) *PageHandler {
+// NewPageHandler set the repository and return instance of PageHandler
+func NewPageHandler(s page.Repository) *PageHandler {
 	return &PageHandler{
-		service: s,
+		repository: s,
 	}
 }
 
 // ListCategories returns all page categories
 func (h *PageHandler) ListCategories(c *fiber.Ctx) error {
-	categories, err := h.service.FindCategories()
+	categories, err := h.repository.FindCategories()
 
 	if err != nil {
 		log.Errorf("Error while getting list categories %s", err)
@@ -36,7 +36,7 @@ func (h *PageHandler) ListCategories(c *fiber.Ctx) error {
 
 // ListPages return all pages specific for page category
 func (h *PageHandler) ListPages(c *fiber.Ctx) error {
-	pages, err := h.service.FindAllByCategory(c.Params("pageCategory"))
+	pages, err := h.repository.FindAllByCategorySlug(c.Params("pageCategory"))
 
 	if err != nil {
 		log.Debugf("Error while getting pages by category slug %s", err)
@@ -48,14 +48,17 @@ func (h *PageHandler) ListPages(c *fiber.Ctx) error {
 
 // GetDetail return detail for page by slug
 func (h *PageHandler) GetDetail(c *fiber.Ctx) error {
-	p, err := h.service.FindBySlug(c.Params("slug"))
+	p, children, err := h.repository.FindBySlug(c.Params("slug"))
 
 	if err != nil {
 		log.Debugf("Error while getting page %s", err)
 		return h.Error(404)
 	}
 
-	return h.JSON(c, 200, p)
+	return h.JSON(c, 200, &page.PageDetail{
+		Page:     *p,
+		Children: children,
+	})
 }
 
 // Create the page
@@ -70,7 +73,7 @@ func (h *PageHandler) Create(c *fiber.Ctx) error {
 		return h.Error(400)
 	}
 
-	pageID, err := h.service.Store(p, categorySlug, h.ParseUserID(c))
+	pageID, err := h.repository.Store(p, categorySlug, h.ParseUserID(c))
 
 	if err != nil {
 		log.Errorf("Error while create page %s", err)
@@ -101,7 +104,7 @@ func (h *PageHandler) Update(c *fiber.Ctx) error {
 		return h.Error(400)
 	}
 
-	err = h.service.Update(p, id)
+	err = h.repository.Update(p, id)
 
 	if err != nil {
 		log.Errorf("Error while update page %s", err)
@@ -124,7 +127,7 @@ func (h *PageHandler) Remove(c *fiber.Ctx) error {
 		return h.Error(400)
 	}
 
-	err = h.service.Delete(id, h.ParseUserID(c))
+	err = h.repository.Delete(id, h.ParseUserID(c))
 
 	if err != nil {
 		log.Errorf("Problem while removing page: %s", err)

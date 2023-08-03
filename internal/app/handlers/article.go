@@ -12,13 +12,13 @@ import (
 // ArticleHandler article
 type ArticleHandler struct {
 	Handler
-	service article.Service
+	repository article.Repository
 }
 
-// NewHandler return instance of ArticleHandler
-func NewArticleHandler(s article.Service) *ArticleHandler {
+// NewArticleHandler return instance of ArticleHandler
+func NewArticleHandler(s article.Repository) *ArticleHandler {
 	return &ArticleHandler{
-		service: s,
+		repository: s,
 	}
 }
 
@@ -28,7 +28,7 @@ func (h *ArticleHandler) List(c *fiber.Ctx) error {
 	s := c.Query("s")
 	page, size := pagination.ParsePagination(p, s)
 
-	articles, count, err := h.service.FindAll(c.Query("sort"), page, size)
+	articles, count, err := h.repository.FindAll(c.Query("sort"), page, size)
 
 	if err != nil {
 		log.Errorf("Error while getting list of articles: %s", err)
@@ -57,7 +57,7 @@ func (h *ArticleHandler) Create(c *fiber.Ctx) error {
 		return h.Error(400)
 	}
 
-	a, err := h.service.Store(data, h.ParseUserID(c))
+	ID, err := h.repository.Store(data, h.ParseUserID(c))
 
 	if err != nil {
 		log.Errorf("Error while creating article: %s", err)
@@ -66,7 +66,7 @@ func (h *ArticleHandler) Create(c *fiber.Ctx) error {
 
 	r := dto.SuccessResponse{
 		Success: true,
-		ID:      a.ID,
+		ID:      ID,
 	}
 
 	return h.JSON(c, 201, &r)
@@ -90,7 +90,7 @@ func (h *ArticleHandler) Update(c *fiber.Ctx) error {
 		return h.Error(400)
 	}
 
-	err = h.service.Update(data, id)
+	err = h.repository.Update(data, id)
 
 	if err != nil {
 		log.Errorf("Error while updating article: %s", err)
@@ -114,7 +114,7 @@ func (h *ArticleHandler) Remove(c *fiber.Ctx) error {
 		return h.Error(400)
 	}
 
-	err = h.service.Delete(id, h.ParseUserID(c))
+	err = h.repository.Delete(id, h.ParseUserID(c))
 
 	if err != nil {
 		log.Errorf("Error while removing article: %s", err)
@@ -133,7 +133,7 @@ func (h *ArticleHandler) Remove(c *fiber.Ctx) error {
 func (h *ArticleHandler) GetDetail(c *fiber.Ctx) error {
 	slug := c.Params("slug")
 
-	a, err := h.service.Find(slug)
+	a, err := h.repository.FindBySlug(slug)
 
 	if err != nil {
 		log.Debugf("Error while  get detail: %s", err)

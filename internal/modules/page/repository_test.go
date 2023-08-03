@@ -190,10 +190,11 @@ func (s *PageTestSuite) TestUpdateNotFound() {
 }
 
 func (s *PageTestSuite) TestStore() {
+	s.prepareTestData()
 	r := NewRepository(s.Conn)
 	page := s.getTestPage()
 
-	id, err := r.Store(page, uint(1))
+	id, err := r.Store(page, "sluzby", uint(1))
 
 	if err != nil {
 		s.T().Errorf("Error find page category by slug %s", err)
@@ -209,7 +210,7 @@ func (s *PageTestSuite) TestDelete() {
 	p, _ := s.prepareTestData()
 	r := NewRepository(s.Conn)
 
-	err := r.Delete(p[0].ID)
+	err := r.Delete(p[0].ID, 1)
 
 	if err != nil {
 		s.T().Errorf("Error Deleting article %s", err)

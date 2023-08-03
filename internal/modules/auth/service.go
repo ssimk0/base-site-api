@@ -12,7 +12,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/dgrijalva/jwt-go"
+	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -50,11 +50,11 @@ func (s *service) Login(username string, password string) (string, error) {
 		return tokenString, fmt.Errorf("error while comparing passwords %v", pwdCompare)
 	}
 
-	claims := jwt.StandardClaims{
-		ExpiresAt: time.Now().Add(oneWeek()).Unix(),
-		Issuer:    "go-with-jwt.it",
-		Id:        strconv.FormatUint(uint64(u.ID), 10),
-		Subject:   strconv.FormatUint(uint64(u.ID), 10),
+	claims := jwt.MapClaims{
+		"expireAt": time.Now().Add(oneWeek()).Unix(),
+		"issuer":   "go-with-jwt.it",
+		"id":       strconv.FormatUint(uint64(u.ID), 10),
+		"subject":  strconv.FormatUint(uint64(u.ID), 10),
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)

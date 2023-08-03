@@ -2,6 +2,9 @@ package page
 
 import (
 	"base-site-api/internal/app/models"
+	"base-site-api/internal/log"
+	"database/sql"
+	"github.com/gosimple/slug"
 	"github.com/jinzhu/gorm"
 )
 
@@ -117,7 +120,25 @@ func (r *repository) Update(page *models.Page, id uint) error {
 }
 
 // Store the page and validate input
-func (r *repository) Store(page *models.Page, userID uint) (uint, error) {
+func (r *repository) Store(page *models.Page, categorySlug string, userID uint) (uint, error) {
+	c, err := r.FindCategoryBySlug(categorySlug)
+	if err != nil || c == nil {
+		return 0, err
+	}
+	page.Slug = slug.Make(page.Title)
+	page.CategoryID = c.ID
+
+	if page.ParentPage != nil && page.ParentPage.ID != 0 {
+		id := sql.NullInt32{}
+		err = id.Scan(page.ParentPage.ID)
+		if err != nil {
+			return 0, err
+		}
+
+		page.ParentPageID = id
+		page.ParentPage = nil
+	}
+
 	page.UserID = userID
 	if err := r.db.Create(page).Error; err != nil {
 		return 0, err
@@ -127,7 +148,9 @@ func (r *repository) Store(page *models.Page, userID uint) (uint, error) {
 }
 
 // Delete the page by id
-func (r *repository) Delete(id uint) error {
+func (r *repository) Delete(id uint, userID uint) error {
+	log.Infof("Page with id %d deleted by user with id %d", id, userID)
+
 	if err := r.db.Where("id = ?", id).Delete(&models.Page{}).Error; err != nil {
 		return err
 	}

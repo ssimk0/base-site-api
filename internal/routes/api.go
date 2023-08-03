@@ -46,7 +46,7 @@ func Register(api fiber.Router, signingKey []byte, templatePath string) {
 	a.Post("/forgot-password", authHandler.ForgotPassword)
 	a.Post("/reset-password/:token", authHandler.ResetPassword)
 
-	ph := handlers.NewPageHandler(page.NewService(page.NewRepository(database.Instance())))
+	ph := handlers.NewPageHandler(page.NewRepository(database.Instance()))
 
 	pages := api.Group("/v1/pages")
 	pages.Use(middleware.NewAuthMiddleware(&middleware.Config{
