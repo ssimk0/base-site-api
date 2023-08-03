@@ -1,8 +1,8 @@
 package article
 
 import (
-	"base-site-api/internal/app/models"
 	"base-site-api/internal/log"
+	"base-site-api/internal/models"
 	"base-site-api/internal/tests/test_helper"
 	"testing"
 
@@ -92,7 +92,7 @@ func (s *ArticleTestSuite) TestFindAll() {
 
 	assert.Len(s.T(), articles, len(data))
 
-	assert.Equal(s.T(), articles[0].Title, data[0].Title)
+	assert.Equal(s.T(), articles[0].Title, data[2].Title)
 	assert.Equal(s.T(), count, 3)
 }
 
@@ -100,7 +100,7 @@ func (s *ArticleTestSuite) TestFindAllOrderViewed() {
 	data := s.prepareTestData()
 	r := NewRepository(s.Conn)
 
-	articles, count, err := r.FindAll("viewed desc", 0, 10)
+	articles, count, err := r.FindAll("viewed", 1, 10)
 
 	if err != nil {
 		s.T().Errorf("Error List article %s", err)
@@ -160,7 +160,7 @@ func (s *ArticleTestSuite) TestDelete() {
 	data := s.prepareTestData()
 	r := NewRepository(s.Conn)
 
-	err := r.Delete(data[0].ID)
+	err := r.Delete(data[0].ID, 1)
 
 	if err != nil {
 		s.T().Errorf("Error Deleting article %s", err)

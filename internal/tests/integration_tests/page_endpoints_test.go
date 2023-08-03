@@ -1,8 +1,7 @@
 package integration_tests
 
 import (
-	"base-site-api/internal/app/models"
-	"base-site-api/internal/modules/page"
+	"base-site-api/internal/models"
 	"encoding/json"
 	"net/http"
 	"testing"
@@ -120,7 +119,7 @@ func (s *PageEndpointsTestSuite) TestFindPagesOfCategory() {
 	assert.Equal(s.T(), res.StatusCode, 200)
 
 	d := json.NewDecoder(res.Body)
-	var resData []*page.PageDetail
+	var resData []*models.PageDetailResponse
 	err = d.Decode(&resData)
 
 	if err != nil {

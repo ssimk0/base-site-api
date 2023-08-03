@@ -1,8 +1,8 @@
 package page
 
 import (
-	"base-site-api/internal/app/models"
 	"base-site-api/internal/log"
+	"base-site-api/internal/models"
 	"database/sql"
 	"github.com/gosimple/slug"
 	"github.com/jinzhu/gorm"
@@ -42,9 +42,9 @@ func (r *repository) FindCategoryBySlug(slug string) (*models.PageCategory, erro
 }
 
 // FindAllByCategorySlug return pages for specific page category
-func (r *repository) FindAllByCategorySlug(categorySlug string) ([]*PageDetail, error) {
+func (r *repository) FindAllByCategorySlug(categorySlug string) ([]*models.PageDetailResponse, error) {
 	var pages []*models.Page
-	var result []*PageDetail
+	var result []*models.PageDetailResponse
 	category, err := r.FindCategoryBySlug(categorySlug)
 
 	if err != nil {
@@ -61,7 +61,7 @@ func (r *repository) FindAllByCategorySlug(categorySlug string) ([]*PageDetail, 
 			return nil, err
 		}
 
-		result = append(result, &PageDetail{
+		result = append(result, &models.PageDetailResponse{
 			Page:     *pages[i],
 			Children: child,
 		})

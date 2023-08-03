@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"base-site-api/internal/app/models"
+	"base-site-api/internal/models"
 	"fmt"
 	"github.com/jinzhu/gorm"
 	"net/http"

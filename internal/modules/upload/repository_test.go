@@ -1,7 +1,7 @@
 package upload
 
 import (
-	"base-site-api/internal/app/models"
+	"base-site-api/internal/models"
 	"base-site-api/internal/tests/test_helper"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"

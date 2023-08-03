@@ -1,8 +1,8 @@
 package article
 
 import (
-	"base-site-api/internal/app/models"
 	"base-site-api/internal/log"
+	"base-site-api/internal/models"
 	"base-site-api/internal/pagination"
 	"fmt"
 	"github.com/gosimple/slug"
@@ -30,10 +30,6 @@ func (r *repository) Find(id uint) (*models.Article, error) {
 	if err := r.db.Set("gorm:auto_preload", true).Where("published = 1").First(&article, id).Error; err != nil {
 		return nil, err
 	}
-	article.Viewed++
-
-	// update viewed is not critical error can be ignored
-	_ = r.Update(&article, article.ID)
 
 	return &article, nil
 }
@@ -56,7 +52,7 @@ func (r *repository) FindAll(sort string, page int, size int) ([]*models.Article
 	if sort == "viewed" || sort == "created_at" {
 		order = fmt.Sprintf("%s desc", sort)
 	}
-	limit, offset := r.CalculateLimitAndOffset(page, size)
+	offset, limit := r.CalculateLimitAndOffset(page, size)
 
 	var articles []*models.Article
 	var count int

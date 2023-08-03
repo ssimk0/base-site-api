@@ -17,7 +17,7 @@ func postOnlyFilter(c *fiber.Ctx) bool {
 }
 
 func Register(api fiber.Router, signingKey []byte, templatePath string) {
-	ah := handlers.NewArticleHandler(article.NewService(article.NewRepository(database.Instance())))
+	ah := handlers.NewArticleHandler(article.NewRepository(database.Instance()))
 	authHandler := handlers.NewAuthHandler(auth.NewService(auth.NewRepository(database.Instance()), signingKey, templatePath))
 
 	articles := api.Group("/v1/articles")
@@ -62,7 +62,7 @@ func Register(api fiber.Router, signingKey []byte, templatePath string) {
 	pages.Put("/:id", ph.Update)
 	pages.Delete("/:id", ph.Remove)
 
-	anh := handlers.NewAnnouncementHandler(announcement.NewService(announcement.NewRepository(database.Instance())))
+	anh := handlers.NewAnnouncementHandler(announcement.NewRepository(database.Instance()))
 
 	announce := api.Group("/v1/announcement")
 	announce.Use(middleware.NewAuthMiddleware(&middleware.Config{

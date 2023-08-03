@@ -2,8 +2,8 @@ package handlers
 
 import (
 	"base-site-api/internal/app/dto"
-	"base-site-api/internal/app/models"
 	"base-site-api/internal/log"
+	"base-site-api/internal/models"
 	"base-site-api/internal/modules/announcement"
 	"github.com/gofiber/fiber/v2"
 )
@@ -31,7 +31,7 @@ func (h *AnnouncementHandler) Active(c *fiber.Ctx) error {
 }
 
 func (h *AnnouncementHandler) Create(c *fiber.Ctx) error {
-	data := &announcement.Announcement{}
+	data := &models.AnnouncementRequest{}
 
 	err := c.BodyParser(data)
 

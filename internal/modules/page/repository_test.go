@@ -1,7 +1,7 @@
 package page
 
 import (
-	"base-site-api/internal/app/models"
+	models2 "base-site-api/internal/models"
 	"base-site-api/internal/tests/test_helper"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
@@ -15,13 +15,13 @@ type PageTestSuite struct {
 func (s *PageTestSuite) SetupTest() {
 	s.Setup()
 	s.Conn.Debug().AutoMigrate(
-		&models.Page{},
-		&models.PageCategory{},
+		&models2.Page{},
+		&models2.PageCategory{},
 	)
 }
 
-func (s *PageTestSuite) getTestPage() *models.Page {
-	return &models.Page{
+func (s *PageTestSuite) getTestPage() *models2.Page {
+	return &models2.Page{
 		Title:      "Test",
 		Body:       "Body",
 		Slug:       "test",
@@ -30,8 +30,8 @@ func (s *PageTestSuite) getTestPage() *models.Page {
 	}
 }
 
-func (s *PageTestSuite) prepareTestData() ([]*models.Page, []*models.PageCategory) {
-	pages := []*models.Page{
+func (s *PageTestSuite) prepareTestData() ([]*models2.Page, []*models2.PageCategory) {
+	pages := []*models2.Page{
 		{
 			Title: "Test",
 			Body:  "Body",
@@ -49,7 +49,7 @@ func (s *PageTestSuite) prepareTestData() ([]*models.Page, []*models.PageCategor
 		},
 	}
 
-	categories := []*models.PageCategory{
+	categories := []*models2.PageCategory{
 		{
 			Name: "Oznamy",
 			Slug: "oznamy",
@@ -155,7 +155,7 @@ func (s *PageTestSuite) TestUpdate() {
 	p, _ := s.prepareTestData()
 	r := NewRepository(s.Conn)
 
-	data := &models.Page{
+	data := &models2.Page{
 		Title: "new title",
 		Body:  "other",
 		Slug:  "new-title",
@@ -166,7 +166,7 @@ func (s *PageTestSuite) TestUpdate() {
 	if err != nil {
 		s.T().Errorf("Error find page category by slug %s", err)
 	}
-	page := &models.Page{}
+	page := &models2.Page{}
 	s.Conn.First(page, p[0].ID)
 
 	assert.NotNil(s.T(), page)
@@ -178,7 +178,7 @@ func (s *PageTestSuite) TestUpdate() {
 func (s *PageTestSuite) TestUpdateNotFound() {
 	r := NewRepository(s.Conn)
 
-	data := &models.Page{
+	data := &models2.Page{
 		Title: "new title",
 		Body:  "other",
 		Slug:  "new-title",
@@ -199,7 +199,7 @@ func (s *PageTestSuite) TestStore() {
 	if err != nil {
 		s.T().Errorf("Error find page category by slug %s", err)
 	}
-	p := &models.Page{}
+	p := &models2.Page{}
 	s.Conn.First(p, id)
 
 	assert.NotNil(s.T(), p)
@@ -216,7 +216,7 @@ func (s *PageTestSuite) TestDelete() {
 		s.T().Errorf("Error Deleting article %s", err)
 	}
 
-	a := &models.Article{}
+	a := &models2.Article{}
 	s.Conn.First(a, p[0].ID)
 	// Not found
 	assert.Equal(s.T(), uint(0), a.ID)

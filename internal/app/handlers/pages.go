@@ -2,8 +2,8 @@ package handlers
 
 import (
 	"base-site-api/internal/app/dto"
-	"base-site-api/internal/app/models"
 	"base-site-api/internal/log"
+	"base-site-api/internal/models"
 	"base-site-api/internal/modules/page"
 	"github.com/gofiber/fiber/v2"
 )
@@ -55,7 +55,7 @@ func (h *PageHandler) GetDetail(c *fiber.Ctx) error {
 		return h.Error(404)
 	}
 
-	return h.JSON(c, 200, &page.PageDetail{
+	return h.JSON(c, 200, &models.PageDetailResponse{
 		Page:     *p,
 		Children: children,
 	})

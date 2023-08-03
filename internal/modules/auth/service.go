@@ -1,9 +1,9 @@
 package auth
 
 import (
-	"base-site-api/internal/app/models"
 	"base-site-api/internal/email"
 	"base-site-api/internal/log"
+	"base-site-api/internal/models"
 	"base-site-api/internal/random"
 	"bytes"
 	"fmt"
@@ -139,7 +139,7 @@ func (s *service) ResetPassword(token string, newPassword string) error {
 }
 
 // RegisterUser prepare, validate new user and save it to database
-func (s *service) RegisterUser(u *UserRequest) error {
+func (s *service) RegisterUser(u *models.UserRequest) error {
 	if u.Password != u.PasswordConfirm {
 		return fmt.Errorf("passwords are not same")
 	}

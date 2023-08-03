@@ -1,7 +1,7 @@
 package announcement
 
 import (
-	"base-site-api/internal/app/models"
+	"base-site-api/internal/models"
 	"github.com/jinzhu/gorm"
 	"time"
 )

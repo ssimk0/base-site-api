@@ -2,8 +2,8 @@ package handlers
 
 import (
 	"base-site-api/internal/app/dto"
-	"base-site-api/internal/app/models"
 	"base-site-api/internal/log"
+	"base-site-api/internal/models"
 	"base-site-api/internal/modules/article"
 	"base-site-api/internal/pagination"
 	"github.com/gofiber/fiber/v2"
@@ -37,7 +37,7 @@ func (h *ArticleHandler) List(c *fiber.Ctx) error {
 
 	r := h.CalculatePagination(page, size, count)
 
-	a := article.PaginatedArticles{
+	a := models.PaginatedArticles{
 		Pagination: r,
 		Articles:   articles,
 	}
@@ -134,6 +134,10 @@ func (h *ArticleHandler) GetDetail(c *fiber.Ctx) error {
 	slug := c.Params("slug")
 
 	a, err := h.repository.FindBySlug(slug)
+	a.Viewed++
+
+	// update viewed is not critical error can be ignored
+	_ = h.repository.Update(a, a.ID)
 
 	if err != nil {
 		log.Debugf("Error while  get detail: %s", err)

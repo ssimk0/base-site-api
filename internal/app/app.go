@@ -3,19 +3,19 @@ package app
 import (
 	"base-site-api/internal/app/config"
 	"base-site-api/internal/app/dto"
-	"base-site-api/internal/app/models"
 	"base-site-api/internal/database"
 	"base-site-api/internal/email"
 	"base-site-api/internal/log"
+	models2 "base-site-api/internal/models"
 	"base-site-api/internal/routes"
 	"base-site-api/internal/storage"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/compress"
 	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/helmet"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
-	"github.com/gofiber/fiber/v2/middleware/helmet"
 )
 
 // New function prepare whole app setup
@@ -44,15 +44,15 @@ func New(c *config.Config) *fiber.App {
 	log.Setup(&c.App)
 
 	database.Instance().AutoMigrate(
-		&models.PageCategory{},
-		&models.Page{},
-		&models.UploadType{},
-		&models.UploadCategory{},
-		&models.Upload{},
-		&models.User{},
-		&models.ForgotPasswordToken{},
-		&models.Article{},
-		&models.Announcement{},
+		&models2.PageCategory{},
+		&models2.Page{},
+		&models2.UploadType{},
+		&models2.UploadCategory{},
+		&models2.Upload{},
+		&models2.User{},
+		&models2.ForgotPasswordToken{},
+		&models2.Article{},
+		&models2.Announcement{},
 	)
 
 	// SETUP APP

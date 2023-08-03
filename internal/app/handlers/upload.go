@@ -2,8 +2,8 @@ package handlers
 
 import (
 	"base-site-api/internal/app/dto"
-	"base-site-api/internal/app/models"
 	"base-site-api/internal/log"
+	"base-site-api/internal/models"
 	"base-site-api/internal/modules/upload"
 	"base-site-api/internal/pagination"
 	"base-site-api/internal/random"

@@ -2,8 +2,8 @@ package handlers
 
 import (
 	"base-site-api/internal/app/dto"
-	"base-site-api/internal/app/models"
 	"base-site-api/internal/log"
+	"base-site-api/internal/models"
 	"base-site-api/internal/modules/auth"
 	"net/http"
 
@@ -25,7 +25,7 @@ func NewAuthHandler(s auth.Service) *AuthHandler {
 
 // Login handler return the JWT token
 func (h *AuthHandler) Login(c *fiber.Ctx) error {
-	r := &auth.LoginRequest{}
+	r := &models.LoginRequest{}
 
 	if err := c.BodyParser(r); err != nil {
 		log.Debugf("Wrong request login: %s", err)
@@ -39,14 +39,14 @@ func (h *AuthHandler) Login(c *fiber.Ctx) error {
 		return h.Error(http.StatusForbidden)
 	}
 
-	return h.JSON(c, 200, &auth.TokenResponse{
+	return h.JSON(c, 200, &models.TokenResponse{
 		Token: token,
 	})
 }
 
 // RegisterUser validate and register the user
 func (h *AuthHandler) RegisterUser(c *fiber.Ctx) error {
-	u := &auth.UserRequest{}
+	u := &models.UserRequest{}
 
 	if err := c.BodyParser(u); err != nil {
 		return h.Error(400)
@@ -75,7 +75,7 @@ func (h *AuthHandler) GetUserInfo(c *fiber.Ctx) error {
 		return h.Error(500)
 	}
 
-	return h.JSON(c, 200, auth.UserInfoResponse{
+	return h.JSON(c, 200, models.UserInfoResponse{
 		Email:     u.Email,
 		FirstName: u.FirstName,
 		LastName:  u.LastName,
@@ -109,7 +109,7 @@ func (h *AuthHandler) ForgotPassword(c *fiber.Ctx) error {
 
 // ResetPassword based on token from ForgotPassword
 func (h *AuthHandler) ResetPassword(c *fiber.Ctx) error {
-	u := &auth.ResetPasswordRequest{}
+	u := &models.ResetPasswordRequest{}
 	token := c.Params("token")
 
 	if err := c.BodyParser(u); err != nil {

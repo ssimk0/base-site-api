@@ -1,5 +1,7 @@
 package models
 
+import "base-site-api/internal/pagination"
+
 type Article struct {
 	Model
 	Title     string `json:"title" gorm:"not null"`
@@ -11,4 +13,10 @@ type Article struct {
 	Viewed    int    `json:"viewed"`
 	UserID    uint   `json:"-" gorm:"not null"`
 	User      User   `json:"created_by" gorm:"foreignkey:UserID"`
+}
+
+// PaginatedArticles struct for articles list and Pagination for api response
+type PaginatedArticles struct {
+	*pagination.Pagination
+	Articles []*Article `json:"articles"`
 }

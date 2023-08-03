@@ -24,3 +24,8 @@ type Page struct {
 	ParentPage   *Page         `json:"parent" gorm:"foreignkey:ParentPageID"`
 	Category     PageCategory  `json:"page_category" gorm:"foreignkey:CategoryID"`
 }
+
+type PageDetailResponse struct {
+	Page
+	Children []*Page `json:"children"`
+}

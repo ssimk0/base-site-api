@@ -1,7 +1,7 @@
 package upload
 
 import (
-	"base-site-api/internal/app/models"
+	"base-site-api/internal/models"
 	"base-site-api/internal/pagination"
 )
 
