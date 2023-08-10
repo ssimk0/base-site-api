@@ -18,7 +18,8 @@ import (
 // PageHandler for the upload
 type UploadHandler struct {
 	Handler
-	service upload.Service
+	service    upload.Service
+	repository upload.Repository
 }
 
 func NewUploadHandler(s upload.Service) *UploadHandler {
@@ -30,7 +31,7 @@ func NewUploadHandler(s upload.Service) *UploadHandler {
 func (h *UploadHandler) ListCategories(c *fiber.Ctx) error {
 	s := c.Params("type")
 
-	categories, err := h.service.UploadCategories(s)
+	categories, err := h.repository.FindCategoriesByType(s)
 
 	if err != nil {
 		log.Debugf("Error while getting upload categories by type slug %s", err)
@@ -48,7 +49,7 @@ func (h *UploadHandler) DownloadUpload(c *fiber.Ctx) error {
 		return h.Error(400)
 	}
 
-	u, err := h.service.Upload(uint(uid))
+	u, err := h.repository.Find(uint(uid))
 
 	if err != nil {
 		log.Debugf("Error while getting latest upload by type slug %s", err)
@@ -72,7 +73,7 @@ func (h *UploadHandler) Detail(c *fiber.Ctx) error {
 		return h.Error(400)
 	}
 
-	u, err := h.service.Upload(uint(uid))
+	u, err := h.repository.Find(uint(uid))
 
 	if err != nil {
 		log.Debugf("Error while getting latest upload by type slug %s", err)
@@ -98,7 +99,7 @@ func (h *UploadHandler) EditUpload(c *fiber.Ctx) error {
 		return h.Error(400)
 	}
 
-	err = h.service.Update(u.Description, uint(uid))
+	err = h.repository.Update(u.Description, uint(uid))
 
 	if err != nil {
 		log.Debugf("Error while edit upload %s", err)
@@ -111,7 +112,7 @@ func (h *UploadHandler) EditUpload(c *fiber.Ctx) error {
 func (h *UploadHandler) LastestUpload(c *fiber.Ctx) error {
 	s := c.Params("uploadCategory")
 
-	u, err := h.service.LatestUpload(s)
+	u, err := h.repository.FindLatestUploadByCategory(s)
 
 	if err != nil {
 		log.Debugf("Error while getting latest upload by type slug %s", err)
@@ -152,7 +153,7 @@ func (h *UploadHandler) ListUploads(c *fiber.Ctx) error {
 	qs := c.Query("s")
 	page, size := pagination.ParsePagination(qp, qs)
 
-	uploads, count, err := h.service.UploadsByCategory(s, page, size)
+	uploads, count, err := h.repository.FindUploadsByCategory(s, page, size)
 
 	if err != nil {
 		log.Debugf("Error while getting upload by category slug %s", err)
@@ -198,7 +199,7 @@ func (h *UploadHandler) CreateCategory(c *fiber.Ctx) error {
 		return h.Error(400)
 	}
 
-	id, err := h.service.StoreCategory(category.Name, category.SubPath, category.Description, t)
+	id, err := h.repository.StoreCategory(category.Name, category.SubPath, category.Description, t)
 
 	if err != nil {
 		log.Errorf("Error while creating upload category: %s", err)
@@ -230,7 +231,7 @@ func (h *UploadHandler) UpdateCategory(c *fiber.Ctx) error {
 		return h.Error(400)
 	}
 
-	err = h.service.UpdateCategory(category.Name, category.SubPath, id)
+	err = h.repository.UpdateCategory(category.Name, category.SubPath, "", id)
 
 	if err != nil {
 		log.Errorf("Error while updating upload category: %s", err)
@@ -262,7 +263,7 @@ func (h *UploadHandler) Update(c *fiber.Ctx) error {
 		return h.Error(400)
 	}
 
-	err = h.service.Update(u.Description, id)
+	err = h.repository.Update(u.Description, id)
 
 	if err != nil {
 		log.Errorf("Error while updating upload: %s", err)
@@ -287,7 +288,7 @@ func (h *UploadHandler) Remove(c *fiber.Ctx) error {
 		return h.Error(400)
 	}
 
-	err = h.service.Delete(id)
+	err = h.repository.Delete(id)
 
 	if err != nil {
 		log.Errorf("Error while removing upload: %s", err)
@@ -311,7 +312,7 @@ func (h *UploadHandler) RemoveCategory(c *fiber.Ctx) error {
 		return h.Error(400)
 	}
 
-	err = h.service.DeleteCategory(id)
+	err = h.repository.DeleteCategory(id)
 
 	if err != nil {
 		log.Errorf("Error while removing upload category: %s", err)

@@ -181,7 +181,7 @@ func (s *UploadTestSuite) TestStoreUploadCategory() {
 		Slug:   "file-cat",
 		TypeID: t.ID,
 	}
-	id, err := r.StoreCategory(&c)
+	id, err := r.StoreCategory(c.Name, c.Slug, "", t.Slug)
 	if err != nil {
 		s.T().Errorf("Error create upload category %s", err)
 	}

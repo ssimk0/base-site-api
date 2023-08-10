@@ -2,16 +2,20 @@ package upload
 
 import (
 	"base-site-api/internal/models"
+	"base-site-api/internal/pagination"
+	"github.com/gosimple/slug"
 	"github.com/jinzhu/gorm"
 )
 
 type repository struct {
+	pagination.Service
 	db *gorm.DB
 }
 
 // NewRepository for the upload module
 func NewRepository(db *gorm.DB) Repository {
 	return &repository{
+		pagination.Service{},
 		db,
 	}
 }
@@ -32,7 +36,8 @@ func (r *repository) FindCategoriesByType(typeSlug string) ([]*models.UploadCate
 }
 
 // FindUploadsByCategory return all upload for the category
-func (r *repository) FindUploadsByCategory(categorySlug string, offset int, limit int) ([]*models.Upload, int, error) {
+func (r *repository) FindUploadsByCategory(categorySlug string, page int, size int) ([]*models.Upload, int, error) {
+	offset, limit := r.CalculateLimitAndOffset(page, size)
 	var u []*models.Upload
 	var count int
 
@@ -111,11 +116,18 @@ func (r *repository) UpdateCategory(categoryName string, subpath string, thum st
 	if err != nil {
 		return err
 	}
-	u.SubPath = subpath
-	u.Name = categoryName
+
+	if categoryName != "" {
+		u.Name = categoryName
+	}
+	if subpath != "" {
+		u.SubPath = subpath
+	}
+
 	if thum != "" {
 		u.Thumbnail = thum
 	}
+
 	return r.db.Save(&u).Error
 }
 
@@ -129,12 +141,25 @@ func (r *repository) Store(upload *models.Upload) (uint, error) {
 }
 
 // StoreCategory upload
-func (r *repository) StoreCategory(category *models.UploadCategory) (uint, error) {
-	if err := r.db.Create(category).Error; err != nil {
+func (r *repository) StoreCategory(categoryName string, subPath string, desc string, typeSlug string) (uint, error) {
+	t, err := r.FindTypeBySlug(typeSlug)
+	if err != nil {
 		return 0, err
 	}
 
-	return category.ID, nil
+	c := models.UploadCategory{
+		Name:        categoryName,
+		SubPath:     subPath,
+		Description: desc,
+		TypeID:      t.ID,
+		Slug:        slug.Make(categoryName),
+	}
+
+	if err := r.db.Create(&c).Error; err != nil {
+		return 0, err
+	}
+
+	return c.ID, nil
 }
 
 // Delete upload from DB
