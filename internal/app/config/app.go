@@ -2,7 +2,6 @@ package config
 
 import (
 	"github.com/spf13/viper"
-	"io/ioutil"
 	"os"
 	"path"
 )
@@ -56,7 +55,7 @@ func loadApplicationConfiguration() (ApplicationConfiguration, error) {
 		return config, err
 	}
 
-	config.SigningKey, err = ioutil.ReadFile(path.Join(dir, config.SigningKeyPath))
+	config.SigningKey, err = os.ReadFile(path.Join(dir, config.SigningKeyPath))
 	if err != nil {
 		return config, err
 	}

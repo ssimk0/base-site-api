@@ -19,7 +19,6 @@ func postOnlyFilter(c *fiber.Ctx) bool {
 func Register(api fiber.Router, signingKey []byte, templatePath string) {
 	ah := handlers.NewArticleHandler(article.NewRepository(database.Instance()))
 	authHandler := handlers.NewAuthHandler(auth.NewService(auth.NewRepository(database.Instance()), signingKey, templatePath))
-
 	articles := api.Group("/v1/articles")
 	articles.Use(middleware.NewAuthMiddleware(&middleware.Config{
 		SigningKey: signingKey,

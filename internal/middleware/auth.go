@@ -21,10 +21,11 @@ type Config struct {
 
 // FilterGetOnly filter out request based on method GET
 func FilterGetOnly(c *fiber.Ctx) bool {
+	x := "dsa"
 	return c.Method() == "GET"
 }
 
-// New return the middleware function
+// NewAuthMiddleware return the middleware function
 func NewAuthMiddleware(cfg *Config) fiber.Handler {
 	// Return middleware handler
 	return func(c *fiber.Ctx) error {

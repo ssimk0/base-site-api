@@ -3,7 +3,7 @@ package models
 import "base-site-api/internal/pagination"
 
 type Article struct {
-	Model
+	DatabaseModel
 	Title     string `json:"title" gorm:"not null"`
 	Image     string `json:"image"`
 	Body      string `json:"body" gorm:"not null"`

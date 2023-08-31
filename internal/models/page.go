@@ -6,14 +6,14 @@ import (
 
 // PageCategory model
 type PageCategory struct {
-	Model
+	DatabaseModel
 	Name string `json:"name" gorm:"not null"`
 	Slug string `json:"slug" gorm:"unique_index;not null"`
 }
 
 // Page model linked to PageCategory
 type Page struct {
-	Model
+	DatabaseModel
 	Title        string        `json:"title" gorm:"not null"`
 	Body         string        `json:"body" gorm:"not null"`
 	Slug         string        `json:"slug" gorm:"unique_index;not null"`

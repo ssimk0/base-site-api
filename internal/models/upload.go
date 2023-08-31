@@ -2,7 +2,7 @@ package models
 
 // Upload store information about  specific file mainly URL to s3
 type Upload struct {
-	Model
+	DatabaseModel
 	File        string         `json:"file" gorm:"not null"`
 	Thumbnail   string         `json:"thumbnail"`
 	Description string         `json:"description"`
@@ -13,7 +13,7 @@ type Upload struct {
 // UploadCategory will be used to build tree structure of upload
 // also main part of querying specific upload
 type UploadCategory struct {
-	Model
+	DatabaseModel
 	Name        string     `json:"name" gorm:"not null"`
 	Description string     `json:"description"`
 	Slug        string     `json:"slug" gorm:"unique_index;not null"`
@@ -26,7 +26,7 @@ type UploadCategory struct {
 // UploadType will be used to enable upload for specific parts of site
 // also used  as querying upload categories
 type UploadType struct {
-	Model
+	DatabaseModel
 	Name string `json:"name" gorm:"not null"`
 	Slug string `json:"slug" gorm:"unique_index;not null"`
 }
