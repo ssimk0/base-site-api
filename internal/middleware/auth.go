@@ -3,10 +3,11 @@ package middleware
 import (
 	"base-site-api/internal/models"
 	"fmt"
-	"github.com/jinzhu/gorm"
 	"net/http"
 	"strconv"
 	"strings"
+
+	"github.com/jinzhu/gorm"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
@@ -21,7 +22,6 @@ type Config struct {
 
 // FilterGetOnly filter out request based on method GET
 func FilterGetOnly(c *fiber.Ctx) bool {
-	x := "dsa"
 	return c.Method() == "GET"
 }
 
