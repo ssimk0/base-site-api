@@ -57,10 +57,9 @@ func NewAuthMiddleware(cfg *Config) fiber.Handler {
 			return fiber.NewError(http.StatusUnauthorized, fmt.Sprintf("could not parse the token, %v", err))
 
 		}
-
 		// getting claims
 		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-			userID, err := strconv.ParseUint(claims["jti"].(string), 10, 32)
+			userID, err := strconv.ParseUint(claims["id"].(string), 10, 32)
 			if err != nil {
 				return fiber.NewError(http.StatusUnauthorized, fmt.Sprintf("failed to validate token: %v", claims))
 			}
@@ -72,9 +71,8 @@ func NewAuthMiddleware(cfg *Config) fiber.Handler {
 			}
 
 			if user.CanEdit || user.IsAdmin {
-				c.Locals("userID", uint(userID))
+				c.Locals("user", user)
 			} else {
-
 				return fiber.NewError(http.StatusUnauthorized, fmt.Sprintf("failed to validate token: %v", claims))
 			}
 

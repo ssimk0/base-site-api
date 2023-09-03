@@ -1,10 +1,12 @@
 package handlers
 
 import (
+	"base-site-api/internal/models"
 	"base-site-api/internal/pagination"
-	"github.com/gofiber/fiber/v2"
 	"math"
 	"strconv"
+
+	"github.com/gofiber/fiber/v2"
 )
 
 // Handler wrap common logic  for handlers
@@ -42,7 +44,9 @@ func (h *Handler) ErrorWithMessage(status int, message string) error {
 
 // ParseUserID parse user id from context and convert it to uint
 func (h *Handler) ParseUserID(c *fiber.Ctx) uint {
-	return c.Locals("userID").(uint)
+	user := c.Locals("user").(models.User)
+
+	return user.ID
 }
 
 // ParseID parse id from url and convert to uint
